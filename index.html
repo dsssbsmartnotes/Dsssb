@@ -12,7 +12,7 @@
 
 <style>
 /* =========================================
-   TESTBOOK STYLE PREMIUM UI VARIABLES
+   TESTBOOK STYLE PREMIUM UI
    ========================================= */
 :root {
   --tb-blue: #0266fd;
@@ -33,7 +33,7 @@
   --radius-md: 10px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg-app); color: var(--text-main); padding-bottom: 30px; }
 
 /* --- SECURITY LOADER --- */
@@ -45,12 +45,12 @@ body { background: var(--bg-app); color: var(--text-main); padding-bottom: 30px;
 /* --- HERO HEADER --- */
 .hero-header { background: linear-gradient(135deg, var(--tb-blue), var(--tb-dark-blue)); padding: 25px 20px 60px; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; position: relative; }
 .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.brand { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
-.pro-badge { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 10px rgba(245,158,11,0.4); }
+.brand { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.pro-badge { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
 .user-greet { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
 .user-sub { font-size: 13px; opacity: 0.85; }
 
-/* --- OVERVIEW STATS (OVERLAPPING) --- */
+/* --- OVERVIEW STATS --- */
 .stats-wrapper { padding: 0 20px; margin-top: -40px; position: relative; z-index: 10; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .stat-box { background: var(--card-bg); padding: 18px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 5px; border: 1px solid rgba(0,0,0,0.02); }
 .stat-box .icon { width: 35px; height: 35px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 18px; margin-bottom: 5px; }
@@ -66,28 +66,26 @@ body { background: var(--bg-app); color: var(--text-main); padding-bottom: 30px;
 .comparison-bar { margin-top: 15px; }
 .comp-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-muted); }
 .bar-bg { height: 8px; background: var(--border-light); border-radius: 10px; overflow: hidden; position: relative; margin-bottom: 10px; }
-.bar-fill { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.bar-fill { height: 100%; border-radius: 10px; transition: width 1s ease-out; }
 .fill-you { background: var(--tb-blue); }
 .fill-topper { background: var(--tb-green); }
 
 /* --- TEST CARDS --- */
 .test-list { display: flex; flex-direction: column; gap: 15px; }
-.test-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-card); border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 12px; transition: 0.2s; }
-.test-card:active { transform: scale(0.98); }
+.test-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-card); border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 12px; }
 .t-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .t-title { font-size: 16px; font-weight: 700; color: var(--text-main); }
 .t-tags { display: flex; gap: 10px; margin-top: 8px; }
-.tag { font-size: 11px; font-weight: 600; color: var(--text-muted); background: var(--bg-app); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light); display: flex; align-items: center; gap: 4px; }
+.tag { font-size: 11px; font-weight: 600; color: var(--text-muted); background: var(--bg-app); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light); }
 
-/* Results inside card */
 .t-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--bg-app); padding: 12px; border-radius: var(--radius-md); margin-top: 5px; }
 .res-item { display: flex; flex-direction: column; }
 .res-item span:first-child { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
 .res-item span:last-child { font-size: 15px; color: var(--text-main); font-weight: 800; }
 
 .t-actions { display: flex; gap: 10px; margin-top: 5px; }
-.btn-primary { flex: 1; background: var(--tb-blue); color: #fff; border: none; padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; box-shadow: var(--shadow-blue); }
-.btn-outline { flex: 1; background: transparent; color: var(--tb-blue); border: 2px solid var(--tb-blue); padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; }
+.btn-primary { flex: 1; background: var(--tb-blue); color: #fff; border: none; padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; box-shadow: var(--shadow-blue); }
+.btn-outline { flex: 1; background: transparent; color: var(--tb-blue); border: 2px solid var(--tb-blue); padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; }
 </style>
 </head>
 <body>
@@ -158,6 +156,7 @@ body { background: var(--bg-app); color: var(--text-main); padding-bottom: 30px;
             </div>
     </div>
 </div>
+
 <script>
 // ==========================================
 // 1. FIREBASE CONFIGURATION
@@ -177,7 +176,8 @@ const db = firebase.database();
 const DB_REF = "dsssb_results_live";
 
 // ==========================================
-// 2. MOCK TESTS DATABASE (Admin yahan tests add karenge)
+// 2. MOCK TESTS DATABASE 
+// (Har naye test ki file ka naam yahan add karein)
 // ==========================================
 const TESTS_DB = [
     { id: "mock_01", title: "DSSSB Grade-II Full Mock 1", qs: 10, time: 120, url: "Testv11.html" },
@@ -189,30 +189,38 @@ let userAttempts = {};
 let myScoreHistory = [];
 
 // ==========================================
-// 3. APP INIT & TELEGRAM SECURITY
+// 3. APP INIT & TELEGRAM BUG FIX (tg.ready)
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        
+        // 🔴 FIX: Yeh line app ko freeze hone se rokegi
+        tg.ready(); 
+        tg.expand();
 
-    if (!tg.initData) {
-        // Agar browser me direct khola hai toh block
+        // SECURITY: Check if opened inside Telegram
+        if (!tg.initData) {
+            document.getElementById('accessDenied').style.display = 'flex';
+            document.getElementById('loader').style.display = 'none';
+        } else {
+            const user = tg.initDataUnsafe.user;
+            if(user && user.first_name) {
+                userName = user.first_name + (user.last_name ? " " + user.last_name : "");
+                localStorage.setItem("dsssb_pro_user", userName); 
+            }
+            document.getElementById('userName').innerText = userName;
+            fetchSmartData();
+        }
+    } else {
+        // Fallback for Non-Telegram Browsers (Security)
         document.getElementById('accessDenied').style.display = 'flex';
         document.getElementById('loader').style.display = 'none';
-    } else {
-        // Telegram se naam extract karna
-        const user = tg.initDataUnsafe.user;
-        if(user && user.first_name) {
-            userName = user.first_name + (user.last_name ? " " + user.last_name : "");
-            localStorage.setItem("dsssb_pro_user", userName); 
-        }
-        document.getElementById('userName').innerText = userName;
-        fetchSmartData();
     }
 });
 
 // ==========================================
-// 4. FETCH DATA & SMART ANALYSIS (Rank & Accuracy)
+// 4. FETCH DATA & SMART ANALYSIS 
 // ==========================================
 async function fetchSmartData() {
     try {
@@ -225,7 +233,6 @@ async function fetchSmartData() {
             Object.values(data).forEach(att => {
                 if(!att.name || att.score === undefined) return;
                 
-                // Sabhi users ka data group karna
                 if(!allUsersData[att.name]) {
                     allUsersData[att.name] = { totalScore: 0, attempts: 0, highestScore: -999 };
                 }
@@ -236,9 +243,7 @@ async function fetchSmartData() {
                     allUsersData[att.name].highestScore = att.score;
                 }
 
-                // Agar current user ka data hai, toh save karo
                 if(att.name === userName) {
-                    // Hum pehle test (mock_01) me existing data map kar rahe hain
                     if(!userAttempts["mock_01"] || att.score > userAttempts["mock_01"].score) {
                         userAttempts["mock_01"] = att;
                     }
@@ -247,14 +252,12 @@ async function fetchSmartData() {
             });
         }
 
-        // Leaderboard Calculation
         let leaderboard = [];
         for (const [name, stats] of Object.entries(allUsersData)) {
             let avg = stats.totalScore / stats.attempts;
             leaderboard.push({ name: name, avgScore: avg });
         }
 
-        // Topper nikalne ke liye sort karna
         leaderboard.sort((a, b) => b.avgScore - a.avgScore);
 
         let myRank = "--";
@@ -263,10 +266,9 @@ async function fetchSmartData() {
 
         const myDataIndex = leaderboard.findIndex(u => u.name === userName);
         if(myDataIndex !== -1) {
-            myRank = myDataIndex + 1; // 1-based indexing for Rank
+            myRank = myDataIndex + 1; 
             myAvg = leaderboard[myDataIndex].avgScore;
             
-            // Overall Accuracy nikalna
             let myTotCorrect = 0, myTotWrong = 0;
             Object.values(data).forEach(att => {
                 if(att.name === userName) {
@@ -281,8 +283,7 @@ async function fetchSmartData() {
 
         document.getElementById('myRank').innerText = myRank !== "--" ? "#" + myRank : "--";
         
-        // Comparison Bars (Aap vs Topper) Update Karna
-        let maxBar = Math.max(myAvg, topperAvg, 10); // Scale factor
+        let maxBar = Math.max(myAvg, topperAvg, 10);
         let myPct = (myAvg / maxBar) * 100;
         let topPct = (topperAvg / maxBar) * 100;
 
@@ -292,11 +293,9 @@ async function fetchSmartData() {
         document.getElementById('txtTopScore').innerText = topperAvg.toFixed(2);
         setTimeout(() => document.getElementById('barTopScore').style.width = topPct + "%", 500);
 
-        // Chart aur Cards Render karna
         renderChart();
         renderTestCards();
 
-        // Loader hide aur Asli Dashboard show
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
 
@@ -312,19 +311,17 @@ async function fetchSmartData() {
 function renderChart() {
     const ctx = document.getElementById('performanceChart').getContext('2d');
     
-    // User ke pichle kuch attempts ka data nikalna
     let labels = [];
     let dataPoints = [];
     
     if(myScoreHistory.length === 0) {
         labels = ['Test 1']; dataPoints = [0];
     } else {
-        let recent = myScoreHistory.slice(-6); // Max 6 attempts
-        recent.forEach((_, i) => labels.push('Attempt ' + (i+1)));
+        let recent = myScoreHistory.slice(-6); 
+        recent.forEach((_, i) => labels.push('Att ' + (i+1)));
         dataPoints = recent;
     }
 
-    // Graph ke niche gradient color
     let gradient = ctx.createLinearGradient(0, 0, 0, 180);
     gradient.addColorStop(0, 'rgba(2, 102, 253, 0.5)');
     gradient.addColorStop(1, 'rgba(2, 102, 253, 0.05)');
@@ -334,7 +331,7 @@ function renderChart() {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Your Score History',
+                label: 'Score',
                 data: dataPoints,
                 borderColor: '#0266fd',
                 backgroundColor: gradient,
@@ -344,7 +341,7 @@ function renderChart() {
                 pointBorderWidth: 2,
                 pointRadius: 5,
                 fill: true,
-                tension: 0.4 // Smooth curve look
+                tension: 0.4 
             }]
         },
         options: {
@@ -352,8 +349,8 @@ function renderChart() {
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                x: { grid: { display: false }, ticks: { font: { family: "'Poppins', sans-serif", size: 10 } } },
-                y: { grid: { borderDash: [4, 4], color: '#e2e8f0' }, beginAtZero: true, ticks: { font: { family: "'Poppins', sans-serif", size: 11 } } }
+                x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                y: { grid: { borderDash: [4, 4], color: '#e2e8f0' }, beginAtZero: true, ticks: { font: { size: 11 } } }
             }
         }
     });
@@ -374,34 +371,31 @@ function renderTestCards() {
         html += `<div class="test-card">
             <div class="t-header">
                 <div class="t-title">${i+1}. ${test.title}</div>
-                ${isDone ? '<span class="tag" style="color:var(--tb-green); border-color:var(--tb-green-light);"><span style="font-size:12px;">✅</span> Completed</span>' : '<span class="tag">🆕 New Test</span>'}
+                ${isDone ? '<span class="tag" style="color:var(--tb-green); border-color:var(--tb-green-light);">✅ Completed</span>' : '<span class="tag">🆕 New</span>'}
             </div>
             
             <div class="t-tags">
                 <span class="tag">⏱ ${test.time} Mins</span>
-                <span class="tag">📝 ${test.qs} Questions</span>
+                <span class="tag">📝 ${test.qs} Qs</span>
             </div>
         `;
 
-        // Agar test de diya hai toh score dikhao
         if(isDone) {
             let acc = attempt.correct + attempt.wrong > 0 ? ((attempt.correct / (attempt.correct + attempt.wrong)) * 100).toFixed(1) : 0;
             html += `
             <div class="t-result-grid">
-                <div class="res-item"><span>Highest Score</span><span style="color:var(--tb-blue);">${attempt.score.toFixed(2)}</span></div>
+                <div class="res-item"><span>High Score</span><span style="color:var(--tb-blue);">${attempt.score.toFixed(2)}</span></div>
                 <div class="res-item"><span>Accuracy</span><span>${acc}%</span></div>
             </div>
             <div class="t-actions">
-                <button class="btn-outline" onclick="window.location.href='${test.url}'">Retake Test ↺</button>
+                <button class="btn-outline" onclick="window.location.href='${test.url}'">Retake ↺</button>
             </div>`;
         } else {
-            // Agar nahi diya hai toh Start button dikhao
             html += `
             <div class="t-actions">
                 <button class="btn-primary" onclick="window.location.href='${test.url}'">Start Exam ➔</button>
             </div>`;
         }
-
         html += `</div>`;
     });
 
@@ -410,4 +404,3 @@ function renderTestCards() {
 </script>
 </body>
 </html>
-
