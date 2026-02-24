@@ -3,247 +3,310 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DSSSB Smart Notes - Dashboard</title>
+<title>DSSSB Smart Notes - Pro</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-/* PREMIUM UI (Shortened for space but visually same) */
-:root { --tb-blue: #0266fd; --tb-dark-blue: #014bbd; --tb-light-blue: #eef5ff; --tb-green: #00b973; --tb-green-light: #e6f8f1; --tb-orange: #f59e0b; --tb-red: #ef4444; --text-main: #1e293b; --text-muted: #64748b; --bg-app: #f4f6f8; --card-bg: #ffffff; --border-light: #e2e8f0; --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05); --shadow-blue: 0 8px 20px rgba(2, 102, 253, 0.2); --radius-lg: 16px; --radius-md: 10px; }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-body { background: var(--bg-app); color: var(--text-main); padding-bottom: 30px; }
-#accessDenied, .spinner-container { position: fixed; inset: 0; background: var(--bg-app); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-#accessDenied { display: none; z-index: 9999; }
-.spinner { width: 45px; height: 45px; border: 4px solid var(--border-light); border-top: 4px solid var(--tb-blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.hero-header { background: linear-gradient(135deg, var(--tb-blue), var(--tb-dark-blue)); padding: 25px 20px 60px; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
-.top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-weight: 800; font-size: 18px; }
-.pro-badge { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; }
-.user-greet { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
-.stats-wrapper { padding: 0 20px; margin-top: -40px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.stat-box { background: var(--card-bg); padding: 18px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid rgba(0,0,0,0.02); }
-.stat-val { font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 5px; }
-.stat-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
-.section-wrapper { padding: 25px 20px 0; }
-.sec-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; }
-.chart-card { background: var(--card-bg); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); margin-bottom: 20px; border: 1px solid var(--border-light); }
-.bar-bg { height: 8px; background: var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 10px; margin-top: 5px; }
-.bar-fill { height: 100%; transition: width 1s ease-out; }
-.test-list { display: flex; flex-direction: column; gap: 15px; }
-.test-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-card); border: 1px solid var(--border-light); }
-.t-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;}
-.t-title { font-size: 16px; font-weight: 700; }
-.tag { font-size: 11px; font-weight: 600; color: var(--text-muted); background: var(--bg-app); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light); margin-right: 5px;}
-.badge-free { background: var(--tb-green-light); color: var(--tb-green); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; }
-.badge-pro { background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; border: 1px solid #fcd34d; }
-.t-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--bg-app); padding: 12px; border-radius: var(--radius-md); margin-top: 10px; }
-.t-actions { display: flex; gap: 10px; margin-top: 15px; }
-.btn-primary { flex: 1; background: var(--tb-blue); color: #fff; border: none; padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; }
-.btn-outline { flex: 1; background: transparent; color: var(--tb-blue); border: 2px solid var(--tb-blue); padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; }
-.btn-lock { background: #f59e0b; color: white; }
+/* --- THEME VARIABLES --- */
+:root {
+    --tb-blue: #0266fd; --tb-bg-blue: rgba(2, 102, 253, 0.08);
+    --tb-green: #00b973; --tb-red: #ef4444;
+    --text-main: #1e293b; --text-muted: #64748b;
+    --bg-app: #f4f6f8; --card-bg: #ffffff;
+    --border-light: #e2e8f0; --shadow-card: 0 4px 12px rgba(0,0,0,0.05);
+    --nav-height: 65px;
+}
+body.dark-mode {
+    --text-main: #f0f0f0; --text-muted: #a0a0a0;
+    --bg-app: #181818; --card-bg: #242424; --border-light: #333333;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg-app); color: var(--text-main); padding-bottom: var(--nav-height); }
 
-/* MARKETING MODAL */
-.modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 6000; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(4px); }
-.modal-box { background: var(--card-bg); padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; }
-.btn-unlock { width: 100%; background: linear-gradient(90deg, #f59e0b, #d97706); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 15px; box-shadow: 0 10px 20px rgba(245,158,11,0.3); }
+/* --- HEADER --- */
+.hero-header { background: linear-gradient(135deg, var(--tb-blue), #014bbd); padding: 20px 20px 50px; color: white; border-radius: 0 0 30px 30px; position: relative; }
+.top-nav { display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 18px; }
+.pro-badge { background: linear-gradient(90deg, #f59e0b, #fbbf24); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: white; box-shadow: 0 2px 8px rgba(245,158,11,0.4); }
+
+/* --- TABS (PAGES) --- */
+.tab-content { display: none; animation: fadeIn 0.3s; padding: 0 20px; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- CARDS & STATS --- */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: -35px; position: relative; z-index: 5; margin-bottom: 25px; }
+.stat-card { background: var(--card-bg); padding: 15px; border-radius: 16px; box-shadow: var(--shadow-card); text-align: center; border: 1px solid var(--border-light); }
+.stat-val { font-size: 20px; font-weight: 800; margin-top: 5px; }
+.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+
+.section-title { font-size: 17px; font-weight: 800; margin: 20px 0 15px; display: flex; align-items: center; gap: 8px; }
+.chart-container { background: var(--card-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--border-light); box-shadow: var(--shadow-card); margin-bottom: 20px; }
+
+/* --- TEST LIST --- */
+.test-card { background: var(--card-bg); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border-light); box-shadow: var(--shadow-card); position: relative; overflow: hidden; }
+.test-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--tb-blue); }
+.t-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.t-title { font-weight: 700; font-size: 15px; }
+.t-meta { display: flex; gap: 10px; font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+.btn-start { background: var(--tb-blue); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; }
+.btn-locked { background: #f59e0b; color: white; }
+
+/* --- BOTTOM NAV --- */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-height); background: var(--card-bg); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-light); box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+.nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px; font-weight: 600; width: 60px; cursor: pointer; transition: 0.2s; }
+.nav-icon { font-size: 22px; margin-bottom: 4px; }
+.nav-item.active { color: var(--tb-blue); }
+.nav-item.active .nav-icon { transform: translateY(-2px); }
+
+/* --- SKELETON & MODALS --- */
+.skeleton { background: linear-gradient(90deg, var(--card-bg) 25%, var(--border-light) 50%, var(--card-bg) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; height: 100px; margin-bottom: 15px; }
+@keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+#loader { padding: 20px; }
 </style>
 </head>
 <body>
 
-<div id="accessDenied">
-    <h1 style="font-size:50px;">🚫</h1><h2 style="color:var(--tb-red)">Access Denied</h2>
-    <p>Please open securely from the Telegram Channel.</p>
-</div>
-
-<div id="loader" class="spinner-container"><div class="spinner"></div><h3 style="color:var(--tb-blue);">Syncing Profile...</h3></div>
-
-<div id="proModal" class="modal-overlay">
-    <div class="modal-box">
-        <div style="font-size: 50px;">👑</div>
-        <h2 style="margin:10px 0;">PRO Test Locked</h2>
-        <p style="color:var(--text-muted); font-size:14px;">This premium mock test is only available for Pro Members. Your Telegram ID is not whitelisted.</p>
-        <button class="btn-unlock" onclick="window.open('https://t.me/DSSSBRank', '_blank')">🚀 Upgrade to PRO Now</button>
-        <button onclick="document.getElementById('proModal').style.display='none'" style="background:transparent; border:none; color:var(--text-muted); margin-top:15px; font-weight:bold;">Cancel</button>
-    </div>
+<div id="loader">
+    <div class="skeleton" style="height: 150px; border-radius: 0 0 20px 20px;"></div>
+    <div class="skeleton" style="height: 80px; width: 48%; display:inline-block;"></div>
+    <div class="skeleton" style="height: 80px; width: 48%; display:inline-block; margin-left:2%;"></div>
+    <div class="skeleton" style="height: 200px;"></div>
 </div>
 
 <div id="app" style="display: none;">
+    
     <div class="hero-header">
-        <div class="top-nav">DSSSB Smart Notes <span id="myPlanBadge" class="pro-badge" style="display:none;">PRO MEMBER</span></div>
-        <div class="user-greet">Hi, <span id="userName">Student</span></div>
-        <div class="user-sub">Here is your Target Prep Portal</div>
+        <div class="top-nav">
+            <span>DSSSB Portal</span>
+            <span id="badgePro" class="pro-badge" style="display:none;">PRO USER</span>
+        </div>
+        <div style="margin-top: 15px;">
+            <h1 style="font-size: 22px;">Hello, <span id="uName">Student</span></h1>
+            <p style="opacity: 0.8; font-size: 13px;">Let's crack the exam today!</p>
+        </div>
     </div>
 
-    <div class="stats-wrapper">
-        <div class="stat-box"><div class="icon-rank" style="font-size:20px;border-radius:8px;width:35px;height:35px;display:flex;justify-content:center;align-items:center;">🏆</div><div class="stat-val" id="myRank">--</div><div class="stat-title">Global Rank</div></div>
-        <div class="stat-box"><div class="icon-acc" style="font-size:20px;border-radius:8px;width:35px;height:35px;display:flex;justify-content:center;align-items:center;">🎯</div><div class="stat-val" id="myAcc">0%</div><div class="stat-title">Avg Accuracy</div></div>
-    </div>
-
-    <div class="section-wrapper">
-        <div class="sec-title">📊 Performance Analysis</div>
-        <div class="chart-card">
-            <div style="height: 160px; width: 100%;"><canvas id="performanceChart"></canvas></div>
-            <div style="margin-top: 15px; border-top: 1px dashed var(--border-light); padding-top: 15px;">
-                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;"><span style="color:var(--text-muted);">● Your Avg</span><span id="txtYouScore">0</span></div>
-                <div class="bar-bg"><div class="bar-fill fill-you" id="barYouScore" style="width: 0%;"></div></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-top:10px;"><span style="color:var(--text-muted);">● Topper Avg</span><span id="txtTopScore">0</span></div>
-                <div class="bar-bg"><div class="bar-fill fill-topper" id="barTopScore" style="width: 0%;"></div></div>
+    <div id="tab-home" class="tab-content active">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-val" id="valRank">--</div>
+                <div class="stat-label">Global Rank</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-val" id="valTests">0</div>
+                <div class="stat-label">Tests Taken</div>
             </div>
         </div>
+
+        <div class="section-title">🚀 Subject Performance</div>
+        <div class="chart-container" style="position: relative; height: 250px;">
+            <canvas id="radarChart"></canvas>
+        </div>
+
+        <div class="section-title">📊 Score Trends</div>
+        <div class="chart-container" style="height: 180px;">
+            <canvas id="lineChart"></canvas>
+        </div>
     </div>
 
-    <div class="section-wrapper">
-        <div class="sec-title" style="justify-content: space-between; display:flex;">
-            <span>📝 Mock Test Series</span><span style="font-size:12px; color:var(--tb-blue); font-weight:700; background:var(--tb-light-blue); padding:4px 10px; border-radius:10px;" id="testCount">0 Tests</span>
+    <div id="tab-tests" class="tab-content" style="padding-top: 20px;">
+        <h2 style="margin-bottom: 15px;">Mock Tests Library</h2>
+        <div id="testList"></div>
+    </div>
+
+    <div id="tab-rank" class="tab-content" style="padding-top: 20px;">
+        <h2 style="margin-bottom: 15px;">🏆 Toppers List</h2>
+        <div class="chart-container" id="leaderboardList">
+            <p style="text-align:center; padding: 20px; color: var(--text-muted);">Loading Ranks...</p>
         </div>
-        <div class="test-list" id="testListContainer"></div>
+    </div>
+
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('home', this)">
+        <div class="nav-icon">🏠</div>
+        <span>Home</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tests', this)">
+        <div class="nav-icon">📝</div>
+        <span>Tests</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('rank', this)">
+        <div class="nav-icon">📊</div>
+        <span>Ranks</span>
     </div>
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef"
-};
+/* --- CONFIG --- */
+const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let TESTS_DB = [];
-let userName = "Student";
-let userAttempts = {};
-let myScoreHistory = [];
-let isUserPro = false; // Isko check karenge background mein
+let currentUser = "Student";
+let isPro = false;
+let myScores = [];
 
-document.addEventListener("DOMContentLoaded", () => {
+/* --- INIT --- */
+window.onload = function() {
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
-        tg.ready(); tg.expand();
-        if (!tg.initData) {
-            document.getElementById('accessDenied').style.display = 'flex'; document.getElementById('loader').style.display = 'none';
+        tg.expand();
+        // Dark Mode Logic
+        if(tg.colorScheme === 'dark') document.body.classList.add('dark-mode');
+        
+        if(tg.initDataUnsafe.user) {
+            currentUser = tg.initDataUnsafe.user.first_name;
+            document.getElementById('uName').innerText = currentUser;
+            fetchData(tg.initDataUnsafe.user);
         } else {
-            const user = tg.initDataUnsafe.user;
-            if(user) {
-                userName = user.first_name + (user.last_name ? " " + user.last_name : "");
-                localStorage.setItem("dsssb_pro_user", userName); 
-            }
-            document.getElementById('userName').innerText = userName;
-            fetchSmartData(tg.initDataUnsafe.user);
+            // Fallback for testing in browser
+            fetchData({username: "test_user"}); 
         }
     } else {
-        document.getElementById('accessDenied').style.display = 'flex'; document.getElementById('loader').style.display = 'none';
+        fetchData({username: "test_user"});
     }
-});
+};
 
-async function fetchSmartData(tgUser) {
+/* --- TABS LOGIC --- */
+function switchTab(tabId, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+}
+
+/* --- DATA FETCH --- */
+async function fetchData(user) {
     try {
-        // 1. Check if Current User is PRO (using Telegram Username or ID)
-        const myUname = tgUser.username ? tgUser.username.toLowerCase() : "";
-        const myId = tgUser.id ? tgUser.id.toString() : "";
-        
-        const proSnap = await db.ref("dsssb_pro_users").once("value");
+        const [testsSnap, resultsSnap, proSnap] = await Promise.all([
+            db.ref("dsssb_tests_db").once("value"),
+            db.ref("dsssb_results_live").once("value"),
+            db.ref("dsssb_pro_users").once("value")
+        ]);
+
+        // 1. Check Pro
         if(proSnap.exists()) {
-            let proList = [];
-            proSnap.forEach(child => { proList.push(child.val().uid); });
-            if(myUname && proList.includes(myUname)) isUserPro = true;
-            if(myId && proList.includes(myId)) isUserPro = true;
+            proSnap.forEach(c => { if(c.val().uid == user.id || c.val().uid == user.username) isPro = true; });
         }
+        if(isPro) document.getElementById('badgePro').style.display = 'inline-block';
 
-        if(isUserPro) document.getElementById('myPlanBadge').style.display = 'inline-block';
+        // 2. Process Results
+        const results = resultsSnap.val() || {};
+        let userMap = {};
+        let myTotalScore = 0;
+        let myAttempts = 0;
 
-        // 2. Fetch Tests
-        const testSnap = await db.ref("dsssb_tests_db").once("value");
-        if(testSnap.exists()) {
-            TESTS_DB = Object.values(testSnap.val());
-            TESTS_DB.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-        }
+        Object.values(results).forEach(r => {
+            if(!userMap[r.name]) userMap[r.name] = { score: 0, count: 0 };
+            userMap[r.name].score += r.score;
+            userMap[r.name].count++;
 
-        // 3. Fetch Analytics
-        const snapshot = await db.ref("dsssb_results_live").once("value");
-        const data = snapshot.val();
-        let allUsersData = {};
-        
-        if (data) {
-            Object.values(data).forEach(att => {
-                if(!att.name || att.score === undefined) return;
-                if(!allUsersData[att.name]) allUsersData[att.name] = { totalScore: 0, attempts: 0 };
-                allUsersData[att.name].totalScore += att.score;
-                allUsersData[att.name].attempts += 1;
-                
-                if(att.name === userName) {
-                    let tId = att.test_id || (TESTS_DB.length > 0 ? TESTS_DB[0].id : "mock_01");
-                    if(!userAttempts[tId] || att.score > userAttempts[tId].score) userAttempts[tId] = att;
-                    myScoreHistory.push(att.score);
-                }
-            });
-        }
+            if(r.name === currentUser) {
+                myScores.push(r.score);
+                myAttempts++;
+            }
+        });
 
-        let leaderboard = [];
-        for (const [name, stats] of Object.entries(allUsersData)) leaderboard.push({ name: name, avgScore: stats.totalScore / stats.attempts });
-        leaderboard.sort((a, b) => b.avgScore - a.avgScore);
+        // 3. Leaderboard Logic
+        let leaderboard = Object.keys(userMap).map(k => ({ 
+            name: k, avg: userMap[k].score / userMap[k].count 
+        })).sort((a,b) => b.avg - a.avg);
 
-        let myRank = "--", myAvg = 0, topperAvg = leaderboard.length > 0 ? leaderboard[0].avgScore : 0;
-        const myDataIndex = leaderboard.findIndex(u => u.name === userName);
-        
-        if(myDataIndex !== -1) {
-            myRank = myDataIndex + 1; myAvg = leaderboard[myDataIndex].avgScore;
-            let myTotCorrect = 0, myTotWrong = 0;
-            Object.values(data).forEach(att => {
-                if(att.name === userName) { myTotCorrect += (att.correct || 0); myTotWrong += (att.wrong || 0); }
-            });
-            let totAtt = myTotCorrect + myTotWrong;
-            document.getElementById('myAcc').innerText = (totAtt > 0 ? ((myTotCorrect/totAtt)*100).toFixed(1) : 0) + "%";
-        }
+        let myRank = leaderboard.findIndex(u => u.name === currentUser) + 1;
+        document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
+        document.getElementById('valTests').innerText = myAttempts;
 
-        document.getElementById('myRank').innerText = myRank !== "--" ? "#" + myRank : "--";
-        let maxBar = Math.max(myAvg, topperAvg, 10);
-        document.getElementById('txtYouScore').innerText = myAvg.toFixed(2);
-        setTimeout(() => document.getElementById('barYouScore').style.width = ((myAvg / maxBar) * 100) + "%", 500);
-        document.getElementById('txtTopScore').innerText = topperAvg.toFixed(2);
-        setTimeout(() => document.getElementById('barTopScore').style.width = ((topperAvg / maxBar) * 100) + "%", 500);
+        renderLeaderboard(leaderboard);
+        renderCharts();
 
-        renderChart(); renderTestCards();
+        // 4. Render Tests
+        const tests = testsSnap.val() ? Object.values(testsSnap.val()) : [];
+        renderTests(tests);
+
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
 
-    } catch(err) { console.error(err); alert("Error syncing data."); }
+    } catch(e) { console.error(e); }
 }
 
-function renderChart() {
-    const ctx = document.getElementById('performanceChart').getContext('2d');
-    let labels = [], dataPoints = [];
-    if(myScoreHistory.length === 0) { labels = ['Test 1']; dataPoints = [0]; } else { let recent = myScoreHistory.slice(-6); recent.forEach((_, i) => labels.push('Att ' + (i+1))); dataPoints = recent; }
-    let gradient = ctx.createLinearGradient(0, 0, 0, 180); gradient.addColorStop(0, 'rgba(2, 102, 253, 0.5)'); gradient.addColorStop(1, 'rgba(2, 102, 253, 0.05)');
-    new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ data: dataPoints, borderColor: '#0266fd', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } } });
-}
-
-function renderTestCards() {
-    const container = document.getElementById('testListContainer');
-    document.getElementById('testCount').innerText = TESTS_DB.length + " Tests";
+/* --- UI RENDERERS --- */
+function renderTests(tests) {
     let html = "";
-    if(TESTS_DB.length === 0) return container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted);">No tests found.</div>`;
-
-    TESTS_DB.forEach((test, i) => {
-        let attempt = userAttempts[test.id], isDone = !!attempt, isProTest = test.type === 'pro';
+    tests.forEach((t, i) => {
+        let isLocked = t.type === 'pro' && !isPro;
+        let btnColor = isLocked ? 'var(--tb-orange)' : 'var(--tb-blue)';
+        let btnTxt = isLocked ? 'Unlock PRO 🔒' : 'Start Test ➔';
+        let action = isLocked ? "window.open('https://t.me/DSSSBRank')" : `window.location.href='${t.url}'`;
         
-        let typeBadge = isProTest ? (isUserPro ? '<span class="badge-pro">👑 PRO 🔓</span>' : '<span class="badge-pro">👑 PRO 🔒</span>') : '<span class="badge-free">🟢 FREE</span>';
-        if(isDone) typeBadge = '<span class="tag" style="color:var(--tb-green); border-color:var(--tb-green-light);">✅ Completed</span>';
-
-        html += `<div class="test-card"><div class="t-header"><div class="t-title">${i+1}. ${test.title}</div>${typeBadge}</div><div class="t-tags"><span class="tag">⏱ ${test.time} Mins</span><span class="tag">📝 ${test.qs} Qs</span></div>`;
-
-        if(isDone) {
-            let acc = attempt.correct + attempt.wrong > 0 ? ((attempt.correct / (attempt.correct + attempt.wrong)) * 100).toFixed(1) : 0;
-            html += `<div class="t-result-grid"><div class="res-item"><span style="font-size:11px;color:var(--text-muted);">High Score</span><span style="font-weight:bold;color:var(--tb-blue);">${attempt.score.toFixed(2)}</span></div><div class="res-item"><span style="font-size:11px;color:var(--text-muted);">Accuracy</span><span style="font-weight:bold;">${acc}%</span></div></div><div class="t-actions"><button class="btn-outline" onclick="window.location.href='${test.url}'">Retake ↺</button></div>`;
-        } else {
-            if(isProTest && !isUserPro) {
-                html += `<div class="t-actions"><button class="btn-primary btn-lock" onclick="document.getElementById('proModal').style.display='flex'">Unlock PRO Exam 🔒</button></div>`;
-            } else {
-                let btnText = isProTest ? "Start PRO Exam ➔" : "Start Free Exam ➔";
-                html += `<div class="t-actions"><button class="btn-primary" onclick="window.location.href='${test.url}'">${btnText}</button></div>`;
-            }
-        }
-        html += `</div>`;
+        html += `
+        <div class="test-card">
+            <div class="t-head">
+                <div class="t-title">${i+1}. ${t.title}</div>
+                ${t.type==='pro' ? '<span style="font-size:10px;background:#fff3cd;padding:2px 6px;border-radius:4px;color:#d97706;">PRO</span>' : ''}
+            </div>
+            <div class="t-meta">
+                <span>⏱ ${t.time}m</span> • <span>📝 ${t.qs} Qs</span> • <span>🎯 ${t.marks} Marks</span>
+            </div>
+            <button class="btn-start" style="background:${btnColor}" onclick="${action}">${btnTxt}</button>
+        </div>`;
     });
-    container.innerHTML = html;
+    document.getElementById('testList').innerHTML = html || "<p>No tests found.</p>";
+}
+
+function renderLeaderboard(list) {
+    let html = "";
+    list.slice(0, 10).forEach((u, i) => {
+        html += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid var(--border-light);">
+            <span><b>#${i+1}</b> ${u.name} ${u.name===currentUser?'(You)':''}</span>
+            <span style="font-weight:bold; color:var(--tb-blue);">${u.avg.toFixed(1)}</span>
+        </div>`;
+    });
+    document.getElementById('leaderboardList').innerHTML = html;
+}
+
+function renderCharts() {
+    // 1. Radar Chart (Subject Strength - Mock Data for Visual)
+    new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: {
+            labels: ['Maths', 'English', 'Hindi', 'GK', 'Reasoning'],
+            datasets: [{
+                label: 'My Strength',
+                data: [65, 80, 90, 55, 70], // Replace with real data logic later
+                backgroundColor: 'rgba(2, 102, 253, 0.2)',
+                borderColor: '#0266fd',
+                pointBackgroundColor: '#0266fd'
+            }]
+        },
+        options: {
+            scales: { r: { suggestMin: 0, suggestMax: 100 } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 2. Line Chart (Progress)
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: myScores.map((_, i) => `T${i+1}`),
+            datasets: [{
+                data: myScores,
+                borderColor: '#00b973',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false } }
+        }
+    });
 }
 </script>
 </body>
