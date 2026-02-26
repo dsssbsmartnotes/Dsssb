@@ -3,242 +3,349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DSSSB Smart Notes - Pro Dashboard</title>
+<title>DSSSB Smart Notes - Student Portal</title>
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#4f46e5">
+<link rel="manifest" id="manifest-placeholder">
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<script>
+// Dynamic Manifest for PWA
+const manifest = {
+    "name": "DSSSB Pro Portal",
+    "short_name": "DSSSB Rank",
+    "start_url": window.location.href,
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4f46e5",
+    "icons": [
+        { "src": "https://cdn-icons-png.flaticon.com/512/2995/2995620.png", "sizes": "192x192", "type": "image/png" }
+    ]
+};
+const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+document.querySelector('#manifest-placeholder').setAttribute('href', URL.createObjectURL(blob));
+</script>
+
 <style>
 /* --- THEME VARIABLES --- */
 :root {
-    --tb-blue: #0266fd; --tb-bg-blue: rgba(2, 102, 253, 0.1);
-    --tb-green: #00b973; --tb-bg-green: rgba(0, 185, 115, 0.1);
-    --tb-orange: #f59e0b; --tb-red: #ef4444;
-    --text-main: #1e293b; --text-muted: #64748b;
-    --bg-app: #f8fafc; --card-bg: #ffffff;
-    --border-light: #e2e8f0; 
-    --shadow-card: 0 4px 15px rgba(0,0,0,0.03);
-    --nav-height: 70px;
+    --primary: #4f46e5; --primary-light: #e0e7ff;
+    --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    --text-main: #1f2937; --text-muted: #6b7280;
+    --bg-body: #f3f4f6; --bg-card: #ffffff;
+    --border: #e5e7eb;
+    --nav-height: 65px;
 }
 
 body.dark-mode {
-    --text-main: #f1f5f9; --text-muted: #94a3b8;
-    --bg-app: #0f172a; --card-bg: #1e293b; 
-    --border-light: #334155;
-    --shadow-card: 0 4px 15px rgba(0,0,0,0.2);
+    --primary: #6366f1; --primary-light: rgba(99, 102, 241, 0.2);
+    --text-main: #f9fafb; --text-muted: #9ca3af;
+    --bg-body: #111827; --bg-card: #1f2937;
+    --border: #374151;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-body { background: var(--bg-app); color: var(--text-main); padding-bottom: var(--nav-height); transition: background 0.3s, color 0.3s; }
+body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(--nav-height); transition: 0.3s; }
 
-/* --- HEADER with Back Button --- */
+/* --- NEWS TICKER --- */
+.news-container {
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    color: white; padding: 10px 15px; display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+}
+.news-badge {
+    background: white; color: #4f46e5; padding: 2px 8px; border-radius: 4px;
+    font-weight: 800; font-size: 11px; white-space: nowrap; animation: pulse 2s infinite;
+}
+marquee { width: 100%; }
+
+/* --- HEADER --- */
 .hero-header { 
-    background: linear-gradient(135deg, var(--tb-blue), #0f5bd1); 
-    padding: 25px 20px 50px; color: white; 
-    border-radius: 0 0 35px 35px; position: relative; 
-    box-shadow: 0 10px 20px rgba(2, 102, 253, 0.2);
-    transition: all 0.3s ease;
+    background: var(--bg-card); padding: 20px; 
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
 }
-.top-nav { display: flex; justify-content: space-between; align-items: center; }
-.brand { font-weight: 800; font-size: 20px; letter-spacing: 0.5px; display:flex; align-items:center; gap:8px;}
+.user-info h1 { font-size: 22px; font-weight: 800; }
+.user-info p { font-size: 13px; color: var(--text-muted); }
 
-/* Back Button */
-.back-btn {
-    background: rgba(255,255,255,0.2); border: none; color: white;
-    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
-    display: none; place-items: center; font-size: 16px; margin-right: 10px;
+.tools { display: flex; gap: 10px; }
+.tool-btn { 
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--bg-body); color: var(--text-main); display: grid; place-items: center; cursor: pointer; transition: 0.2s;
 }
+.tool-btn:active { transform: scale(0.9); }
 
-.theme-switch { 
-    background: rgba(255,255,255,0.2); border: none; color: white; 
-    width: 36px; height: 36px; border-radius: 50%; cursor: pointer; 
-    display: grid; place-items: center; font-size: 16px; transition: 0.2s;
+/* --- STATS CARDS (Updated for Streak) --- */
+.stats-row { 
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 20px; 
 }
-.pro-badge { 
-    background: linear-gradient(90deg, #fbbf24, #d97706); 
-    padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; 
-    color: white; box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4); text-transform: uppercase;
+.stat-card { 
+    background: var(--bg-card); padding: 12px; border-radius: 16px; 
+    border: 1px solid var(--border); text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
+.stat-val { font-size: 20px; font-weight: 900; color: var(--primary); margin: 5px 0; }
+.stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
 
-/* --- TABS --- */
-.tab-content { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 0 20px; }
-.tab-content.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+/* Streak Animation */
+.fire-anim { animation: burn 0.5s alternate infinite; color: #f97316; }
+@keyframes burn { from { transform: scale(1); } to { transform: scale(1.2); } }
 
-/* --- FILTERS (SCROLLABLE) --- */
-.filter-container {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px;
-    scrollbar-width: none; -ms-overflow-style: none;
+/* --- GRAPH SECTION --- */
+.chart-section { padding: 0 20px 20px; }
+.chart-box { 
+    background: var(--bg-card); padding: 15px; border-radius: 16px; 
+    border: 1px solid var(--border); margin-bottom: 20px;
 }
-.filter-container::-webkit-scrollbar { display: none; }
+.chart-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 700; font-size: 15px; }
 
-.filter-btn {
-    background: var(--card-bg); border: 1px solid var(--border-light);
-    padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
-    color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: 0.2s;
-    flex-shrink: 0;
+/* --- TESTS & NOTES LIST --- */
+.list-container { padding: 0 20px; }
+.filter-scroll { 
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; 
+    scrollbar-width: none; 
 }
-.filter-btn.active {
-    background: var(--tb-blue); color: white; border-color: var(--tb-blue);
-    box-shadow: 0 4px 10px rgba(2, 102, 253, 0.3);
+.filter-pill {
+    padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; transition: 0.2s;
 }
+.filter-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-/* --- TESTS LIST --- */
-.test-card { 
-    background: var(--card-bg); padding: 20px; border-radius: 18px; margin-bottom: 15px; 
-    border: 1px solid var(--border-light); box-shadow: var(--shadow-card); 
-    position: relative; overflow: hidden; transition: transform 0.2s;
+.test-card, .note-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 18px; margin-bottom: 15px; position: relative; overflow: hidden; transition: transform 0.2s;
 }
-.test-card:active { transform: scale(0.98); }
-.test-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--tb-blue); }
-.test-card.locked::before { background: var(--tb-orange); }
-
-.t-head { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: flex-start; }
-.t-title { font-weight: 700; font-size: 16px; line-height: 1.3; }
-.t-tags { display: flex; gap: 5px; }
-.tag { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 700; }
-.tag-pro { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; }
-.tag-new { background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
-.t-meta { display: flex; gap: 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 15px; font-weight: 500; }
-.btn-start { 
-    background: var(--tb-blue); color: white; border: none; padding: 12px; 
-    border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; 
-    display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 14px;
+.test-card:active, .note-card:active { transform: scale(0.98); }
+.test-card.locked { opacity: 0.9; }
+.test-card.locked::after {
+    content: "🔒 PRO"; position: absolute; top: 10px; right: 10px;
+    background: var(--warning); color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;
 }
-
-/* --- STATS & CHARTS --- */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: -40px; position: relative; z-index: 5; margin-bottom: 25px; }
-.stat-card { background: var(--card-bg); padding: 15px; border-radius: 18px; box-shadow: var(--shadow-card); text-align: center; border: 1px solid var(--border-light); }
-.stat-val { font-size: 22px; font-weight: 800; margin-top: 2px; }
-.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-.chart-container { background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-card); margin-bottom: 20px; }
+.t-title { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
+.t-info { display: flex; gap: 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 15px; }
+.start-btn {
+    width: 100%; padding: 12px; background: var(--primary); color: white; 
+    border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+}
+.download-btn {
+    width: 100%; padding: 12px; background: var(--bg-body); color: var(--primary); 
+    border: 2px solid var(--primary); border-radius: 10px; font-weight: 700; cursor: pointer;
+}
 
 /* --- BOTTOM NAV --- */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-height); background: var(--card-bg); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-light); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-.nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; font-weight: 600; width: 70px; cursor: pointer; opacity: 0.7; }
-.nav-icon { font-size: 20px; margin-bottom: 6px; }
-.nav-item.active { color: var(--tb-blue); opacity: 1; transform: translateY(-2px); }
+.nav-bar {
+    position: fixed; bottom: 0; width: 100%; height: var(--nav-height);
+    background: var(--bg-card); border-top: 1px solid var(--border);
+    display: flex; justify-content: space-around; align-items: center; z-index: 100;
+}
+.nav-item { 
+    text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 600; opacity: 0.6; 
+    transition: 0.2s; cursor: pointer;
+}
+.nav-item i { font-size: 20px; margin-bottom: 4px; display: block; }
+.nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-2px); }
+
+/* --- REPORT MODAL --- */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+.modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; }
+textarea:focus { border-color: var(--primary); outline: none; }
 
 /* --- LEADERBOARD --- */
-.rank-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-light); }
-.rank-pos { width: 28px; height: 28px; background: var(--bg-app); border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: var(--text-muted); }
-.rank-pos.top-1 { background: #fef3c7; color: #d97706; }
+.rank-row { 
+    display: flex; justify-content: space-between; padding: 12px 0; 
+    border-bottom: 1px solid var(--border); font-size: 14px; 
+}
+.rank-badge { 
+    width: 25px; height: 25px; background: var(--bg-body); border-radius: 50%; 
+    display: inline-flex; align-items: center; justify-content: center; 
+    font-weight: 700; font-size: 12px; margin-right: 10px;
+}
+.rank-badge.first { background: #fef3c7; color: #d97706; }
 
-/* --- LOADER --- */
-#loader { padding: 20px; }
-.skeleton { background: linear-gradient(90deg, var(--card-bg) 25%, var(--border-light) 50%, var(--card-bg) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 12px; height: 100px; margin-bottom: 15px; }
-@keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 </style>
 </head>
 <body>
 
-<div id="loader">
-    <div class="skeleton" style="height: 160px; border-radius: 0 0 30px 30px;"></div>
-    <div class="skeleton" style="height: 250px; margin: 20px;"></div>
+<div class="news-container" id="newsSection" style="display:none;">
+    <div class="news-badge">📢 NEW</div>
+    <marquee id="newsText">Welcome to DSSSB Smart Notes Portal!</marquee>
+</div>
+
+<div id="reportModal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:5px;">🚩 Report Issue</h2>
+        <p style="font-size:13px; color:grey;">Found an error in a question? Let us know!</p>
+        <textarea id="reportText" placeholder="e.g. Test 5, Question 10 answer is wrong..."></textarea>
+        <div style="display:flex; gap:10px;">
+            <button class="start-btn" style="background:var(--bg-body); color:var(--text-main);" onclick="closeReport()">Cancel</button>
+            <button class="start-btn" onclick="submitReport()">Submit Report</button>
+        </div>
+    </div>
+</div>
+
+<div id="loader" style="padding: 50px; text-align: center; color: grey;">
+    <i class="fas fa-circle-notch fa-spin fa-2x"></i>
+    <p style="margin-top: 10px;">Loading Portal...</p>
 </div>
 
 <div id="app" style="display: none;">
-    
+
     <div class="hero-header">
-        <div class="top-nav">
-            <div style="display:flex; align-items:center;">
-                <button id="backBtn" class="back-btn" onclick="goHome()">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <div class="brand"><i class="fas fa-graduation-cap"></i> DSSSB Portal</div>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <span id="badgePro" class="pro-badge" style="display:none;">PRO</span>
-                <button class="theme-switch" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
-            </div>
+        <div class="user-info">
+            <h1 id="uName">Student</h1>
+            <p>Let's crack the exam! 🎯</p>
         </div>
-        <div style="margin-top: 20px;">
-            <h1 style="font-size: 24px;">Hi, <span id="uName">Aspirant</span> 👋</h1>
-            <p style="opacity: 0.85; font-size: 14px; margin-top: 5px;">Ready to beat your best score?</p>
+        <div class="tools">
+            <button class="tool-btn" id="installBtn" style="display:none;" onclick="installApp()"><i class="fas fa-download"></i></button>
+            <button class="tool-btn" id="badgePro" style="display:none; color:gold; border-color:gold;"><i class="fas fa-crown"></i></button>
+            <button class="tool-btn" onclick="openReport()" style="color:#ef4444; border-color:#fee2e2;"><i class="fas fa-exclamation-triangle"></i></button>
+            <button class="tool-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
         </div>
     </div>
 
-    <div id="tab-home" class="tab-content active">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">🏆</div><div class="stat-val" id="valRank">--</div><div class="stat-label">Global Rank</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🔥</div><div class="stat-val" id="valTests">0</div><div class="stat-label">Tests Given</div>
-            </div>
-        </div>
-        <div class="chart-container" style="height: 260px;"><canvas id="radarChart"></canvas></div>
-        <div class="chart-container" style="height: 200px;"><canvas id="lineChart"></canvas></div>
-    </div>
-
-    <div id="tab-tests" class="tab-content" style="padding-top: 20px;">
-        <h2 style="margin-bottom: 20px;">📚 Mock Test Library</h2>
+    <div id="tab-home" class="tab-content">
         
-        <div class="filter-container">
-            <button class="filter-btn active" onclick="filterTests('all', this)">All</button>
-            <button class="filter-btn" onclick="filterTests('Full Mock', this)">Full Mock</button>
-            <button class="filter-btn" onclick="filterTests('Reasoning', this)">Reasoning</button>
-            <button class="filter-btn" onclick="filterTests('GK', this)">GK</button>
-            <button class="filter-btn" onclick="filterTests('Maths', this)">Maths</button>
-            <button class="filter-btn" onclick="filterTests('English', this)">English</button>
-            <button class="filter-btn" onclick="filterTests('Hindi', this)">Hindi</button>
-            <button class="filter-btn" onclick="filterTests('Computer', this)">Computer</button>
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-val" id="valRank">--</div>
+                <div class="stat-lbl">Rank</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="valTests">0</div>
+                <div class="stat-lbl">Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" style="display:flex; align-items:center; justify-content:center; gap:5px;">
+                    <i class="fas fa-fire fire-anim"></i> <span id="valStreak">1</span>
+                </div>
+                <div class="stat-lbl">Day Streak</div>
+            </div>
         </div>
 
-        <div id="testList"></div>
+        <div class="chart-section">
+            <div class="chart-box">
+                <div class="chart-header">
+                    <span>📊 Subject Strength</span>
+                    <span style="font-size:12px; color:grey;">(Est.)</span>
+                </div>
+                <div style="height: 200px;"><canvas id="barChart"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <div class="chart-header">
+                    <span>📈 Growth Graph</span>
+                    <span style="font-size:12px; color:grey;">Last 5 Tests</span>
+                </div>
+                <div style="height: 180px;"><canvas id="lineChart"></canvas></div>
+            </div>
+        </div>
     </div>
 
-    <div id="tab-rank" class="tab-content" style="padding-top: 20px;">
-        <h2 style="margin-bottom: 15px;">🏆 Live Leaderboard</h2>
-        <div class="chart-container" id="leaderboardList" style="padding: 0;"></div>
+    <div id="tab-tests" class="tab-content" style="display:none;">
+        <div style="padding: 20px 20px 0;">
+            <h2 style="font-size: 20px; margin-bottom: 15px;">Mock Tests</h2>
+        </div>
+        <div class="list-container">
+            <div class="filter-scroll">
+                <div class="filter-pill active" onclick="filterTests('all', this)">All</div>
+                <div class="filter-pill" onclick="filterTests('Full Mock', this)">Full Mock</div>
+                <div class="filter-pill" onclick="filterTests('Reasoning', this)">Reasoning</div>
+                <div class="filter-pill" onclick="filterTests('Maths', this)">Maths</div>
+                <div class="filter-pill" onclick="filterTests('English', this)">English</div>
+                <div class="filter-pill" onclick="filterTests('Hindi', this)">Hindi</div>
+                <div class="filter-pill" onclick="filterTests('GK', this)">GK</div>
+                <div class="filter-pill" onclick="filterTests('Computer', this)">Computer</div>
+            </div>
+            <div id="testListContainer"></div>
+        </div>
+    </div>
+
+    <div id="tab-notes" class="tab-content" style="display:none;">
+        <div style="padding: 20px 20px 0;">
+            <h2 style="font-size: 20px; margin-bottom: 15px;">📚 Study Material</h2>
+        </div>
+        <div class="list-container" id="notesListContainer">
+            <div style="text-align:center; padding:30px; color:grey;">
+                <i class="fas fa-book-open fa-3x" style="margin-bottom:15px; opacity:0.3;"></i><br>
+                Notes are being uploaded soon!
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-rank" class="tab-content" style="display:none; padding: 20px;">
+        <h2 style="font-size: 20px; margin-bottom: 15px;">🏆 Leaderboard</h2>
+        <div id="leaderboardList"></div>
     </div>
 
 </div>
 
-<div class="bottom-nav">
-    <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
-        <div class="nav-icon"><i class="fas fa-home"></i></div><span>Home</span>
+<div class="nav-bar">
+    <div class="nav-item active" onclick="switchTab('home', this)">
+        <i class="fas fa-home"></i> Home
     </div>
-    <div class="nav-item" id="nav-tests" onclick="switchTab('tests')">
-        <div class="nav-icon"><i class="fas fa-file-alt"></i></div><span>Tests</span>
+    <div class="nav-item" onclick="switchTab('tests', this)">
+        <i class="fas fa-file-alt"></i> Tests
     </div>
-    <div class="nav-item" id="nav-rank" onclick="switchTab('rank')">
-        <div class="nav-icon"><i class="fas fa-chart-line"></i></div><span>Ranks</span>
+    <div class="nav-item" onclick="switchTab('notes', this)">
+        <i class="fas fa-book"></i> Notes
+    </div>
+    <div class="nav-item" onclick="switchTab('rank', this)">
+        <i class="fas fa-trophy"></i> Ranks
     </div>
 </div>
 
 <script>
-/* CONFIG */
+/* FIREBASE CONFIG */
 const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentUser = "Student";
+let currentUserId = "guest";
 let isPro = false;
 let myScores = [];
-let allTestsData = []; 
+let allTests = [];
 
+/* STARTUP */
 window.onload = function() {
-    const savedTheme = localStorage.getItem('theme');
-    if(savedTheme === 'dark') document.body.classList.add('dark-mode');
-    
+    const theme = localStorage.getItem('theme');
+    if(theme === 'dark') document.body.classList.add('dark-mode');
+
+    // Load Streak
+    checkStreak();
+
+    // Fetch News
+    db.ref('dsssb_config/news').on('value', snap => {
+        if(snap.exists()) {
+            document.getElementById('newsSection').style.display = 'flex';
+            document.getElementById('newsText').innerText = snap.val();
+        }
+    });
+
+    // Fetch Notes
+    fetchNotes();
+
+    // Auth & Main Data
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp; tg.expand();
-        if(tg.colorScheme === 'dark' && !savedTheme) document.body.classList.add('dark-mode');
+        if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
         
         if(tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             currentUser = u.first_name + (u.last_name ? " " + u.last_name : "");
-            document.getElementById('uName').innerText = currentUser;
-            fetchData(u); // Pass Full Telegram Object
-        } else {
-            fetchData({username: "guest", id: "guest", first_name: "Guest"}); 
-        }
-    } else {
-        fetchData({username: "guest", id: "guest", first_name: "Guest"});
-    }
+            currentUserId = u.id.toString();
+            document.getElementById('uName').innerText = u.first_name;
+            fetchData(u);
+        } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
+    } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
 };
 
 function toggleTheme() {
@@ -246,25 +353,88 @@ function toggleTheme() {
     localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 }
 
-/* --- NAVIGATION --- */
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.getElementById('tab-' + tabId).classList.add('active');
-    
+function switchTab(tab, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+    document.getElementById('tab-'+tab).style.display = 'block';
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('nav-' + tabId).classList.add('active');
-
-    // Show Back Button everywhere except Home
-    const backBtn = document.getElementById('backBtn');
-    if(tabId === 'home') backBtn.style.display = 'none';
-    else backBtn.style.display = 'grid';
+    el.classList.add('active');
 }
 
-function goHome() {
-    switchTab('home');
+/* --- STREAK LOGIC (NEW) --- */
+function checkStreak() {
+    const lastVisit = localStorage.getItem('lastVisitDate');
+    const today = new Date().toDateString();
+    let streak = parseInt(localStorage.getItem('streakCount') || 0);
+
+    if(lastVisit !== today) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        if(lastVisit === yesterday.toDateString()) {
+            streak++; // Continue streak
+        } else {
+            streak = 1; // Reset streak
+        }
+        localStorage.setItem('lastVisitDate', today);
+        localStorage.setItem('streakCount', streak);
+    }
+    document.getElementById('valStreak').innerText = streak;
 }
 
-/* --- MAIN LOGIC --- */
+/* --- REPORT SYSTEM (NEW) --- */
+function openReport() { document.getElementById('reportModal').style.display = 'flex'; }
+function closeReport() { document.getElementById('reportModal').style.display = 'none'; }
+function submitReport() {
+    const txt = document.getElementById('reportText').value;
+    if(!txt) return alert("Please write something!");
+    
+    db.ref('dsssb_reports').push({
+        user: currentUser,
+        id: currentUserId,
+        issue: txt,
+        time: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        alert("Report Submitted! We will check it.");
+        document.getElementById('reportText').value = '';
+        closeReport();
+    });
+}
+
+/* --- INSTALL APP LOGIC --- */
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBtn').style.display = 'grid';
+});
+async function installApp() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
+        deferredPrompt = null;
+    }
+}
+
+/* --- FETCH NOTES (NEW) --- */
+function fetchNotes() {
+    db.ref('dsssb_notes_db').on('value', snap => {
+        const notes = snap.val();
+        if(!notes) return;
+        
+        let html = "";
+        Object.values(notes).reverse().forEach(n => {
+            html += `
+            <div class="note-card">
+                <div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div>
+                <div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div>
+                <button class="download-btn" onclick="window.open('${n.url}')">Download PDF</button>
+            </div>`;
+        });
+        document.getElementById('notesListContainer').innerHTML = html;
+    });
+}
+
+/* --- MAIN DATA FETCHING --- */
 async function fetchData(user) {
     try {
         const [testsSnap, resultsSnap, proSnap, usersSnap] = await Promise.all([
@@ -274,7 +444,7 @@ async function fetchData(user) {
             db.ref("users").once("value")
         ]);
 
-        // 1. PRO CHECK (ROBUST: ID, USERNAME, NAME)
+        // PRO CHECK
         if(proSnap.exists()) {
             let tgUser = (user.username || "").toLowerCase().trim().replace("@", "");
             let tgId = (user.id || "").toString();
@@ -284,73 +454,61 @@ async function fetchData(user) {
                 let d = c.val();
                 let dbVal = (typeof d === 'object' ? (d.username || d.id || d.uid || d.name || "") : d).toString();
                 let cleanDbVal = dbVal.toLowerCase().trim().replace("@", "");
-                
                 if (cleanDbVal && (cleanDbVal === tgUser || cleanDbVal === tgId || cleanDbVal === tgName)) {
                     isPro = true;
                 }
             });
         }
-        if(isPro) {
-            let badge = document.getElementById('badgePro');
-            badge.style.display = 'inline-block';
-            badge.innerText = "PRO MEMBER";
-            badge.style.background = "linear-gradient(90deg, #10b981, #059669)";
-        }
+        if(isPro) document.getElementById('badgePro').style.display = 'grid';
 
-        // 2. STATS (UNIQUE ID + NAME FALLBACK)
+        // PROCESS RESULTS
         const results = resultsSnap.val() || {};
         let userMap = {}; 
-        let myId = (user.id || "").toString();
-        let calAttempts = 0;
+        let calcAttempts = 0;
 
         Object.values(results).forEach(r => {
-            // Group by Name for Leaderboard
             if(!userMap[r.name]) userMap[r.name] = { s: 0, c: 0 };
             userMap[r.name].s += r.score; userMap[r.name].c++;
 
-            // Check if it's ME (ID match or Name match fallback)
             let isMe = false;
-            if (r.userId && r.userId.toString() === myId && myId !== 'guest') {
-                isMe = true; 
+            if (r.userId && r.userId.toString() === currentUserId && currentUserId !== 'guest') {
+                isMe = true;
             } else if (!r.userId && r.name === currentUser) {
                 isMe = true; 
             }
 
             if(isMe) {
                 myScores.push(r.score);
-                calAttempts++;
+                calcAttempts++;
             }
         });
 
-        // 3. EXACT TEST COUNT
+        // EXACT TESTS GIVEN
         let uData = usersSnap.val() || {};
         let finalCount = 0;
-        
-        // Try getting by ID
-        if (myId !== 'guest' && uData[myId] && uData[myId].testsGiven) {
-            finalCount = uData[myId].testsGiven;
+        if (currentUserId !== 'guest' && uData[currentUserId] && uData[currentUserId].testsGiven) {
+            finalCount = uData[currentUserId].testsGiven;
         } else {
-            // Fallback: Try Name
-            let safeNameKey = currentUser.replace(/[^a-zA-Z0-9]/g, "_");
-            if (uData[safeNameKey] && uData[safeNameKey].testsGiven) {
-                finalCount = uData[safeNameKey].testsGiven;
+            let safeName = currentUser.replace(/[^a-zA-Z0-9]/g, "_");
+            if (uData[safeName] && uData[safeName].testsGiven) {
+                finalCount = uData[safeName].testsGiven;
             } else {
-                finalCount = calAttempts;
+                finalCount = calcAttempts;
             }
         }
         document.getElementById('valTests').innerText = finalCount;
-        
-        // 4. RANK
+
+        // RANK
         let lb = Object.keys(userMap).map(k => ({ name: k, avg: userMap[k].s/userMap[k].c })).sort((a,b) => b.avg - a.avg);
         let myRank = lb.findIndex(u => u.name === currentUser) + 1;
         document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
-        
+
         renderLeaderboard(lb);
         renderCharts();
 
-        // 5. RENDER TESTS
-        allTestsData = testsSnap.val() ? Object.values(testsSnap.val()) : [];
-        filterTests('all', document.querySelector('.filter-btn.active')); 
+        // RENDER TESTS
+        allTests = testsSnap.val() ? Object.values(testsSnap.val()) : [];
+        filterTests('all', document.querySelector('.filter-pill')); 
 
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
@@ -358,87 +516,93 @@ async function fetchData(user) {
     } catch(e) { console.error(e); }
 }
 
-/* --- FILTER LOGIC --- */
-function filterTests(category, btnElement) {
-    if(btnElement) {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btnElement.classList.add('active');
+/* RENDERERS */
+function filterTests(cat, el) {
+    if(el) {
+        document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+        el.classList.add('active');
     }
-
-    let filtered = [];
-    if(category === 'all') {
-        filtered = allTestsData;
-    } else {
-        filtered = allTestsData.filter(t => {
-            let title = (t.title || "").toLowerCase();
-            let cat = (t.category || "").toLowerCase();
-            let key = category.toLowerCase();
-            
-            if(key === 'full mock') return title.includes('mock') || title.includes('full') || cat === 'full mock';
-            if(key === 'reasoning') return title.includes('reas') || title.includes('logic') || cat.includes('reasoning');
-            if(key === 'gk') return title.includes('gk') || title.includes('general') || cat.includes('gk');
-            if(key === 'maths') return title.includes('math') || title.includes('quant') || cat.includes('math');
-            if(key === 'english') return title.includes('eng') || title.includes('english') || cat.includes('english');
-            if(key === 'hindi') return title.includes('hindi') || cat.includes('hindi');
-            if(key === 'computer') return title.includes('comp') || title.includes('computer') || cat.includes('computer');
-            return false;
-        });
+    let list = allTests.reverse();
+    if(cat !== 'all') {
+        list = list.filter(t => (t.title+t.category).toLowerCase().includes(cat.toLowerCase()));
     }
-    renderTests(filtered);
-}
-
-function renderTests(tests) {
+    
     let html = "";
-    tests.reverse().forEach((t) => {
-        let isLocked = t.type === 'pro' && !isPro;
-        // Fix for undefined marks
-        let displayMarks = t.marks || t.qs || '20'; 
-
-        let btnColor = isLocked ? 'var(--tb-orange)' : 'var(--tb-blue)';
-        let btnTxt = isLocked ? '<i class="fas fa-lock"></i> PRO' : 'Start';
-        let action = isLocked ? "window.open('https://t.me/Ak_india1')" : `window.location.href='${t.url}'`;
-
+    list.forEach(t => {
+        let locked = t.type === 'pro' && !isPro;
+        let displayMarks = t.marks || t.qs || '20';
+        let action = locked ? "window.open('https://t.me/DSSSBRank')" : `window.location.href='${t.url}'`;
+        
         html += `
-        <div class="test-card ${isLocked ? 'locked' : ''}">
-            <div class="t-head">
-                <div class="t-title">${t.title}</div>
-                <div class="t-tags">${t.type==='pro'?'<span class="tag tag-pro">PRO</span>':'<span class="tag tag-new">FREE</span>'}</div>
-            </div>
-            <div class="t-meta">
+        <div class="test-card ${locked?'locked':''}">
+            <div class="t-title">${t.title}</div>
+            <div class="t-info">
                 <span><i class="far fa-clock"></i> ${t.time}m</span>
                 <span><i class="far fa-file-alt"></i> ${t.qs} Qs</span>
                 <span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span>
             </div>
-            <button class="btn-start" style="background:${btnColor}" onclick="${action}">${btnTxt}</button>
+            <button class="start-btn ${locked?'locked':''}" onclick="${action}">
+                ${locked ? 'Unlock Pro' : 'Start Test'}
+            </button>
         </div>`;
     });
-    document.getElementById('testList').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No tests found in this category.</div>";
+    document.getElementById('testListContainer').innerHTML = html || "<div style='text-align:center;color:grey;padding:20px'>No tests found.</div>";
 }
 
 function renderLeaderboard(list) {
     let html = "";
-    list.slice(0, 10).forEach((u, i) => {
-        html += `<div class="rank-item">
-            <div style="display:flex; gap:10px; align-items:center;">
-                <div class="rank-pos ${i===0?'top-1':''}">${i+1}</div>
-                <span>${u.name} ${u.name===currentUser?'<b style="color:var(--tb-blue)">(You)</b>':''}</span>
+    list.slice(0,10).forEach((u,i) => {
+        html += `
+        <div class="rank-row">
+            <div style="display:flex; align-items:center;">
+                <span class="rank-badge ${i===0?'first':''}">${i+1}</span>
+                <span style="font-weight:600;">${u.name} ${u.name===currentUser?'(You)':''}</span>
             </div>
-            <b>${u.avg.toFixed(1)}</b>
+            <span style="font-weight:700;">${u.avg.toFixed(1)}</span>
         </div>`;
     });
     document.getElementById('leaderboardList').innerHTML = html;
 }
 
 function renderCharts() {
-    new Chart(document.getElementById('radarChart'), {
-        type: 'radar',
-        data: { labels: ['Math', 'Eng', 'Hin', 'GK', 'Reas'], datasets: [{ data: [65,80,90,55,75], backgroundColor: 'rgba(2,102,253,0.2)', borderColor: '#0266fd', borderWidth: 2 }] },
-        options: { plugins: { legend: { display: false } }, scales: { r: { ticks: { display: false } } }, maintainAspectRatio: false }
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Maths', 'Eng', 'Hindi', 'GK', 'Reas'],
+            datasets: [{
+                label: 'Score',
+                data: [65, 80, 90, 55, 75],
+                backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: { x: { display:false, max: 100 }, y: { grid: { display: false } } },
+            maintainAspectRatio: false
+        }
     });
+
     new Chart(document.getElementById('lineChart'), {
         type: 'line',
-        data: { labels: myScores.map((_, i) => `T${i+1}`), datasets: [{ data: myScores, borderColor: '#00b973', backgroundColor: 'rgba(0,185,115,0.1)', fill: true, tension: 0.4 }] },
-        options: { plugins: { legend: { display: false } }, scales: { x: { display: false } }, maintainAspectRatio: false }
+        data: {
+            labels: myScores.map((_, i) => `T${i+1}`),
+            datasets: [{
+                data: myScores,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 4,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { x: { grid: { display: false } }, y: { beginAtZero: true } },
+            maintainAspectRatio: false
+        }
     });
 }
 </script>
