@@ -171,7 +171,7 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
         <h2 style="color:var(--primary); margin-bottom:5px;">💎 Upgrade to Pro</h2>
         <p style="font-size:12px; color:grey; margin-bottom:15px;">Unlock all Tests, Videos & Notes!</p>
         <div style="background:white; padding:10px; display:inline-block; border:1px solid #ddd; border-radius:10px; margin-bottom:15px;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=8587961053@ybl&pn=DSSSB_Pro&am=99" style="width:150px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=YOUR_UPI_ID@bank&pn=DSSSB_Pro&am=99" style="width:150px;">
         </div>
         <p style="font-weight:800; font-size:20px; margin-bottom:5px;">₹99 Only</p>
         <p style="font-size:11px; color:red; margin-bottom:10px;">Pay via QR & Enter UTR/Ref No below:</p>
@@ -203,7 +203,9 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
             <div class="user-avatar" id="uAvatar">S</div>
             <div class="user-info">
                 <h1 id="uName">Student</h1>
-                <div id="badgePro" class="pro-badge-header" style="display:none; margin-top:5px;"><i class="fas fa-crown"></i> PRO MEMBER</div>
+                <div id="badgePro" class="pro-badge-header" style="display:none; margin-top:5px;">
+                    <i class="fas fa-crown"></i> PRO MEMBER
+                </div>
                 <button id="buyProBtn" class="buy-pro-btn" style="display:none; margin-top:5px;" onclick="openPayment()">💎 Buy Pro</button>
             </div>
         </div>
@@ -365,7 +367,6 @@ window.onload = function() {
     db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
             const data = snap.val();
-            // Show alert only if it's new (checking timestamp)
             if(data.time && data.time > lastAlertTime && data.msg) {
                 document.getElementById('alertMsgText').innerText = data.msg;
                 document.getElementById('alertModal').style.display = 'flex';
@@ -426,7 +427,7 @@ function checkStreak() {
     if(s >= 3) document.getElementById('badgeStreak').classList.add('unlocked');
 }
 function startCountdown() {
-    const target = new Date(2026, 4, 15); // Target: 15 May 2026
+    const target = new Date(2026, 4, 15); 
     const days = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
     document.getElementById('examTimer').innerText = (days > 0 ? days : 0) + " Days Left";
 }
@@ -435,9 +436,33 @@ function shareApp() {
     else { navigator.clipboard.writeText(window.location.href); alert("Link copied to clipboard!"); }
 }
 
+// PWA Install 
 let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'grid'; });
-async function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; document.getElementById('installBtn').style.display='none'; } }
+window.addEventListener('beforeinstallprompt', (e) => { 
+    e.preventDefault(); 
+    deferredPrompt = e; 
+    document.getElementById('installBtn').style.display = 'grid'; 
+});
+
+async function installApp() { 
+    if(deferredPrompt) { 
+        deferredPrompt.prompt(); 
+        deferredPrompt = null; 
+        document.getElementById('installBtn').style.display='none'; 
+    } 
+    else if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
+        window.Telegram.WebApp.openLink(window.location.href);
+    } 
+    else {
+        alert("App install karne ke liye browser ki settings (⋮) me jaakar 'Add to Home Screen' par click karein.");
+    }
+}
+
+setTimeout(() => {
+    if(document.getElementById('installBtn').style.display === 'none') {
+        document.getElementById('installBtn').style.display = 'grid';
+    }
+}, 3000);
 
 /* 6. SYLLABUS TRACKER */
 function renderSyllabus() {
@@ -490,7 +515,7 @@ function submitPayment() {
     document.getElementById('paymentModal').style.display = 'none';
 }
 
-/* 9. MAIN DATA FETCHING (PRO LOGIC FIXED) */
+/* 9. MAIN DATA FETCHING */
 async function fetchData(user) {
     try {
         const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
@@ -571,7 +596,7 @@ async function fetchData(user) {
 function filterTests(cat, el, searchQuery = "") {
     if(el) { document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
     
-    let list = [...allTests].reverse(); // COPY array
+    let list = [...allTests].reverse(); 
     
     if (searchQuery) {
         list = list.filter(t => (t.title||"").toLowerCase().includes(searchQuery.toLowerCase()));
@@ -630,9 +655,7 @@ function renderLeaderboard(list) {
 }
 
 function renderCharts() {
-    // Prevent chart overlap if re-rendered
     let chartStatus = Chart.getChart("barChart"); if (chartStatus) chartStatus.destroy();
-    
     new Chart(document.getElementById('barChart'), {
         type: 'bar',
         data: { labels: ['Math','Eng','Hin','GK','Reas'], datasets: [{ data: [65,80,90,55,75], backgroundColor: ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderRadius: 6 }] },
