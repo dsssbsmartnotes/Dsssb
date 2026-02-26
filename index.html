@@ -50,7 +50,7 @@ body.dark-mode {
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(--nav-height); transition: 0.3s; }
 
-/* --- HEADER --- */
+/* --- HEADER & PROFILE --- */
 .hero-header { background: var(--bg-card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .user-profile { display: flex; align-items: center; gap: 12px; }
 .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 18px; border: 2px solid var(--primary); overflow: hidden; }
@@ -145,14 +145,12 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; outline:none; }
-.chart-box { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin: 0 20px 20px; }
-.rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-
-/* --- BOTTOM NAV --- */
 .nav-bar { position: fixed; bottom: 0; width: 100%; height: var(--nav-height); background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
 .nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; transition: 0.2s; cursor: pointer; }
 .nav-item i { font-size: 18px; margin-bottom: 3px; display: block; }
 .nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-2px); }
+.chart-box { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin: 0 20px 20px; }
+.rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -318,15 +316,23 @@ const dailyQ = { q: "Synonym of 'Abundant'?", opt: ["Scarce", "Plentiful", "Rare
 
 /* INITIALIZATION */
 window.onload = function() {
+    // 1. Force Start Timer (Fixes "Loading..." issue)
+    setTimeout(() => {
+        if(document.getElementById('loader').style.display !== 'none') {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            console.log("Forced start triggered");
+        }
+    }, 4000);
+
     const theme = localStorage.getItem('theme');
     if(theme === 'dark') document.body.classList.add('dark-mode');
     
-    // SAFE LOAD: Render static parts first
-    try {
-        checkStreak(); renderDailyQ(); startCountdown(); renderSyllabus();
-    } catch(e) { console.warn("Static render error", e); }
+    // Render static parts
+    checkStreak(); renderDailyQ(); startCountdown(); renderSyllabus();
 
-    // FETCH NEWS
+    // LISTENERS
+    // 1. News
     db.ref('dsssb_config/news').on('value', snap => {
         if(snap.exists()) {
             document.getElementById('newsSection').style.display = 'flex';
@@ -334,7 +340,43 @@ window.onload = function() {
         }
     });
 
-    // AUTH & DATA
+    // 2. QOD (Dynamic)
+    db.ref('dsssb_config/qod').on('value', snap => {
+        if(snap.exists()) {
+            const d = snap.val();
+            document.getElementById('qodQuestion').innerText = d.q;
+            let html = "";
+            d.opt.forEach((o, i) => html += `<div class="qod-opt" onclick="checkQOD(this, ${i}, ${d.ans})">${o}</div>`);
+            document.getElementById('qodOptions').innerHTML = html;
+        }
+    });
+
+    // 3. Tests
+    db.ref('dsssb_tests_db').on('value', snap => {
+        const data = snap.val() || {};
+        allTests = Object.values(data);
+        filterTests('all', document.querySelector('.filter-pill')); // Initial Render
+    });
+
+    // 4. Notes
+    db.ref('dsssb_notes_db').on('value', snap => {
+        const data = snap.val() || {};
+        allNotes = Object.values(data).reverse();
+        searchNotes(''); // Initial Render
+    });
+
+    // 5. Videos
+    db.ref('dsssb_videos_db').on('value', snap => {
+        const data = snap.val() || {};
+        const videos = Object.values(data).reverse();
+        let html = "";
+        videos.forEach(v => {
+            html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span class="vid-tag">Class</span><div class="vid-title">${v.title}</div></div></div>`;
+        });
+        document.getElementById('videoListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No videos found.</div>";
+    });
+
+    // Auth
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
@@ -345,9 +387,9 @@ window.onload = function() {
             document.getElementById('uName').innerText = u.first_name;
             if(u.photo_url) document.getElementById('uAvatar').innerHTML = `<img src="${u.photo_url}">`;
             else document.getElementById('uAvatar').innerText = u.first_name.charAt(0);
-            fetchData(u);
-        } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
-    } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
+            fetchUserData(u);
+        } else fetchUserData({username: "guest", id: "guest", first_name: "Guest"});
+    } else fetchUserData({username: "guest", id: "guest", first_name: "Guest"});
 };
 
 function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
@@ -407,18 +449,16 @@ function calcProgress() {
 function renderDailyQ() {
     document.getElementById('qodQuestion').innerText = dailyQ.q;
     let html = "";
-    dailyQ.opt.forEach((o, i) => html += `<div class="qod-opt" onclick="checkQOD(this, ${i})">${o}</div>`);
+    dailyQ.opt.forEach((o, i) => html += `<div class="qod-opt" onclick="checkQOD(this, ${i}, ${dailyQ.ans})">${o}</div>`);
     document.getElementById('qodOptions').innerHTML = html;
 }
-function checkQOD(el, idx) {
+function checkQOD(el, idx, correct) {
     document.querySelectorAll('.qod-opt').forEach(o => o.style.pointerEvents = "none");
-    if(idx === dailyQ.ans) el.classList.add('correct'); else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[dailyQ.ans].classList.add('correct'); }
+    if(idx === correct) el.classList.add('correct'); else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[correct].classList.add('correct'); }
 }
-
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'grid'; });
 async function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; } }
-
 function openReport() { document.getElementById('reportModal').style.display = 'flex'; }
 function closeReport() { document.getElementById('reportModal').style.display = 'none'; }
 function submitReport() {
@@ -440,28 +480,13 @@ function searchNotes(query) {
     document.getElementById('notesListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No notes found.</div>";
 }
 
-function renderVideos() {
-    let html = "";
-    // Default Placeholders + DB Videos
-    const videos = [
-        { title: "Maths: Percentage Full Concept", thumb: "https://img.youtube.com/vi/YyQ5g0i_3wM/mqdefault.jpg", url: "https://youtu.be/YyQ5g0i_3wM" },
-        { title: "Reasoning: Coding Decoding", thumb: "https://img.youtube.com/vi/5qV5L5Qe1w0/mqdefault.jpg", url: "https://youtu.be/5qV5L5Qe1w0" },
-    ];
-    videos.forEach(v => {
-        html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span class="vid-tag">Class</span><div class="vid-title">${v.title}</div></div></div>`;
-    });
-    document.getElementById('videoListContainer').innerHTML = html;
-}
-
-/* DATA FETCHING - SAFE MODE */
-async function fetchData(user) {
+/* DATA FETCHING - INDIVIDUAL */
+async function fetchUserData(user) {
     try {
-        const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
-            db.ref("dsssb_tests_db").once("value"),
+        const [resultsSnap, proSnap, usersSnap] = await Promise.all([
             db.ref("dsssb_results_live").once("value"),
             db.ref("dsssb_pro_users").once("value"),
-            db.ref("users").once("value"),
-            db.ref("dsssb_notes_db").once("value")
+            db.ref("users").once("value")
         ]);
 
         if(proSnap.exists()) {
@@ -478,11 +503,6 @@ async function fetchData(user) {
             document.getElementById('subText').style.color = "#d97706";
             document.getElementById('badgeScholar').classList.add('unlocked');
         }
-
-        const notes = notesSnap.val() || {};
-        allNotes = Object.values(notes).reverse();
-        searchNotes('');
-        renderVideos();
 
         const res = resultsSnap.val() || {};
         let userMap = {}; let calAtt = 0;
@@ -505,17 +525,11 @@ async function fetchData(user) {
         
         renderLeaderboard(lb);
         renderCharts();
-        
-        allTests = testsSnap.val() ? Object.values(testsSnap.val()) : [];
-        filterTests('all', document.querySelector('.filter-pill'));
 
-    } catch(e) { 
-        console.error("Data Load Error:", e);
-        // Fallback: Don't show alert, just log. UI should open.
-    } finally {
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-    }
+
+    } catch(e) { console.error(e); }
 }
 
 function filterTests(cat, el, searchQuery = "") {
