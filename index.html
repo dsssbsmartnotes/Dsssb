@@ -261,8 +261,18 @@ body.dark-mode .announcement-bar { background: linear-gradient(90deg, #451a03, #
 </div>
 
 <script>
-/* --- CONFIGURATION --- */
-const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
+/* =========================
+   CONFIGURATION & INIT
+   ========================= */
+const firebaseConfig = { 
+    apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", 
+    authDomain: "dsssbexamportal.firebaseapp.com", 
+    databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", 
+    projectId: "dsssbexamportal", 
+    storageBucket: "dsssbexamportal.firebasestorage.app", 
+    messagingSenderId: "853373171134", 
+    appId: "1:853373171134:web:77b967374e6f34311af5ef" 
+};
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -271,42 +281,43 @@ const db = firebase.database();
 let currentUser = "Student";
 let isPro = false;
 let myScores = [];
-let takenTests = new Set(); // To track which tests are done
+let takenTests = new Set(); 
 
-/* --- INITIALIZATION --- */
+/* --- STARTUP LOGIC --- */
 window.onload = function() {
     // 1. Theme Check
     const savedTheme = localStorage.getItem('theme');
     if(savedTheme === 'dark') document.body.classList.add('dark-mode');
     
-    // 2. Telegram Auth
+    // 2. Telegram Auth & Name Handling
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // Auto Dark Mode from Telegram
         if(tg.colorScheme === 'dark' && !savedTheme) document.body.classList.add('dark-mode');
         
         if(tg.initDataUnsafe.user) {
-            currentUser = tg.initDataUnsafe.user.first_name || "User";
+            const u = tg.initDataUnsafe.user;
+            
+            // 🔥 FIX 1: Full Name Logic (Test file se match karne ke liye)
+            currentUser = u.first_name + (u.last_name ? " " + u.last_name : "");
+            
             document.getElementById('uName').innerText = currentUser;
-            fetchData(tg.initDataUnsafe.user);
+            fetchData(u);
         } else {
-            fetchData({username: "test_user"}); // Fallback
+            fetchData({username: "test_user"}); 
         }
     } else {
-        fetchData({username: "test_user"}); // Browser testing
+        fetchData({username: "test_user"}); 
     }
 };
 
-/* --- THEME TOGGLE --- */
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
 
-/* --- TABS --- */
 function switchTab(tabId, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
@@ -314,34 +325,31 @@ function switchTab(tabId, el) {
     el.classList.add('active');
 }
 
-/* --- DATA FETCHING & LOGIC --- */
+/* --- MAIN DATA FETCHING --- */
 async function fetchData(user) {
     try {
-        const [testsSnap, resultsSnap, proSnap, bannerSnap] = await Promise.all([
+        // 🔥 FIX 2: Added 'users' node to fetch list
+        const [testsSnap, resultsSnap, proSnap, bannerSnap, usersSnap] = await Promise.all([
             db.ref("dsssb_tests_db").once("value"),
             db.ref("dsssb_results_live").once("value"),
             db.ref("dsssb_pro_users").once("value"),
-            db.ref("dsssb_config/banner").once("value") // New banner ref
+            db.ref("dsssb_config/banner").once("value"),
+            db.ref("users").once("value") 
         ]);
 
-        // 1. Banner Logic
+        // 1. Banner
         if(bannerSnap.exists()) {
             document.getElementById('announcement').style.display = 'flex';
             document.getElementById('annText').innerText = bannerSnap.val();
         }
 
-        // 2. Pro Check (ROBUST FIX)
+        // 2. Pro Check
         if(proSnap.exists()) {
             let tgUsername = (user.username || "").toLowerCase().trim();
             let tgId = (user.id || "").toString();
-
             proSnap.forEach(c => {
                 let data = c.val();
-                let dbValue = "";
-                if (typeof data === 'object') {
-                    dbValue = data.uid || data.username || data.telegram_id || data.id || "";
-                } else { dbValue = data; }
-
+                let dbValue = (typeof data === 'object') ? (data.uid || data.username || data.id || "") : data;
                 let cleanDbValue = dbValue.toString().toLowerCase().replace("@", "").trim();
                 if(cleanDbValue && (cleanDbValue === tgUsername || cleanDbValue === tgId)) {
                     isPro = true;
@@ -350,50 +358,60 @@ async function fetchData(user) {
         }
         if(isPro) document.getElementById('badgePro').style.display = 'inline-block';
 
-        // 3. Process Results & User Stats
+        // 3. Results Processing (Graph ke liye)
         const results = resultsSnap.val() || {};
         let userMap = {};
-        let myAttempts = 0;
+        let calculatedAttempts = 0; // Backup count
 
         Object.values(results).forEach(r => {
             if(!userMap[r.name]) userMap[r.name] = { score: 0, count: 0 };
             userMap[r.name].score += r.score;
             userMap[r.name].count++;
 
-            // If it's ME
+            // Check using the FIXED Full Name
             if(r.name === currentUser) {
                 myScores.push(r.score);
-                myAttempts++;
-                // Track taken tests logic (if test ID exists in result, add to Set)
-                // Assuming result has testId, if not, we skip.
+                calculatedAttempts++;
                 if(r.testId) takenTests.add(r.testId); 
             }
         });
 
-        // 4. Leaderboard Logic
-        let leaderboard = Object.keys(userMap).map(k => ({ 
-            name: k, avg: userMap[k].score / userMap[k].count 
-        })).sort((a,b) => b.avg - a.avg);
+        // 🔥 FIX 3: Fetch Exact 'Tests Given' Count from Database
+        // Name ko safe key banate hain (Spaces ko underscore karke)
+        let safeKey = currentUser.replace(/[^a-zA-Z0-9]/g, "_");
+        let usersData = usersSnap.val() || {};
+        let myUserNode = usersData[safeKey]; // Database mein dhoondo
+        
+        let finalTestCount = calculatedAttempts; // Default fallback
+        if(myUserNode && myUserNode.testsGiven) {
+            finalTestCount = myUserNode.testsGiven; // Agar DB mein count hai to wahi use karo
+        }
 
-        let myRank = leaderboard.findIndex(u => u.name === currentUser) + 1;
-        document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
-        document.getElementById('valTests').innerText = myAttempts;
+        // Update UI
+        document.getElementById('valRank').innerText = calculateRank(userMap);
+        document.getElementById('valTests').innerText = finalTestCount;
 
-        renderLeaderboard(leaderboard);
+        renderLeaderboard(Object.keys(userMap).map(k => ({ name: k, avg: userMap[k].score / userMap[k].count })).sort((a,b) => b.avg - a.avg));
         renderCharts();
 
-        // 5. Render Tests
+        // 4. Render Tests
         const tests = testsSnap.val() ? Object.values(testsSnap.val()) : [];
         renderTests(tests);
 
-        // Hide Loader
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
 
     } catch(e) { console.error("Data Load Error:", e); }
 }
 
-/* --- RENDER FUNCTIONS --- */
+function calculateRank(userMap) {
+    let leaderboard = Object.keys(userMap).map(k => ({ 
+        name: k, avg: userMap[k].score / userMap[k].count 
+    })).sort((a,b) => b.avg - a.avg);
+    let myRank = leaderboard.findIndex(u => u.name === currentUser) + 1;
+    return myRank > 0 ? `#${myRank}` : '--';
+}
+
 function renderTests(tests) {
     let html = "";
     // Reverse array to show newest first
@@ -445,50 +463,22 @@ function renderLeaderboard(list) {
 }
 
 function renderCharts() {
-    // 1. Radar Chart (Improved Config)
-    const ctxRadar = document.getElementById('radarChart').getContext('2d');
-    new Chart(ctxRadar, {
+    new Chart(document.getElementById('radarChart').getContext('2d'), {
         type: 'radar',
         data: {
             labels: ['Maths', 'English', 'Hindi', 'GK', 'Reasoning'],
-            datasets: [{
-                label: 'Strong Subjects',
-                data: [65, 80, 90, 55, 75], // Keeps placeholder logic safe
-                backgroundColor: 'rgba(2, 102, 253, 0.2)',
-                borderColor: '#0266fd',
-                pointBackgroundColor: '#0266fd',
-                borderWidth: 2
-            }]
+            datasets: [{ label: 'Performance', data: [65, 80, 90, 55, 75], backgroundColor: 'rgba(2, 102, 253, 0.2)', borderColor: '#0266fd', borderWidth: 2 }]
         },
-        options: {
-            maintainAspectRatio: false,
-            scales: { r: { suggestMin: 0, suggestMax: 100, ticks: { display: false } } },
-            plugins: { legend: { display: false } }
-        }
+        options: { maintainAspectRatio: false, scales: { r: { ticks: { display: false } } }, plugins: { legend: { display: false } } }
     });
 
-    // 2. Line Chart (Improved Config)
-    const ctxLine = document.getElementById('lineChart').getContext('2d');
-    new Chart(ctxLine, {
+    new Chart(document.getElementById('lineChart').getContext('2d'), {
         type: 'line',
         data: {
             labels: myScores.map((_, i) => `T${i+1}`),
-            datasets: [{
-                label: 'Score',
-                data: myScores,
-                borderColor: '#00b973',
-                backgroundColor: 'rgba(0, 185, 115, 0.1)',
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2,
-                pointRadius: 4
-            }]
+            datasets: [{ label: 'Score', data: myScores, borderColor: '#00b973', backgroundColor: 'rgba(0, 185, 115, 0.1)', tension: 0.4, fill: true, borderWidth: 2 }]
         },
-        options: {
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { display: false }, y: { beginAtZero: true } }
-        }
+        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
     });
 }
 </script>
