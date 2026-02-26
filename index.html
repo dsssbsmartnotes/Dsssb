@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DSSSB Smart Notes - Student Portal</title>
+<title>DSSSB Smart Notes - Pro Portal</title>
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,6 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
@@ -25,16 +26,14 @@ const manifest = {
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#4f46e5",
-    "icons": [
-        { "src": "https://cdn-icons-png.flaticon.com/512/2995/2995620.png", "sizes": "192x192", "type": "image/png" }
-    ]
+    "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/2995/2995620.png", "sizes": "192x192", "type": "image/png" }]
 };
 const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
 document.querySelector('#manifest-placeholder').setAttribute('href', URL.createObjectURL(blob));
 </script>
 
 <style>
-/* --- THEME VARIABLES --- */
+/* --- 1. THEME VARIABLES --- */
 :root {
     --primary: #4f46e5; --primary-light: #e0e7ff;
     --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
@@ -43,149 +42,128 @@ document.querySelector('#manifest-placeholder').setAttribute('href', URL.createO
     --border: #e5e7eb;
     --nav-height: 65px;
 }
-
 body.dark-mode {
     --primary: #6366f1; --primary-light: rgba(99, 102, 241, 0.2);
     --text-main: #f9fafb; --text-muted: #9ca3af;
     --bg-body: #111827; --bg-card: #1f2937;
     --border: #374151;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(--nav-height); transition: 0.3s; }
 
-/* --- NEWS TICKER --- */
-.news-container {
-    background: linear-gradient(90deg, #4f46e5, #7c3aed);
-    color: white; padding: 10px 15px; display: flex; align-items: center; gap: 10px;
-    font-size: 13px; font-weight: 500; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
-}
-.news-badge {
-    background: white; color: #4f46e5; padding: 2px 8px; border-radius: 4px;
-    font-weight: 800; font-size: 11px; white-space: nowrap; animation: pulse 2s infinite;
-}
-marquee { width: 100%; }
+/* --- 2. HEADER & PROFILE --- */
+.hero-header { background: var(--bg-card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.user-profile { display: flex; align-items: center; gap: 12px; }
+.user-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 18px; border: 2px solid var(--primary); overflow: hidden; }
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-info h1 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+.user-info p { font-size: 11px; color: var(--text-muted); }
+.tools { display: flex; gap: 8px; align-items: center; }
+.tool-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); display: grid; place-items: center; cursor: pointer; transition: 0.2s; }
+.pro-badge-header { background: linear-gradient(90deg, #FFD700, #FFA500); color: #000; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 11px; display: none; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3); border: 1px solid #eab308; white-space: nowrap; }
 
-/* --- HEADER --- */
-.hero-header { 
-    background: var(--bg-card); padding: 20px; 
-    border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-}
-.user-info h1 { font-size: 22px; font-weight: 800; }
-.user-info p { font-size: 13px; color: var(--text-muted); }
+/* --- 3. HOME DASHBOARD --- */
+.countdown-box { background: linear-gradient(90deg, #1e293b, #0f172a); color: white; padding: 10px 20px; margin: 15px 20px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.cd-timer { font-size: 16px; font-weight: 800; color: #fbbf24; }
 
-.tools { display: flex; gap: 10px; }
-.tool-btn { 
-    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
-    background: var(--bg-body); color: var(--text-main); display: grid; place-items: center; cursor: pointer; transition: 0.2s;
-}
-.tool-btn:active { transform: scale(0.9); }
+.quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px 20px 0; }
+.action-item { background: var(--bg-card); padding: 10px; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+.action-item i { font-size: 18px; color: var(--primary); }
+.action-item span { font-size: 10px; font-weight: 600; color: var(--text-muted); }
 
-/* --- STATS CARDS --- */
-.stats-row { 
-    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 20px; 
-}
-.stat-card { 
-    background: var(--bg-card); padding: 12px; border-radius: 16px; 
-    border: 1px solid var(--border); text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-}
-.stat-val { font-size: 20px; font-weight: 900; color: var(--primary); margin: 5px 0; }
-.stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-
-/* Streak Animation */
+.stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 15px 20px; }
+.stat-card { background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+.stat-val { font-size: 18px; font-weight: 900; color: var(--primary); margin: 4px 0; }
+.stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
 .fire-anim { animation: burn 0.5s alternate infinite; color: #f97316; }
 @keyframes burn { from { transform: scale(1); } to { transform: scale(1.2); } }
 
-/* --- GRAPH SECTION --- */
-.chart-section { padding: 0 20px 20px; }
-.chart-box { 
-    background: var(--bg-card); padding: 15px; border-radius: 16px; 
-    border: 1px solid var(--border); margin-bottom: 20px;
-}
-.chart-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 700; font-size: 15px; }
+/* --- 4. BADGES & QOD --- */
+.badge-section { padding: 0 20px; margin-bottom: 20px; }
+.badge-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+.badge-item { min-width: 80px; background: var(--bg-card); border: 1px solid var(--border); padding: 10px; border-radius: 12px; text-align: center; opacity: 0.5; filter: grayscale(1); transition: 0.3s; }
+.badge-item.unlocked { opacity: 1; filter: grayscale(0); border-color: #fbbf24; background: linear-gradient(180deg, var(--bg-card), #fffbeb); }
+.badge-icon { font-size: 24px; margin-bottom: 5px; display: block; }
+.badge-name { font-size: 10px; font-weight: 700; }
 
-/* --- TESTS & NOTES LIST --- */
+.qod-card { background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%); border: 1px solid #fed7aa; border-radius: 16px; padding: 15px; margin: 0 20px 20px; box-shadow: 0 4px 10px rgba(251, 146, 60, 0.1); }
+.dark-mode .qod-card { background: #2a1b0d; border-color: #431407; }
+.qod-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.qod-tag { background: #f97316; color: white; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.qod-text { font-weight: 700; font-size: 14px; margin-bottom: 12px; line-height: 1.4; }
+.qod-options { display: grid; gap: 8px; }
+.qod-opt { padding: 10px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; text-align: center; font-weight: 600; }
+.dark-mode .qod-opt { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); }
+.qod-opt.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #16a34a; }
+.qod-opt.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #dc2626; }
+
+/* --- 5. LISTS & CARDS (TESTS, NOTES, VIDEOS) --- */
 .list-container { padding: 0 20px; }
-.filter-scroll { 
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; 
-    scrollbar-width: none; 
-}
-.filter-pill {
-    padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; transition: 0.2s; cursor: pointer;
-}
+.search-box { background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.search-box input { border: none; background: transparent; width: 100%; font-size: 14px; color: var(--text-main); outline: none; }
+.filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; }
+.filter-pill { padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap; transition: 0.2s; cursor: pointer; }
 .filter-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-.test-card, .note-card {
-    background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
-    padding: 18px; margin-bottom: 15px; position: relative; overflow: hidden; transition: transform 0.2s;
-}
-.test-card:active, .note-card:active { transform: scale(0.98); }
-.test-card.locked { opacity: 0.9; }
-.test-card.locked::after {
-    content: "🔒 PRO"; position: absolute; top: 10px; right: 10px;
-    background: var(--warning); color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;
-}
-.t-title { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
-.t-info { display: flex; gap: 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 15px; }
-.start-btn {
-    width: 100%; padding: 12px; background: var(--primary); color: white; 
-    border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
-}
+.test-card, .note-card, .video-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; position: relative; overflow: hidden; }
+.test-card { padding: 15px; }
+.note-card { padding: 15px; }
+.video-card { padding: 0; cursor: pointer; }
+.test-card.locked::after { content: "🔒 PRO"; position: absolute; top: 10px; right: 10px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; }
+.t-title { font-weight: 700; font-size: 15px; margin-bottom: 5px; }
+.t-info { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+.start-btn, .download-btn { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
 .start-btn.locked { background: #fee2e2; color: #ef4444; }
-.download-btn {
-    width: 100%; padding: 12px; background: var(--bg-body); color: var(--primary); 
-    border: 2px solid var(--primary); border-radius: 10px; font-weight: 700; cursor: pointer;
-}
+.download-btn { background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); }
 
-/* --- BOTTOM NAV --- */
-.nav-bar {
-    position: fixed; bottom: 0; width: 100%; height: var(--nav-height);
-    background: var(--bg-card); border-top: 1px solid var(--border);
-    display: flex; justify-content: space-around; align-items: center; z-index: 100;
-}
-.nav-item { 
-    text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 600; opacity: 0.6; 
-    transition: 0.2s; cursor: pointer;
-}
-.nav-item i { font-size: 20px; margin-bottom: 4px; display: block; }
-.nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-2px); }
+/* Video Specific */
+.vid-thumb { width: 100%; height: 160px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+.vid-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+.play-icon { position: absolute; font-size: 40px; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.vid-content { padding: 12px; }
+.vid-tag { font-size: 10px; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-bottom: 5px; display: inline-block; }
+.vid-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
 
-/* --- REPORT MODAL --- */
+/* --- 6. STUDY HUB TABS --- */
+.segment-control { display: flex; background: var(--bg-body); padding: 5px; border-radius: 12px; margin: 0 20px 15px; border: 1px solid var(--border); }
+.segment-btn { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+.segment-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+/* --- 7. SYLLABUS TRACKER --- */
+.syllabus-container { padding: 20px; }
+.progress-card { background: var(--bg-card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; text-align: center; }
+.prog-ring { width: 100%; height: 10px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); width: 0%; transition: width 0.5s; }
+.subject-group { margin-bottom: 15px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.subject-head { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.02); cursor: pointer; font-weight: 700; }
+.topic-list { display: none; padding: 10px; }
+.topic-list.open { display: block; }
+.topic-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.topic-chk { width: 18px; height: 18px; accent-color: var(--primary); }
+
+/* --- 8. MISC (News, Loader, Modal, Nav) --- */
+.news-container { background: linear-gradient(90deg, #4f46e5, #7c3aed); color: white; padding: 8px 15px; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; }
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; }
-textarea:focus { border-color: var(--primary); outline: none; }
-
-/* --- LEADERBOARD --- */
-.rank-row { 
-    display: flex; justify-content: space-between; padding: 12px 0; 
-    border-bottom: 1px solid var(--border); font-size: 14px; 
-}
-.rank-badge { 
-    width: 25px; height: 25px; background: var(--bg-body); border-radius: 50%; 
-    display: inline-flex; align-items: center; justify-content: center; 
-    font-weight: 700; font-size: 12px; margin-right: 10px;
-}
-.rank-badge.first { background: #fef3c7; color: #d97706; }
-
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; outline:none; }
+.nav-bar { position: fixed; bottom: 0; width: 100%; height: var(--nav-height); background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+.nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; transition: 0.2s; cursor: pointer; }
+.nav-item i { font-size: 18px; margin-bottom: 3px; display: block; }
+.nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-2px); }
+.chart-box { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin: 0 20px 20px; }
+.rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
 </style>
 </head>
 <body>
 
 <div class="news-container" id="newsSection" style="display:none;">
-    <div class="news-badge">📢 NEW</div>
-    <marquee id="newsText">Welcome to DSSSB Smart Notes Portal!</marquee>
+    <span>📢</span> <marquee id="newsText">Welcome to DSSSB Smart Notes Portal!</marquee>
 </div>
 
 <div id="reportModal" class="modal">
     <div class="modal-content">
         <h2 style="margin-bottom:5px;">🚩 Report Issue</h2>
-        <p style="font-size:13px; color:grey;">Found an error? Let us know!</p>
-        <textarea id="reportText" placeholder="e.g. Test 5, Question 10 is wrong..."></textarea>
+        <textarea id="reportText" placeholder="Describe the issue..."></textarea>
         <div style="display:flex; gap:10px;">
             <button class="start-btn" style="background:var(--bg-body); color:var(--text-main);" onclick="closeReport()">Cancel</button>
             <button class="start-btn" onclick="submitReport()">Submit</button>
@@ -194,66 +172,69 @@ textarea:focus { border-color: var(--primary); outline: none; }
 </div>
 
 <div id="loader" style="padding: 50px; text-align: center; color: grey;">
-    <i class="fas fa-circle-notch fa-spin fa-2x"></i>
-    <p style="margin-top: 10px;">Loading Portal...</p>
+    <i class="fas fa-circle-notch fa-spin fa-2x"></i><p style="margin-top: 10px;">Loading...</p>
 </div>
 
 <div id="app" style="display: none;">
 
     <div class="hero-header">
-        <div class="user-info">
-            <h1 id="uName">Student</h1>
-            <p>Let's crack the exam! 🎯</p>
+        <div class="user-profile">
+            <div class="user-avatar" id="uAvatar">S</div>
+            <div class="user-info">
+                <h1 id="uName">Student</h1>
+                <div id="badgePro" class="pro-badge-header" style="display:none; margin-top:5px;"><i class="fas fa-crown"></i> PRO MEMBER</div>
+                <p id="subText" style="margin-top:2px;">Let's crack the exam! 🎯</p>
+            </div>
         </div>
         <div class="tools">
             <button class="tool-btn" id="installBtn" style="display:none;" onclick="installApp()"><i class="fas fa-download"></i></button>
-            <button class="tool-btn" id="badgePro" style="display:none; color:gold; border-color:gold;"><i class="fas fa-crown"></i></button>
-            <button class="tool-btn" onclick="openReport()" style="color:#ef4444; border-color:#fee2e2;"><i class="fas fa-exclamation-triangle"></i></button>
             <button class="tool-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
         </div>
     </div>
 
     <div id="tab-home" class="tab-content">
+        <div class="countdown-box">
+            <span class="cd-text">🎯 Target Exam</span><span class="cd-timer" id="examTimer">00 Days Left</span>
+        </div>
+
+        <div class="quick-actions">
+            <div class="action-item" onclick="window.open('https://t.me/DSSSBRank')"><i class="fab fa-telegram-plane"></i><span>Channel</span></div>
+            <div class="action-item" onclick="shareApp()"><i class="fas fa-share-alt"></i><span>Share</span></div>
+            <div class="action-item" onclick="openReport()"><i class="fas fa-exclamation-circle"></i><span>Report</span></div>
+            <div class="action-item" onclick="switchTab('study', document.getElementById('nav-study'))"><i class="fas fa-graduation-cap"></i><span>Study</span></div>
+        </div>
+
         <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-val" id="valRank">--</div>
-                <div class="stat-lbl">Rank</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val" id="valTests">0</div>
-                <div class="stat-lbl">Tests</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val" style="display:flex; align-items:center; justify-content:center; gap:5px;">
-                    <i class="fas fa-fire fire-anim"></i> <span id="valStreak">1</span>
-                </div>
-                <div class="stat-lbl">Streak</div>
+            <div class="stat-card"><div class="stat-val" id="valRank">--</div><div class="stat-lbl">Rank</div></div>
+            <div class="stat-card"><div class="stat-val" id="valTests">0</div><div class="stat-lbl">Tests</div></div>
+            <div class="stat-card"><div class="stat-val"><i class="fas fa-fire fire-anim"></i> <span id="valStreak">1</span></div><div class="stat-lbl">Streak</div></div>
+        </div>
+
+        <div class="badge-section">
+            <div style="font-weight:700; margin-bottom:10px; font-size:14px;">🏆 Achievements</div>
+            <div class="badge-grid">
+                <div class="badge-item unlocked"><span class="badge-icon">🐣</span><span class="badge-name">Starter</span></div>
+                <div class="badge-item" id="badgeStreak"><span class="badge-icon">🔥</span><span class="badge-name">On Fire</span></div>
+                <div class="badge-item" id="badgeScholar"><span class="badge-icon">🎓</span><span class="badge-name">Scholar</span></div>
+                <div class="badge-item" id="badgeMachine"><span class="badge-icon">🤖</span><span class="badge-name">Machine</span></div>
             </div>
         </div>
 
-        <div class="chart-section">
-            <div class="chart-box">
-                <div class="chart-header">
-                    <span>📊 Subject Strength</span>
-                    <span style="font-size:12px; color:grey;">(Est.)</span>
-                </div>
-                <div style="height: 200px;"><canvas id="barChart"></canvas></div>
-            </div>
-            <div class="chart-box">
-                <div class="chart-header">
-                    <span>📈 Growth Graph</span>
-                    <span style="font-size:12px; color:grey;">Last 5 Tests</span>
-                </div>
-                <div style="height: 180px;"><canvas id="lineChart"></canvas></div>
-            </div>
+        <div class="qod-card">
+            <div class="qod-header"><span class="qod-tag">💡 Daily Question</span><span style="font-size:11px; color:#f97316; font-weight:700;">+2 Pts</span></div>
+            <div class="qod-text" id="qodQuestion">Loading...</div>
+            <div class="qod-options" id="qodOptions"></div>
+        </div>
+
+        <div class="chart-box">
+            <div style="font-weight:700; margin-bottom:10px; font-size:14px;">📊 Performance</div>
+            <div style="height: 180px;"><canvas id="barChart"></canvas></div>
         </div>
     </div>
 
     <div id="tab-tests" class="tab-content" style="display:none;">
-        <div style="padding: 20px 20px 0;">
-            <h2 style="font-size: 20px; margin-bottom: 15px;">Mock Tests</h2>
-        </div>
-        <div class="list-container">
+        <div class="list-container" style="padding-top:15px;">
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="testSearch" placeholder="Search for Tests..." onkeyup="searchTests(this.value)"></div>
             <div class="filter-scroll">
                 <div class="filter-pill active" onclick="filterTests('all', this)">All</div>
                 <div class="filter-pill" onclick="filterTests('Full Mock', this)">Full Mock</div>
@@ -262,48 +243,57 @@ textarea:focus { border-color: var(--primary); outline: none; }
                 <div class="filter-pill" onclick="filterTests('English', this)">English</div>
                 <div class="filter-pill" onclick="filterTests('Hindi', this)">Hindi</div>
                 <div class="filter-pill" onclick="filterTests('GK', this)">GK</div>
-                <div class="filter-pill" onclick="filterTests('Computer', this)">Computer</div>
             </div>
             <div id="testListContainer"></div>
         </div>
     </div>
 
-    <div id="tab-notes" class="tab-content" style="display:none;">
-        <div style="padding: 20px 20px 0;">
-            <h2 style="font-size: 20px; margin-bottom: 15px;">📚 Study Material</h2>
-        </div>
-        <div class="list-container" id="notesListContainer">
-            <div style="text-align:center; padding:30px; color:grey;">
-                <i class="fas fa-book-open fa-3x" style="margin-bottom:15px; opacity:0.3;"></i><br>
-                Notes are being uploaded soon!
+    <div id="tab-study" class="tab-content" style="display:none;">
+        <div style="padding-top:15px;">
+            <div class="segment-control">
+                <div class="segment-btn active" onclick="switchStudy('notes', this)">📄 Notes & PDFs</div>
+                <div class="segment-btn" onclick="switchStudy('videos', this)">🎥 Video Classes</div>
+            </div>
+            
+            <div id="notesSection" class="list-container">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" id="noteSearch" placeholder="Search Notes..." onkeyup="searchNotes(this.value)"></div>
+                <div id="notesListContainer"></div>
+            </div>
+
+            <div id="videosSection" class="list-container" style="display:none;">
+                <div id="videoListContainer"></div>
             </div>
         </div>
     </div>
 
+    <div id="tab-syllabus" class="tab-content" style="display:none;">
+        <div class="syllabus-container">
+            <h2 style="font-size:20px; font-weight:800; margin-bottom:15px;">📊 Progress Tracker</h2>
+            <div class="progress-card">
+                <div style="display:flex; justify-content:space-between; font-weight:700;"><span>Overall Syllabus</span><span id="progText">0%</span></div>
+                <div class="prog-ring"><div class="prog-fill" id="progFill"></div></div>
+            </div>
+            <div id="syllabusList"></div>
+        </div>
+    </div>
+
     <div id="tab-rank" class="tab-content" style="display:none; padding: 20px;">
-        <h2 style="font-size: 20px; margin-bottom: 15px;">🏆 Leaderboard</h2>
+        <h2 style="font-size: 18px; margin-bottom: 10px;">🏆 Leaderboard</h2>
         <div id="leaderboardList"></div>
     </div>
 
 </div>
 
 <div class="nav-bar">
-    <div class="nav-item active" onclick="switchTab('home', this)">
-        <i class="fas fa-home"></i> Home
-    </div>
-    <div class="nav-item" onclick="switchTab('tests', this)">
-        <i class="fas fa-file-alt"></i> Tests
-    </div>
-    <div class="nav-item" onclick="switchTab('notes', this)">
-        <i class="fas fa-book"></i> Notes
-    </div>
-    <div class="nav-item" onclick="switchTab('rank', this)">
-        <i class="fas fa-trophy"></i> Ranks
-    </div>
+    <div class="nav-item active" onclick="switchTab('home', this)"><i class="fas fa-home"></i> Home</div>
+    <div class="nav-item" onclick="switchTab('tests', this)"><i class="fas fa-file-alt"></i> Tests</div>
+    <div class="nav-item" id="nav-study" onclick="switchTab('study', this)"><i class="fas fa-graduation-cap"></i> Study</div>
+    <div class="nav-item" onclick="switchTab('syllabus', this)"><i class="fas fa-tasks"></i> Syllabus</div>
+    <div class="nav-item" onclick="switchTab('rank', this)"><i class="fas fa-trophy"></i> Ranks</div>
 </div>
 
 <script>
-/* FIREBASE CONFIG */
+/* 1. CONFIG */
 const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -313,16 +303,26 @@ let currentUserId = "guest";
 let isPro = false;
 let myScores = [];
 let allTests = [];
+let allNotes = [];
 
-/* STARTUP */
+/* 2. DATA CONSTANTS */
+const syllabusDB = {
+    "Reasoning": ["Analogy", "Classification", "Series", "Coding-Decoding", "Blood Relation", "Direction", "Venn Diagram", "Mirror Image", "Dice & Cube", "Ranking"],
+    "Maths": ["Number System", "HCF & LCM", "Percentage", "Profit & Loss", "SI & CI", "Time & Work", "Time Speed Distance", "Average", "Ratio", "Mensuration"],
+    "English": ["Reading Comprehension", "Synonyms & Antonyms", "Idioms & Phrases", "One Word Substitution", "Spelling Errors", "Spotting Errors", "Sentence Improvement", "Fill in Blanks"],
+    "Hindi": ["Sandhi", "Samas", "Upsarg-Pratyay", "Vilom Shabd", "Paryayvachi", "Muhavare", "Vakya Shuddhi", "Anekarthi Shabd"],
+    "GK": ["History", "Geography", "Polity", "Economics", "Science", "Current Affairs", "Static GK"]
+};
+const dailyQ = { q: "Synonym of 'Abundant'?", opt: ["Scarce", "Plentiful", "Rare", "Few"], ans: 1 };
+
+/* 3. INITIALIZATION */
 window.onload = function() {
     const theme = localStorage.getItem('theme');
     if(theme === 'dark') document.body.classList.add('dark-mode');
+    
+    checkStreak(); renderDailyQ(); startCountdown(); renderSyllabus();
 
-    // Load Streak
-    checkStreak();
-
-    // Fetch News
+    // News Ticker
     db.ref('dsssb_config/news').on('value', snap => {
         if(snap.exists()) {
             document.getElementById('newsSection').style.display = 'flex';
@@ -330,185 +330,203 @@ window.onload = function() {
         }
     });
 
-    // Fetch Notes
-    fetchNotes();
-
-    // Auth & Main Data
+    // Telegram Auth
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
-        
         if(tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             currentUser = u.first_name + (u.last_name ? " " + u.last_name : "");
             currentUserId = u.id.toString();
             document.getElementById('uName').innerText = u.first_name;
+            if(u.photo_url) document.getElementById('uAvatar').innerHTML = `<img src="${u.photo_url}">`;
+            else document.getElementById('uAvatar').innerText = u.first_name.charAt(0);
             fetchData(u);
         } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
     } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
 };
 
+/* 4. UTILS & NAVIGATION */
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 }
-
 function switchTab(tab, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
     document.getElementById('tab-'+tab).style.display = 'block';
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
 }
-
-/* --- STREAK LOGIC --- */
-function checkStreak() {
-    const lastVisit = localStorage.getItem('lastVisitDate');
-    const today = new Date().toDateString();
-    let streak = parseInt(localStorage.getItem('streakCount') || 0);
-
-    if(lastVisit !== today) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        if(lastVisit === yesterday.toDateString()) {
-            streak++; 
-        } else {
-            streak = 1; 
-        }
-        localStorage.setItem('lastVisitDate', today);
-        localStorage.setItem('streakCount', streak);
-    }
-    document.getElementById('valStreak').innerText = streak;
+function switchStudy(type, el) {
+    document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('notesSection').style.display = (type === 'notes') ? 'block' : 'none';
+    document.getElementById('videosSection').style.display = (type === 'videos') ? 'block' : 'none';
 }
 
-/* --- REPORT SYSTEM --- */
+/* 5. GAMIFICATION LOGIC */
+function checkStreak() {
+    const last = localStorage.getItem('lastVisit');
+    const today = new Date().toDateString();
+    let s = parseInt(localStorage.getItem('streak') || 0);
+    if(last !== today) {
+        const y = new Date(); y.setDate(y.getDate()-1);
+        if(last === y.toDateString()) s++; else s = 1;
+        localStorage.setItem('lastVisit', today);
+        localStorage.setItem('streak', s);
+    }
+    document.getElementById('valStreak').innerText = s;
+    if(s >= 3) document.getElementById('badgeStreak').classList.add('unlocked');
+}
+function startCountdown() {
+    const target = new Date(2026, 4, 15);
+    const now = new Date();
+    const days = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+    document.getElementById('examTimer').innerText = (days > 0 ? days : 0) + " Days Left";
+}
+function shareApp() {
+    if (navigator.share) navigator.share({ title: 'DSSSB Pro Portal', text: 'Best Exam Prep App!', url: window.location.href });
+    else { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); }
+}
+
+/* 6. SYLLABUS LOGIC */
+function renderSyllabus() {
+    const container = document.getElementById('syllabusList');
+    let saved = JSON.parse(localStorage.getItem('syllabusProgress') || '{}');
+    let html = "";
+    Object.keys(syllabusDB).forEach((sub, i) => {
+        html += `<div class="subject-group"><div class="subject-head" onclick="toggleTopic('sub${i}')"><span>📚 ${sub}</span> <i class="fas fa-chevron-down"></i></div><div class="topic-list" id="sub${i}">`;
+        syllabusDB[sub].forEach(topic => {
+            const key = `${sub}-${topic}`;
+            const checked = saved[key] ? 'checked' : '';
+            html += `<div class="topic-item"><input type="checkbox" class="topic-chk" onchange="updateSyllabus('${key}', this)" ${checked}><span>${topic}</span></div>`;
+        });
+        html += `</div></div>`;
+    });
+    container.innerHTML = html;
+    calcProgress();
+}
+function toggleTopic(id) { document.getElementById(id).classList.toggle('open'); }
+function updateSyllabus(key, el) {
+    let saved = JSON.parse(localStorage.getItem('syllabusProgress') || '{}');
+    if(el.checked) saved[key] = true; else delete saved[key];
+    localStorage.setItem('syllabusProgress', JSON.stringify(saved));
+    calcProgress();
+}
+function calcProgress() {
+    let saved = JSON.parse(localStorage.getItem('syllabusProgress') || '{}');
+    let total = 0; Object.values(syllabusDB).forEach(list => total += list.length);
+    let done = Object.keys(saved).length;
+    let pct = Math.round((done/total)*100);
+    document.getElementById('progFill').style.width = pct + "%";
+    document.getElementById('progText').innerText = pct + "%";
+    if(pct === 100) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+}
+
+/* 7. QOD & REPORT */
+function renderDailyQ() {
+    document.getElementById('qodQuestion').innerText = dailyQ.q;
+    let html = "";
+    dailyQ.opt.forEach((o, i) => html += `<div class="qod-opt" onclick="checkQOD(this, ${i})">${o}</div>`);
+    document.getElementById('qodOptions').innerHTML = html;
+}
+function checkQOD(el, idx) {
+    document.querySelectorAll('.qod-opt').forEach(o => o.style.pointerEvents = "none");
+    if(idx === dailyQ.ans) el.classList.add('correct');
+    else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[dailyQ.ans].classList.add('correct'); }
+}
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'grid'; });
+async function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; } }
 function openReport() { document.getElementById('reportModal').style.display = 'flex'; }
 function closeReport() { document.getElementById('reportModal').style.display = 'none'; }
 function submitReport() {
     const txt = document.getElementById('reportText').value;
-    if(!txt) return alert("Please write something!");
-    
-    db.ref('dsssb_reports').push({
-        user: currentUser,
-        id: currentUserId,
-        issue: txt,
-        time: firebase.database.ServerValue.TIMESTAMP
-    }).then(() => {
-        alert("Report Submitted! We will check it.");
-        document.getElementById('reportText').value = '';
-        closeReport();
+    if(!txt) return alert("Write something!");
+    db.ref('dsssb_reports').push({ user: currentUser, id: currentUserId, issue: txt, time: firebase.database.ServerValue.TIMESTAMP });
+    alert("Report Sent!"); closeReport();
+}
+
+/* 8. SEARCH & FILTER */
+function searchTests(query) {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    document.querySelector('.filter-pill').classList.add('active');
+    filterTests('search', null, query);
+}
+function searchNotes(query) {
+    let html = "";
+    const list = allNotes.filter(n => n.title.toLowerCase().includes(query.toLowerCase()));
+    list.forEach(n => html += `<div class="note-card"><div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div><div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div><button class="download-btn" onclick="window.open('${n.url}')">Download PDF</button></div>`);
+    document.getElementById('notesListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No notes found.</div>";
+}
+function renderVideos() {
+    let html = "";
+    // PLACEHOLDER VIDEOS (Replace or Fetch from DB)
+    const videos = [
+        { title: "Maths: Percentage Full Concept", thumb: "https://img.youtube.com/vi/YyQ5g0i_3wM/mqdefault.jpg", url: "https://youtu.be/YyQ5g0i_3wM" },
+        { title: "Reasoning: Coding Decoding", thumb: "https://img.youtube.com/vi/5qV5L5Qe1w0/mqdefault.jpg", url: "https://youtu.be/5qV5L5Qe1w0" },
+    ];
+    videos.forEach(v => {
+        html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span class="vid-tag">Class</span><div class="vid-title">${v.title}</div></div></div>`;
     });
+    document.getElementById('videoListContainer').innerHTML = html;
 }
 
-/* --- INSTALL APP LOGIC --- */
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('installBtn').style.display = 'grid';
-});
-async function installApp() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
-        deferredPrompt = null;
-    }
-}
-
-/* --- FETCH NOTES --- */
-function fetchNotes() {
-    db.ref('dsssb_notes_db').on('value', snap => {
-        const notes = snap.val();
-        if(!notes) return;
-        
-        let html = "";
-        Object.values(notes).reverse().forEach(n => {
-            html += `
-            <div class="note-card">
-                <div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div>
-                <div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div>
-                <button class="download-btn" onclick="window.open('${n.url}')">Download PDF</button>
-            </div>`;
-        });
-        document.getElementById('notesListContainer').innerHTML = html;
-    });
-}
-
-/* --- MAIN DATA FETCHING --- */
+/* 9. MAIN DATA FETCHING */
 async function fetchData(user) {
     try {
-        const [testsSnap, resultsSnap, proSnap, usersSnap] = await Promise.all([
+        const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
             db.ref("dsssb_tests_db").once("value"),
             db.ref("dsssb_results_live").once("value"),
             db.ref("dsssb_pro_users").once("value"),
-            db.ref("users").once("value")
+            db.ref("users").once("value"),
+            db.ref("dsssb_notes_db").once("value")
         ]);
 
-        // PRO CHECK
         if(proSnap.exists()) {
-            let tgUser = (user.username || "").toLowerCase().trim().replace("@", "");
-            let tgId = (user.id || "").toString();
-            let tgName = (user.first_name + (user.last_name ? " " + user.last_name : "")).toLowerCase().trim();
-
+            let uName = (user.username||"").toLowerCase().replace("@","");
+            let uid = (user.id||"").toString();
             proSnap.forEach(c => {
-                let d = c.val();
-                let dbVal = (typeof d === 'object' ? (d.username || d.id || d.uid || d.name || "") : d).toString();
-                let cleanDbVal = dbVal.toLowerCase().trim().replace("@", "");
-                if (cleanDbVal && (cleanDbVal === tgUser || cleanDbVal === tgId || cleanDbVal === tgName)) {
-                    isPro = true;
-                }
+                let val = c.val().toString().toLowerCase().replace("@","");
+                if(val === uName || val === uid) isPro = true;
             });
         }
-        if(isPro) document.getElementById('badgePro').style.display = 'grid';
+        if(isPro) {
+            document.getElementById('badgePro').style.display = 'flex';
+            document.getElementById('subText').innerText = "Premium Member 👑";
+            document.getElementById('subText').style.color = "#d97706";
+            document.getElementById('badgeScholar').classList.add('unlocked');
+        }
 
-        // PROCESS RESULTS
-        const results = resultsSnap.val() || {};
-        let userMap = {}; 
-        let calcAttempts = 0;
+        const notes = notesSnap.val() || {};
+        allNotes = Object.values(notes).reverse();
+        searchNotes('');
+        renderVideos();
 
-        Object.values(results).forEach(r => {
-            if(!userMap[r.name]) userMap[r.name] = { s: 0, c: 0 };
+        const res = resultsSnap.val() || {};
+        let userMap = {}; let calAtt = 0;
+        Object.values(res).forEach(r => {
+            if(!userMap[r.name]) userMap[r.name] = {s:0,c:0};
             userMap[r.name].s += r.score; userMap[r.name].c++;
-
-            let isMe = false;
-            if (r.userId && r.userId.toString() === currentUserId && currentUserId !== 'guest') {
-                isMe = true;
-            } else if (!r.userId && r.name === currentUser) {
-                isMe = true; 
-            }
-
-            if(isMe) {
-                myScores.push(r.score);
-                calcAttempts++;
+            if((r.userId && r.userId==currentUserId) || (!r.userId && r.name==currentUser)) {
+                myScores.push(r.score); calAtt++;
             }
         });
 
-        // EXACT TESTS GIVEN
         let uData = usersSnap.val() || {};
-        let finalCount = 0;
-        if (currentUserId !== 'guest' && uData[currentUserId] && uData[currentUserId].testsGiven) {
-            finalCount = uData[currentUserId].testsGiven;
-        } else {
-            let safeName = currentUser.replace(/[^a-zA-Z0-9]/g, "_");
-            if (uData[safeName] && uData[safeName].testsGiven) {
-                finalCount = uData[safeName].testsGiven;
-            } else {
-                finalCount = calcAttempts;
-            }
-        }
-        document.getElementById('valTests').innerText = finalCount;
+        let count = (currentUserId !== 'guest' && uData[currentUserId]) ? uData[currentUserId].testsGiven : calAtt;
+        document.getElementById('valTests').innerText = count || 0;
+        if(count >= 5) document.getElementById('badgeMachine').classList.add('unlocked');
 
-        // RANK
-        let lb = Object.keys(userMap).map(k => ({ name: k, avg: userMap[k].s/userMap[k].c })).sort((a,b) => b.avg - a.avg);
-        let myRank = lb.findIndex(u => u.name === currentUser) + 1;
-        document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
-
+        let lb = Object.keys(userMap).map(k=>({name:k, avg:userMap[k].s/userMap[k].c})).sort((a,b)=>b.avg-a.avg);
+        let rank = lb.findIndex(u=>u.name === currentUser) + 1;
+        document.getElementById('valRank').innerText = rank > 0 ? `#${rank}` : '--';
+        
         renderLeaderboard(lb);
         renderCharts();
-
-        // RENDER TESTS
+        
         allTests = testsSnap.val() ? Object.values(testsSnap.val()) : [];
-        filterTests('all', document.querySelector('.filter-pill')); 
+        filterTests('all', document.querySelector('.filter-pill'));
 
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
@@ -516,68 +534,40 @@ async function fetchData(user) {
     } catch(e) { console.error(e); }
 }
 
-/* --- FILTER LOGIC (FIXED) --- */
-function filterTests(cat, el) {
+/* 10. RENDERERS */
+function filterTests(cat, el, searchQuery = "") {
     if(el) {
         document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
         el.classList.add('active');
     }
-    
-    // 🔥 FIX: Create copy before reverse to prevent array mutation issues
     let list = [...allTests].reverse();
-    
-    if(cat !== 'all') {
-        const searchKey = cat.toLowerCase();
+    if (searchQuery) {
+        list = list.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    } else if(cat !== 'all' && cat !== 'search') {
+        const key = cat.toLowerCase();
         list = list.filter(t => {
-            const title = (t.title || "").toLowerCase();
-            const category = (t.category || "").toLowerCase();
-            
-            // Special mapping for Maths/Math
-            if(searchKey === 'maths') {
-                return title.includes('math') || category.includes('math');
-            }
-            return title.includes(searchKey) || category.includes(searchKey);
+            const title = (t.title||"").toLowerCase();
+            const c = (t.category||"").toLowerCase();
+            if(key === 'reasoning') return title.includes('reas') || title.includes('logic') || c.includes('reasoning');
+            if(key === 'maths') return title.includes('math') || title.includes('quant') || c.includes('math');
+            if(key === 'gk') return title.includes('gk') || title.includes('general') || c.includes('gk');
+            return title.includes(key) || c.includes(key);
         });
     }
-    
     let html = "";
     list.forEach(t => {
         let locked = t.type === 'pro' && !isPro;
         let displayMarks = t.marks || t.qs || '20';
         let action = locked ? "window.open('https://t.me/DSSSBRank')" : `window.location.href='${t.url}'`;
-        
-        html += `
-        <div class="test-card ${locked?'locked':''}">
-            <div class="t-title">${t.title}</div>
-            <div class="t-info">
-                <span><i class="far fa-clock"></i> ${t.time}m</span>
-                <span><i class="far fa-file-alt"></i> ${t.qs} Qs</span>
-                <span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span>
-            </div>
-            <button class="start-btn ${locked?'locked':''}" onclick="${action}">
-                ${locked ? 'Unlock Pro' : 'Start Test'}
-            </button>
-        </div>`;
+        html += `<div class="test-card ${locked?'locked':''}"><div class="t-title">${t.title}</div><div class="t-info"><span><i class="far fa-clock"></i> ${t.time}m</span><span><i class="far fa-file-alt"></i> ${t.qs} Qs</span><span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span></div><button class="start-btn ${locked?'locked':''}" onclick="${action}">${locked ? 'Unlock Pro' : 'Start Test'}</button></div>`;
     });
-    
-    document.getElementById('testListContainer').innerHTML = html || `
-        <div style='text-align:center; padding:40px; color:grey; opacity:0.7;'>
-            <i class="fas fa-search fa-2x" style="margin-bottom:10px;"></i><br>
-            No tests found for "${cat}"
-        </div>`;
+    document.getElementById('testListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No tests found.</div>";
 }
 
 function renderLeaderboard(list) {
     let html = "";
     list.slice(0,10).forEach((u,i) => {
-        html += `
-        <div class="rank-row">
-            <div style="display:flex; align-items:center;">
-                <span class="rank-badge ${i===0?'first':''}">${i+1}</span>
-                <span style="font-weight:600;">${u.name} ${u.name===currentUser?'(You)':''}</span>
-            </div>
-            <span style="font-weight:700;">${u.avg.toFixed(1)}</span>
-        </div>`;
+        html += `<div class="rank-row"><div style="display:flex;align-items:center;"><span style="width:25px;height:25px;background:#f3f4f6;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-right:10px;font-size:12px;">${i+1}</span><span style="font-weight:600;">${u.name} ${u.name==currentUser?'(You)':''}</span></div><span style="font-weight:700;">${u.avg.toFixed(1)}</span></div>`;
     });
     document.getElementById('leaderboardList').innerHTML = html;
 }
@@ -585,44 +575,9 @@ function renderLeaderboard(list) {
 function renderCharts() {
     new Chart(document.getElementById('barChart'), {
         type: 'bar',
-        data: {
-            labels: ['Maths', 'Eng', 'Hindi', 'GK', 'Reas'],
-            datasets: [{
-                label: 'Score',
-                data: [65, 80, 90, 55, 75],
-                backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
-                borderRadius: 4
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            plugins: { legend: { display: false } },
-            scales: { x: { display:false, max: 100 }, y: { grid: { display: false } } },
-            maintainAspectRatio: false
-        }
+        data: { labels: ['Math','Eng','Hin','GK','Reas'], datasets: [{ data: [65,80,90,55,75], backgroundColor: ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderRadius: 4 }] },
+        options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { display:false, max: 100 }, y: { grid: { display: false } } }, maintainAspectRatio: false }
     });
-
     new Chart(document.getElementById('lineChart'), {
         type: 'line',
-        data: {
-            labels: myScores.map((_, i) => `T${i+1}`),
-            datasets: [{
-                data: myScores,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true,
-                pointRadius: 4,
-                borderWidth: 2
-            }]
-        },
-        options: {
-            plugins: { legend: { display: false } },
-            scales: { x: { grid: { display: false } }, y: { beginAtZero: true } },
-            maintainAspectRatio: false
-        }
-    });
-}
-</script>
-</body>
-</html>
+        data: { labels: myScores.map((_, i) => `T${i+1}`), datasets: [{ data: myScores, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0
