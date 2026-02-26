@@ -44,6 +44,7 @@ body { background: var(--bg-app); color: var(--text-main); padding-bottom: var(-
 .top-nav { display: flex; justify-content: space-between; align-items: center; }
 .brand { font-weight: 800; font-size: 20px; letter-spacing: 0.5px; display:flex; align-items:center; gap:8px;}
 
+/* Back Button */
 .back-btn {
     background: rgba(255,255,255,0.2); border: none; color: white;
     width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
@@ -69,7 +70,7 @@ body { background: var(--bg-app); color: var(--text-main); padding-bottom: var(-
 /* --- FILTERS (SCROLLABLE) --- */
 .filter-container {
     display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px;
-    scrollbar-width: none; -ms-overflow-style: none; /* Hide scrollbar */
+    scrollbar-width: none; -ms-overflow-style: none;
 }
 .filter-container::-webkit-scrollbar { display: none; }
 
@@ -77,7 +78,7 @@ body { background: var(--bg-app); color: var(--text-main); padding-bottom: var(-
     background: var(--card-bg); border: 1px solid var(--border-light);
     padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
     color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: 0.2s;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
 }
 .filter-btn.active {
     background: var(--tb-blue); color: white; border-color: var(--tb-blue);
@@ -217,7 +218,7 @@ const db = firebase.database();
 let currentUser = "Student";
 let isPro = false;
 let myScores = [];
-let allTestsData = []; // Store tests globally for filtering
+let allTestsData = []; 
 
 window.onload = function() {
     const savedTheme = localStorage.getItem('theme');
@@ -226,13 +227,18 @@ window.onload = function() {
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !savedTheme) document.body.classList.add('dark-mode');
+        
         if(tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             currentUser = u.first_name + (u.last_name ? " " + u.last_name : "");
             document.getElementById('uName').innerText = currentUser;
-            fetchData(u);
-        } else fetchData({username: "test"});
-    } else fetchData({username: "test"});
+            fetchData(u); // Pass Full Telegram Object
+        } else {
+            fetchData({username: "guest", id: "guest", first_name: "Guest"}); 
+        }
+    } else {
+        fetchData({username: "guest", id: "guest", first_name: "Guest"});
+    }
 };
 
 function toggleTheme() {
@@ -240,7 +246,7 @@ function toggleTheme() {
     localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 }
 
-/* --- NAVIGATION & BACK BUTTON --- */
+/* --- NAVIGATION --- */
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
@@ -248,7 +254,7 @@ function switchTab(tabId) {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('nav-' + tabId).classList.add('active');
 
-    // Show Back Button if NOT on Home
+    // Show Back Button everywhere except Home
     const backBtn = document.getElementById('backBtn');
     if(tabId === 'home') backBtn.style.display = 'none';
     else backBtn.style.display = 'grid';
@@ -258,7 +264,7 @@ function goHome() {
     switchTab('home');
 }
 
-/* --- DATA FETCH --- */
+/* --- MAIN LOGIC --- */
 async function fetchData(user) {
     try {
         const [testsSnap, resultsSnap, proSnap, usersSnap] = await Promise.all([
@@ -268,33 +274,73 @@ async function fetchData(user) {
             db.ref("users").once("value")
         ]);
 
-        // Pro Check
+        // 1. PRO CHECK (ROBUST: ID, USERNAME, NAME)
         if(proSnap.exists()) {
-            let tgUser = (user.username||"").toLowerCase();
-            let tgId = (user.id||"").toString();
+            let tgUser = (user.username || "").toLowerCase().trim().replace("@", "");
+            let tgId = (user.id || "").toString();
+            let tgName = (user.first_name + (user.last_name ? " " + user.last_name : "")).toLowerCase().trim();
+
             proSnap.forEach(c => {
-                let d = c.val(); let val = (typeof d==='object' ? (d.username||d.id||"") : d).toString().toLowerCase().replace("@","");
-                if(val === tgUser || val === tgId) isPro = true;
+                let d = c.val();
+                let dbVal = (typeof d === 'object' ? (d.username || d.id || d.uid || d.name || "") : d).toString();
+                let cleanDbVal = dbVal.toLowerCase().trim().replace("@", "");
+                
+                if (cleanDbVal && (cleanDbVal === tgUser || cleanDbVal === tgId || cleanDbVal === tgName)) {
+                    isPro = true;
+                }
             });
         }
-        if(isPro) document.getElementById('badgePro').style.display = 'inline-block';
+        if(isPro) {
+            let badge = document.getElementById('badgePro');
+            badge.style.display = 'inline-block';
+            badge.innerText = "PRO MEMBER";
+            badge.style.background = "linear-gradient(90deg, #10b981, #059669)";
+        }
 
-        // Stats
+        // 2. STATS (UNIQUE ID + NAME FALLBACK)
         const results = resultsSnap.val() || {};
-        let userMap = {}; let calAttempts = 0;
+        let userMap = {}; 
+        let myId = (user.id || "").toString();
+        let calAttempts = 0;
+
         Object.values(results).forEach(r => {
+            // Group by Name for Leaderboard
             if(!userMap[r.name]) userMap[r.name] = { s: 0, c: 0 };
             userMap[r.name].s += r.score; userMap[r.name].c++;
-            if(r.name === currentUser) { myScores.push(r.score); calAttempts++; }
+
+            // Check if it's ME (ID match or Name match fallback)
+            let isMe = false;
+            if (r.userId && r.userId.toString() === myId && myId !== 'guest') {
+                isMe = true; 
+            } else if (!r.userId && r.name === currentUser) {
+                isMe = true; 
+            }
+
+            if(isMe) {
+                myScores.push(r.score);
+                calAttempts++;
+            }
         });
 
-        // Exact Test Count
-        let safeKey = currentUser.replace(/[^a-zA-Z0-9]/g, "_");
+        // 3. EXACT TEST COUNT
         let uData = usersSnap.val() || {};
-        let finalCount = (uData[safeKey] && uData[safeKey].testsGiven) ? uData[safeKey].testsGiven : calAttempts;
+        let finalCount = 0;
+        
+        // Try getting by ID
+        if (myId !== 'guest' && uData[myId] && uData[myId].testsGiven) {
+            finalCount = uData[myId].testsGiven;
+        } else {
+            // Fallback: Try Name
+            let safeNameKey = currentUser.replace(/[^a-zA-Z0-9]/g, "_");
+            if (uData[safeNameKey] && uData[safeNameKey].testsGiven) {
+                finalCount = uData[safeNameKey].testsGiven;
+            } else {
+                finalCount = calAttempts;
+            }
+        }
         document.getElementById('valTests').innerText = finalCount;
         
-        // Rank
+        // 4. RANK
         let lb = Object.keys(userMap).map(k => ({ name: k, avg: userMap[k].s/userMap[k].c })).sort((a,b) => b.avg - a.avg);
         let myRank = lb.findIndex(u => u.name === currentUser) + 1;
         document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
@@ -302,7 +348,7 @@ async function fetchData(user) {
         renderLeaderboard(lb);
         renderCharts();
 
-        // Save Tests Global & Render
+        // 5. RENDER TESTS
         allTestsData = testsSnap.val() ? Object.values(testsSnap.val()) : [];
         filterTests('all', document.querySelector('.filter-btn.active')); 
 
@@ -312,15 +358,13 @@ async function fetchData(user) {
     } catch(e) { console.error(e); }
 }
 
-/* --- ADVANCED FILTER LOGIC (NEW) --- */
+/* --- FILTER LOGIC --- */
 function filterTests(category, btnElement) {
-    // 1. Update Buttons
     if(btnElement) {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btnElement.classList.add('active');
     }
 
-    // 2. Filter Logic
     let filtered = [];
     if(category === 'all') {
         filtered = allTestsData;
@@ -330,39 +374,24 @@ function filterTests(category, btnElement) {
             let cat = (t.category || "").toLowerCase();
             let key = category.toLowerCase();
             
-            // SMART MATCHING
-            if(key === 'full mock') {
-                return title.includes('mock') || title.includes('full') || cat === 'full mock';
-            }
-            if(key === 'reasoning') {
-                return title.includes('reas') || title.includes('logic') || title.includes('reasoning') || cat.includes('reasoning');
-            }
-            if(key === 'gk') {
-                return title.includes('gk') || title.includes('general') || title.includes('ga') || cat.includes('gk');
-            }
-            if(key === 'maths') {
-                return title.includes('math') || title.includes('quant') || title.includes('numerical') || cat.includes('math');
-            }
-            if(key === 'english') {
-                return title.includes('eng') || title.includes('english') || cat.includes('english');
-            }
-            if(key === 'hindi') {
-                return title.includes('hindi') || cat.includes('hindi');
-            }
-            if(key === 'computer') {
-                return title.includes('comp') || title.includes('computer') || cat.includes('computer');
-            }
+            if(key === 'full mock') return title.includes('mock') || title.includes('full') || cat === 'full mock';
+            if(key === 'reasoning') return title.includes('reas') || title.includes('logic') || cat.includes('reasoning');
+            if(key === 'gk') return title.includes('gk') || title.includes('general') || cat.includes('gk');
+            if(key === 'maths') return title.includes('math') || title.includes('quant') || cat.includes('math');
+            if(key === 'english') return title.includes('eng') || title.includes('english') || cat.includes('english');
+            if(key === 'hindi') return title.includes('hindi') || cat.includes('hindi');
+            if(key === 'computer') return title.includes('comp') || title.includes('computer') || cat.includes('computer');
             return false;
         });
     }
     renderTests(filtered);
 }
 
-/* --- RENDER TESTS --- */
 function renderTests(tests) {
     let html = "";
     tests.reverse().forEach((t) => {
         let isLocked = t.type === 'pro' && !isPro;
+        // Fix for undefined marks
         let displayMarks = t.marks || t.qs || '20'; 
 
         let btnColor = isLocked ? 'var(--tb-orange)' : 'var(--tb-blue)';
