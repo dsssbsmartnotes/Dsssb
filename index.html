@@ -33,33 +33,28 @@ body.dark-mode {
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg-app); color: var(--text-main); padding-bottom: var(--nav-height); transition: background 0.3s, color 0.3s; }
 
-/* --- ANNOUNCEMENT BAR --- */
-.announcement-bar {
-    background: linear-gradient(90deg, #ffedd5, #ffe4e6);
-    color: #9a3412; padding: 8px 15px; font-size: 12px; font-weight: 600;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-body.dark-mode .announcement-bar { background: linear-gradient(90deg, #451a03, #4c0519); color: #fdba74; border-bottom: 1px solid #333; }
-
-/* --- HEADER --- */
+/* --- HEADER with Back Button --- */
 .hero-header { 
     background: linear-gradient(135deg, var(--tb-blue), #0f5bd1); 
     padding: 25px 20px 50px; color: white; 
     border-radius: 0 0 35px 35px; position: relative; 
     box-shadow: 0 10px 20px rgba(2, 102, 253, 0.2);
+    transition: all 0.3s ease;
 }
 .top-nav { display: flex; justify-content: space-between; align-items: center; }
 .brand { font-weight: 800; font-size: 20px; letter-spacing: 0.5px; display:flex; align-items:center; gap:8px;}
 
-/* Theme Toggle */
+.back-btn {
+    background: rgba(255,255,255,0.2); border: none; color: white;
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: none; place-items: center; font-size: 16px; margin-right: 10px;
+}
+
 .theme-switch { 
     background: rgba(255,255,255,0.2); border: none; color: white; 
     width: 36px; height: 36px; border-radius: 50%; cursor: pointer; 
     display: grid; place-items: center; font-size: 16px; transition: 0.2s;
 }
-.theme-switch:active { transform: scale(0.9); }
-
 .pro-badge { 
     background: linear-gradient(90deg, #fbbf24, #d97706); 
     padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; 
@@ -71,26 +66,22 @@ body.dark-mode .announcement-bar { background: linear-gradient(90deg, #451a03, #
 .tab-content.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- STATS GRID --- */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: -40px; position: relative; z-index: 5; margin-bottom: 25px; }
-.stat-card { 
-    background: var(--card-bg); padding: 15px; border-radius: 18px; 
-    box-shadow: var(--shadow-card); text-align: center; border: 1px solid var(--border-light); 
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+/* --- FILTERS (SCROLLABLE) --- */
+.filter-container {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px;
+    scrollbar-width: none; -ms-overflow-style: none; /* Hide scrollbar */
 }
-.stat-icon { font-size: 24px; margin-bottom: 5px; }
-.stat-val { font-size: 22px; font-weight: 800; margin-top: 2px; }
-.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+.filter-container::-webkit-scrollbar { display: none; }
 
-/* --- CHARTS --- */
-.section-header { 
-    display: flex; justify-content: space-between; align-items: center; 
-    margin: 25px 0 15px; 
+.filter-btn {
+    background: var(--card-bg); border: 1px solid var(--border-light);
+    padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: 0.2s;
+    flex-shrink: 0; /* Prevent shrinking */
 }
-.section-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-.chart-container { 
-    background: var(--card-bg); padding: 15px; border-radius: 20px; 
-    border: 1px solid var(--border-light); box-shadow: var(--shadow-card); margin-bottom: 20px; 
+.filter-btn.active {
+    background: var(--tb-blue); color: white; border-color: var(--tb-blue);
+    box-shadow: 0 4px 10px rgba(2, 102, 253, 0.3);
 }
 
 /* --- TESTS LIST --- */
@@ -109,65 +100,41 @@ body.dark-mode .announcement-bar { background: linear-gradient(90deg, #451a03, #
 .tag { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 700; }
 .tag-pro { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; }
 .tag-new { background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
-
 .t-meta { display: flex; gap: 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 15px; font-weight: 500; }
-.t-meta i { color: var(--tb-blue); width: 15px; }
-
 .btn-start { 
     background: var(--tb-blue); color: white; border: none; padding: 12px; 
     border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; 
     display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 14px;
 }
-.btn-locked { background: var(--tb-orange); color: white; }
 
-/* --- LEADERBOARD --- */
-.rank-item { 
-    display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; 
-    border-bottom: 1px solid var(--border-light); 
-}
-.rank-item:last-child { border-bottom: none; }
-.rank-left { display: flex; gap: 12px; align-items: center; }
-.rank-pos { 
-    width: 28px; height: 28px; background: var(--bg-app); border-radius: 50%; 
-    display: grid; place-items: center; font-weight: 700; font-size: 12px; color: var(--text-muted);
-}
-.rank-pos.top-1 { background: #fef3c7; color: #d97706; }
-.rank-pos.top-2 { background: #f3f4f6; color: #4b5563; }
-.rank-pos.top-3 { background: #ffedd5; color: #9a3412; }
+/* --- STATS & CHARTS --- */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: -40px; position: relative; z-index: 5; margin-bottom: 25px; }
+.stat-card { background: var(--card-bg); padding: 15px; border-radius: 18px; box-shadow: var(--shadow-card); text-align: center; border: 1px solid var(--border-light); }
+.stat-val { font-size: 22px; font-weight: 800; margin-top: 2px; }
+.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+.chart-container { background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-card); margin-bottom: 20px; }
 
 /* --- BOTTOM NAV --- */
-.bottom-nav { 
-    position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-height); 
-    background: var(--card-bg); display: flex; justify-content: space-around; align-items: center; 
-    border-top: 1px solid var(--border-light); box-shadow: 0 -5px 20px rgba(0,0,0,0.05); 
-    z-index: 1000; padding-bottom: env(safe-area-inset-bottom); 
-}
-.nav-item { 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    color: var(--text-muted); font-size: 11px; font-weight: 600; width: 70px; cursor: pointer; 
-    transition: 0.2s; opacity: 0.7;
-}
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-height); background: var(--card-bg); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-light); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+.nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; font-weight: 600; width: 70px; cursor: pointer; opacity: 0.7; }
 .nav-icon { font-size: 20px; margin-bottom: 6px; }
 .nav-item.active { color: var(--tb-blue); opacity: 1; transform: translateY(-2px); }
 
-/* --- LOADING --- */
+/* --- LEADERBOARD --- */
+.rank-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-light); }
+.rank-pos { width: 28px; height: 28px; background: var(--bg-app); border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: var(--text-muted); }
+.rank-pos.top-1 { background: #fef3c7; color: #d97706; }
+
+/* --- LOADER --- */
+#loader { padding: 20px; }
 .skeleton { background: linear-gradient(90deg, var(--card-bg) 25%, var(--border-light) 50%, var(--card-bg) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 12px; height: 100px; margin-bottom: 15px; }
 @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-#loader { padding: 20px; }
 </style>
 </head>
 <body>
 
-<div class="announcement-bar" id="announcement" style="display:none;">
-    <i class="fas fa-bullhorn"></i> <span id="annText">Welcome to the new Pro Dashboard!</span>
-</div>
-
 <div id="loader">
     <div class="skeleton" style="height: 160px; border-radius: 0 0 30px 30px;"></div>
-    <div style="display:flex; gap:15px; margin-top:-30px; padding:0 20px;">
-        <div class="skeleton" style="height: 100px; flex:1;"></div>
-        <div class="skeleton" style="height: 100px; flex:1;"></div>
-    </div>
     <div class="skeleton" style="height: 250px; margin: 20px;"></div>
 </div>
 
@@ -175,11 +142,14 @@ body.dark-mode .announcement-bar { background: linear-gradient(90deg, #451a03, #
     
     <div class="hero-header">
         <div class="top-nav">
-            <div class="brand">
-                <i class="fas fa-graduation-cap"></i> DSSSB Portal
+            <div style="display:flex; align-items:center;">
+                <button id="backBtn" class="back-btn" onclick="goHome()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="brand"><i class="fas fa-graduation-cap"></i> DSSSB Portal</div>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
-                <span id="badgePro" class="pro-badge" style="display:none;">PRO MEMBER</span>
+                <span id="badgePro" class="pro-badge" style="display:none;">PRO</span>
                 <button class="theme-switch" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
             </div>
         </div>
@@ -192,293 +162,254 @@ body.dark-mode .announcement-bar { background: linear-gradient(90deg, #451a03, #
     <div id="tab-home" class="tab-content active">
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">🏆</div>
-                <div class="stat-val" id="valRank">--</div>
-                <div class="stat-label">Global Rank</div>
+                <div class="stat-icon">🏆</div><div class="stat-val" id="valRank">--</div><div class="stat-label">Global Rank</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🔥</div>
-                <div class="stat-val" id="valTests">0</div>
-                <div class="stat-label">Tests Given</div>
+                <div class="stat-icon">🔥</div><div class="stat-val" id="valTests">0</div><div class="stat-label">Tests Given</div>
             </div>
         </div>
-
-        <div class="section-header">
-            <div class="section-title">🚀 Performance Analysis</div>
-            <span style="font-size: 12px; color: var(--tb-blue); font-weight: 600;">Last 5 Tests</span>
-        </div>
-        
-        <div class="chart-container" style="position: relative; height: 260px;">
-            <canvas id="radarChart"></canvas>
-        </div>
-
-        <div class="section-header">
-            <div class="section-title">📈 Growth Curve</div>
-        </div>
-        <div class="chart-container" style="height: 200px;">
-            <canvas id="lineChart"></canvas>
-        </div>
+        <div class="chart-container" style="height: 260px;"><canvas id="radarChart"></canvas></div>
+        <div class="chart-container" style="height: 200px;"><canvas id="lineChart"></canvas></div>
     </div>
 
     <div id="tab-tests" class="tab-content" style="padding-top: 20px;">
         <h2 style="margin-bottom: 20px;">📚 Mock Test Library</h2>
         
-        <div style="display:flex; gap:10px; overflow-x:auto; padding-bottom:15px; margin-bottom:5px;">
-            <span style="background:var(--tb-blue); color:white; padding:6px 15px; border-radius:20px; font-size:12px; font-weight:700;">All</span>
-            <span style="background:var(--card-bg); border:1px solid var(--border-light); padding:6px 15px; border-radius:20px; font-size:12px; font-weight:600; color:var(--text-muted);">Full Mock</span>
-            <span style="background:var(--card-bg); border:1px solid var(--border-light); padding:6px 15px; border-radius:20px; font-size:12px; font-weight:600; color:var(--text-muted);">Sectional</span>
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterTests('all', this)">All</button>
+            <button class="filter-btn" onclick="filterTests('Full Mock', this)">Full Mock</button>
+            <button class="filter-btn" onclick="filterTests('Reasoning', this)">Reasoning</button>
+            <button class="filter-btn" onclick="filterTests('GK', this)">GK</button>
+            <button class="filter-btn" onclick="filterTests('Maths', this)">Maths</button>
+            <button class="filter-btn" onclick="filterTests('English', this)">English</button>
+            <button class="filter-btn" onclick="filterTests('Hindi', this)">Hindi</button>
+            <button class="filter-btn" onclick="filterTests('Computer', this)">Computer</button>
         </div>
 
         <div id="testList"></div>
     </div>
 
     <div id="tab-rank" class="tab-content" style="padding-top: 20px;">
-        <div class="section-header">
-            <h2 style="margin-bottom: 0;">🏆 Top Performers</h2>
-            <span style="font-size: 12px; color: var(--text-muted);">Live Updates</span>
-        </div>
-        
-        <div class="chart-container" id="leaderboardList" style="padding: 0; overflow: hidden;">
-            <p style="text-align:center; padding: 30px; color: var(--text-muted);">Fetching Data...</p>
-        </div>
+        <h2 style="margin-bottom: 15px;">🏆 Live Leaderboard</h2>
+        <div class="chart-container" id="leaderboardList" style="padding: 0;"></div>
     </div>
 
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('home', this)">
-        <div class="nav-icon"><i class="fas fa-home"></i></div>
-        <span>Home</span>
+    <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+        <div class="nav-icon"><i class="fas fa-home"></i></div><span>Home</span>
     </div>
-    <div class="nav-item" onclick="switchTab('tests', this)">
-        <div class="nav-icon"><i class="fas fa-file-alt"></i></div>
-        <span>Tests</span>
+    <div class="nav-item" id="nav-tests" onclick="switchTab('tests')">
+        <div class="nav-icon"><i class="fas fa-file-alt"></i></div><span>Tests</span>
     </div>
-    <div class="nav-item" onclick="switchTab('rank', this)">
-        <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
-        <span>Ranks</span>
+    <div class="nav-item" id="nav-rank" onclick="switchTab('rank')">
+        <div class="nav-icon"><i class="fas fa-chart-line"></i></div><span>Ranks</span>
     </div>
 </div>
 
 <script>
-/* =========================
-   CONFIGURATION & INIT
-   ========================= */
-const firebaseConfig = { 
-    apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", 
-    authDomain: "dsssbexamportal.firebaseapp.com", 
-    databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", 
-    projectId: "dsssbexamportal", 
-    storageBucket: "dsssbexamportal.firebasestorage.app", 
-    messagingSenderId: "853373171134", 
-    appId: "1:853373171134:web:77b967374e6f34311af5ef" 
-};
-
+/* CONFIG */
+const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* --- STATE --- */
 let currentUser = "Student";
 let isPro = false;
 let myScores = [];
-let takenTests = new Set(); 
+let allTestsData = []; // Store tests globally for filtering
 
-/* --- STARTUP LOGIC --- */
 window.onload = function() {
-    // 1. Theme Check
     const savedTheme = localStorage.getItem('theme');
     if(savedTheme === 'dark') document.body.classList.add('dark-mode');
     
-    // 2. Telegram Auth & Name Handling
     if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        
+        const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !savedTheme) document.body.classList.add('dark-mode');
-        
         if(tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            
-            // 🔥 FIX 1: Full Name Logic (Test file se match karne ke liye)
             currentUser = u.first_name + (u.last_name ? " " + u.last_name : "");
-            
             document.getElementById('uName').innerText = currentUser;
             fetchData(u);
-        } else {
-            fetchData({username: "test_user"}); 
-        }
-    } else {
-        fetchData({username: "test_user"}); 
-    }
+        } else fetchData({username: "test"});
+    } else fetchData({username: "test"});
 };
 
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 }
 
-function switchTab(tabId, el) {
+/* --- NAVIGATION & BACK BUTTON --- */
+function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
+    
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    el.classList.add('active');
+    document.getElementById('nav-' + tabId).classList.add('active');
+
+    // Show Back Button if NOT on Home
+    const backBtn = document.getElementById('backBtn');
+    if(tabId === 'home') backBtn.style.display = 'none';
+    else backBtn.style.display = 'grid';
 }
 
-/* --- MAIN DATA FETCHING --- */
+function goHome() {
+    switchTab('home');
+}
+
+/* --- DATA FETCH --- */
 async function fetchData(user) {
     try {
-        // 🔥 FIX 2: Added 'users' node to fetch list
-        const [testsSnap, resultsSnap, proSnap, bannerSnap, usersSnap] = await Promise.all([
+        const [testsSnap, resultsSnap, proSnap, usersSnap] = await Promise.all([
             db.ref("dsssb_tests_db").once("value"),
             db.ref("dsssb_results_live").once("value"),
             db.ref("dsssb_pro_users").once("value"),
-            db.ref("dsssb_config/banner").once("value"),
-            db.ref("users").once("value") 
+            db.ref("users").once("value")
         ]);
 
-        // 1. Banner
-        if(bannerSnap.exists()) {
-            document.getElementById('announcement').style.display = 'flex';
-            document.getElementById('annText').innerText = bannerSnap.val();
-        }
-
-        // 2. Pro Check
+        // Pro Check
         if(proSnap.exists()) {
-            let tgUsername = (user.username || "").toLowerCase().trim();
-            let tgId = (user.id || "").toString();
+            let tgUser = (user.username||"").toLowerCase();
+            let tgId = (user.id||"").toString();
             proSnap.forEach(c => {
-                let data = c.val();
-                let dbValue = (typeof data === 'object') ? (data.uid || data.username || data.id || "") : data;
-                let cleanDbValue = dbValue.toString().toLowerCase().replace("@", "").trim();
-                if(cleanDbValue && (cleanDbValue === tgUsername || cleanDbValue === tgId)) {
-                    isPro = true;
-                }
+                let d = c.val(); let val = (typeof d==='object' ? (d.username||d.id||"") : d).toString().toLowerCase().replace("@","");
+                if(val === tgUser || val === tgId) isPro = true;
             });
         }
         if(isPro) document.getElementById('badgePro').style.display = 'inline-block';
 
-        // 3. Results Processing (Graph ke liye)
+        // Stats
         const results = resultsSnap.val() || {};
-        let userMap = {};
-        let calculatedAttempts = 0; // Backup count
-
+        let userMap = {}; let calAttempts = 0;
         Object.values(results).forEach(r => {
-            if(!userMap[r.name]) userMap[r.name] = { score: 0, count: 0 };
-            userMap[r.name].score += r.score;
-            userMap[r.name].count++;
-
-            // Check using the FIXED Full Name
-            if(r.name === currentUser) {
-                myScores.push(r.score);
-                calculatedAttempts++;
-                if(r.testId) takenTests.add(r.testId); 
-            }
+            if(!userMap[r.name]) userMap[r.name] = { s: 0, c: 0 };
+            userMap[r.name].s += r.score; userMap[r.name].c++;
+            if(r.name === currentUser) { myScores.push(r.score); calAttempts++; }
         });
 
-        // 🔥 FIX 3: Fetch Exact 'Tests Given' Count from Database
-        // Name ko safe key banate hain (Spaces ko underscore karke)
+        // Exact Test Count
         let safeKey = currentUser.replace(/[^a-zA-Z0-9]/g, "_");
-        let usersData = usersSnap.val() || {};
-        let myUserNode = usersData[safeKey]; // Database mein dhoondo
+        let uData = usersSnap.val() || {};
+        let finalCount = (uData[safeKey] && uData[safeKey].testsGiven) ? uData[safeKey].testsGiven : calAttempts;
+        document.getElementById('valTests').innerText = finalCount;
         
-        let finalTestCount = calculatedAttempts; // Default fallback
-        if(myUserNode && myUserNode.testsGiven) {
-            finalTestCount = myUserNode.testsGiven; // Agar DB mein count hai to wahi use karo
-        }
-
-        // Update UI
-        document.getElementById('valRank').innerText = calculateRank(userMap);
-        document.getElementById('valTests').innerText = finalTestCount;
-
-        renderLeaderboard(Object.keys(userMap).map(k => ({ name: k, avg: userMap[k].score / userMap[k].count })).sort((a,b) => b.avg - a.avg));
+        // Rank
+        let lb = Object.keys(userMap).map(k => ({ name: k, avg: userMap[k].s/userMap[k].c })).sort((a,b) => b.avg - a.avg);
+        let myRank = lb.findIndex(u => u.name === currentUser) + 1;
+        document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
+        
+        renderLeaderboard(lb);
         renderCharts();
 
-        // 4. Render Tests
-        const tests = testsSnap.val() ? Object.values(testsSnap.val()) : [];
-        renderTests(tests);
+        // Save Tests Global & Render
+        allTestsData = testsSnap.val() ? Object.values(testsSnap.val()) : [];
+        filterTests('all', document.querySelector('.filter-btn.active')); 
 
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
 
-    } catch(e) { console.error("Data Load Error:", e); }
+    } catch(e) { console.error(e); }
 }
 
-function calculateRank(userMap) {
-    let leaderboard = Object.keys(userMap).map(k => ({ 
-        name: k, avg: userMap[k].score / userMap[k].count 
-    })).sort((a,b) => b.avg - a.avg);
-    let myRank = leaderboard.findIndex(u => u.name === currentUser) + 1;
-    return myRank > 0 ? `#${myRank}` : '--';
+/* --- ADVANCED FILTER LOGIC (NEW) --- */
+function filterTests(category, btnElement) {
+    // 1. Update Buttons
+    if(btnElement) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+
+    // 2. Filter Logic
+    let filtered = [];
+    if(category === 'all') {
+        filtered = allTestsData;
+    } else {
+        filtered = allTestsData.filter(t => {
+            let title = (t.title || "").toLowerCase();
+            let cat = (t.category || "").toLowerCase();
+            let key = category.toLowerCase();
+            
+            // SMART MATCHING
+            if(key === 'full mock') {
+                return title.includes('mock') || title.includes('full') || cat === 'full mock';
+            }
+            if(key === 'reasoning') {
+                return title.includes('reas') || title.includes('logic') || title.includes('reasoning') || cat.includes('reasoning');
+            }
+            if(key === 'gk') {
+                return title.includes('gk') || title.includes('general') || title.includes('ga') || cat.includes('gk');
+            }
+            if(key === 'maths') {
+                return title.includes('math') || title.includes('quant') || title.includes('numerical') || cat.includes('math');
+            }
+            if(key === 'english') {
+                return title.includes('eng') || title.includes('english') || cat.includes('english');
+            }
+            if(key === 'hindi') {
+                return title.includes('hindi') || cat.includes('hindi');
+            }
+            if(key === 'computer') {
+                return title.includes('comp') || title.includes('computer') || cat.includes('computer');
+            }
+            return false;
+        });
+    }
+    renderTests(filtered);
 }
 
+/* --- RENDER TESTS --- */
 function renderTests(tests) {
     let html = "";
-    // Reverse array to show newest first
-    tests.reverse().forEach((t, i) => {
+    tests.reverse().forEach((t) => {
         let isLocked = t.type === 'pro' && !isPro;
-        let isTaken = takenTests.has(t.id); // Check if previously taken
-        
+        let displayMarks = t.marks || t.qs || '20'; 
+
         let btnColor = isLocked ? 'var(--tb-orange)' : 'var(--tb-blue)';
-        let btnTxt = isLocked ? '<i class="fas fa-lock"></i> Unlock PRO' : '<i class="fas fa-play"></i> Start Now';
-        
-        // If locked, redirect to Telegram Channel
+        let btnTxt = isLocked ? '<i class="fas fa-lock"></i> PRO' : 'Start';
         let action = isLocked ? "window.open('https://t.me/DSSSBRank')" : `window.location.href='${t.url}'`;
 
         html += `
         <div class="test-card ${isLocked ? 'locked' : ''}">
             <div class="t-head">
                 <div class="t-title">${t.title}</div>
-                <div class="t-tags">
-                    ${t.type==='pro' ? '<span class="tag tag-pro">PRO</span>' : '<span class="tag tag-new">FREE</span>'}
-                </div>
+                <div class="t-tags">${t.type==='pro'?'<span class="tag tag-pro">PRO</span>':'<span class="tag tag-new">FREE</span>'}</div>
             </div>
             <div class="t-meta">
                 <span><i class="far fa-clock"></i> ${t.time}m</span>
                 <span><i class="far fa-file-alt"></i> ${t.qs} Qs</span>
-                <span><i class="fas fa-bullseye"></i> ${t.marks} Marks</span>
+                <span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span>
             </div>
-            <button class="btn-start" style="background:${btnColor}" onclick="${action}">
-                ${btnTxt}
-            </button>
+            <button class="btn-start" style="background:${btnColor}" onclick="${action}">${btnTxt}</button>
         </div>`;
     });
-    document.getElementById('testList').innerHTML = html || "<p style='text-align:center; padding:20px; color:var(--text-muted);'>No tests available right now.</p>";
+    document.getElementById('testList').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No tests found in this category.</div>";
 }
 
 function renderLeaderboard(list) {
     let html = "";
     list.slice(0, 10).forEach((u, i) => {
-        let rankClass = i === 0 ? 'top-1' : (i === 1 ? 'top-2' : (i === 2 ? 'top-3' : ''));
-        html += `
-        <div class="rank-item">
-            <div class="rank-left">
-                <div class="rank-pos ${rankClass}">${i+1}</div>
-                <span>${u.name} ${u.name===currentUser?'<span style="font-size:10px; color:var(--tb-blue); font-weight:bold;">(You)</span>':''}</span>
+        html += `<div class="rank-item">
+            <div style="display:flex; gap:10px; align-items:center;">
+                <div class="rank-pos ${i===0?'top-1':''}">${i+1}</div>
+                <span>${u.name} ${u.name===currentUser?'<b style="color:var(--tb-blue)">(You)</b>':''}</span>
             </div>
-            <span style="font-weight:700; color:var(--text-main);">${u.avg.toFixed(1)}</span>
+            <b>${u.avg.toFixed(1)}</b>
         </div>`;
     });
     document.getElementById('leaderboardList').innerHTML = html;
 }
 
 function renderCharts() {
-    new Chart(document.getElementById('radarChart').getContext('2d'), {
+    new Chart(document.getElementById('radarChart'), {
         type: 'radar',
-        data: {
-            labels: ['Maths', 'English', 'Hindi', 'GK', 'Reasoning'],
-            datasets: [{ label: 'Performance', data: [65, 80, 90, 55, 75], backgroundColor: 'rgba(2, 102, 253, 0.2)', borderColor: '#0266fd', borderWidth: 2 }]
-        },
-        options: { maintainAspectRatio: false, scales: { r: { ticks: { display: false } } }, plugins: { legend: { display: false } } }
+        data: { labels: ['Math', 'Eng', 'Hin', 'GK', 'Reas'], datasets: [{ data: [65,80,90,55,75], backgroundColor: 'rgba(2,102,253,0.2)', borderColor: '#0266fd', borderWidth: 2 }] },
+        options: { plugins: { legend: { display: false } }, scales: { r: { ticks: { display: false } } }, maintainAspectRatio: false }
     });
-
-    new Chart(document.getElementById('lineChart').getContext('2d'), {
+    new Chart(document.getElementById('lineChart'), {
         type: 'line',
-        data: {
-            labels: myScores.map((_, i) => `T${i+1}`),
-            datasets: [{ label: 'Score', data: myScores, borderColor: '#00b973', backgroundColor: 'rgba(0, 185, 115, 0.1)', tension: 0.4, fill: true, borderWidth: 2 }]
-        },
-        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+        data: { labels: myScores.map((_, i) => `T${i+1}`), datasets: [{ data: myScores, borderColor: '#00b973', backgroundColor: 'rgba(0,185,115,0.1)', fill: true, tension: 0.4 }] },
+        options: { plugins: { legend: { display: false } }, scales: { x: { display: false } }, maintainAspectRatio: false }
     });
 }
 </script>
