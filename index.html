@@ -639,40 +639,6 @@ function renderCharts() {
         options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { display:false, max: 100 }, y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } }, maintainAspectRatio: false }
     });
 }
-// PWA Installation Logic
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => { 
-    e.preventDefault(); 
-    deferredPrompt = e; 
-    // Button dikhayein
-    document.getElementById('installBtn').style.display = 'grid'; 
-});
-
-// Naya aur Advanced Install Function
-async function installApp() { 
-    if(deferredPrompt) { 
-        // Agar pehle se Chrome me hai, toh direct Popup aayega
-        deferredPrompt.prompt(); 
-        deferredPrompt = null; 
-        document.getElementById('installBtn').style.display='none'; 
-    } 
-    else if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
-        // TELEGRAM MAGIC: Agar Telegram me hai, toh ye code usko force Chrome me bhej dega!
-        window.Telegram.WebApp.openLink(window.location.href);
-    } 
-    else {
-        alert("App install karne ke liye browser ki settings (⋮) me jaakar 'Add to Home Screen' par click karein.");
-    }
-}
-
-// Telegram me button hamesha dikhane ke liye
-setTimeout(() => {
-    if(document.getElementById('installBtn').style.display === 'none') {
-        document.getElementById('installBtn').style.display = 'grid';
-    }
-}, 3000);
-    
 </script>
 </body>
 </html>
