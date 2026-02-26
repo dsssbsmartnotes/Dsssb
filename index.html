@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DSSSB Smart Notes - Pro Portal</title>
+<title>DSSSB Smart Notes - Student Portal</title>
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-// Dynamic Manifest
 const manifest = {
     "name": "DSSSB Pro Portal",
     "short_name": "DSSSB Rank",
@@ -33,7 +32,7 @@ document.querySelector('#manifest-placeholder').setAttribute('href', URL.createO
 </script>
 
 <style>
-/* --- 1. THEME VARIABLES --- */
+/* --- THEME VARIABLES --- */
 :root {
     --primary: #4f46e5; --primary-light: #e0e7ff;
     --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
@@ -51,7 +50,7 @@ body.dark-mode {
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(--nav-height); transition: 0.3s; }
 
-/* --- 2. HEADER & PROFILE --- */
+/* --- HEADER & PROFILE --- */
 .hero-header { background: var(--bg-card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .user-profile { display: flex; align-items: center; gap: 12px; }
 .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 18px; border: 2px solid var(--primary); overflow: hidden; }
@@ -61,71 +60,60 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .tools { display: flex; gap: 8px; align-items: center; }
 .tool-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); display: grid; place-items: center; cursor: pointer; transition: 0.2s; }
 .pro-badge-header { background: linear-gradient(90deg, #FFD700, #FFA500); color: #000; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 11px; display: none; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3); border: 1px solid #eab308; white-space: nowrap; }
+.buy-pro-btn { background: #dcfce7; color: #16a34a; font-weight: 800; padding: 6px 12px; border-radius: 20px; font-size: 11px; border: 1px solid #16a34a; cursor: pointer; animation: pulse 2s infinite; }
 
-/* --- 3. HOME DASHBOARD --- */
+/* --- HOME WIDGETS --- */
 .countdown-box { background: linear-gradient(90deg, #1e293b, #0f172a); color: white; padding: 10px 20px; margin: 15px 20px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 .cd-timer { font-size: 16px; font-weight: 800; color: #fbbf24; }
-
 .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px 20px 0; }
 .action-item { background: var(--bg-card); padding: 10px; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
 .action-item i { font-size: 18px; color: var(--primary); }
 .action-item span { font-size: 10px; font-weight: 600; color: var(--text-muted); }
-
 .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 15px 20px; }
 .stat-card { background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
 .stat-val { font-size: 18px; font-weight: 900; color: var(--primary); margin: 4px 0; }
 .stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-.fire-anim { animation: burn 0.5s alternate infinite; color: #f97316; }
-@keyframes burn { from { transform: scale(1); } to { transform: scale(1.2); } }
 
-/* --- 4. BADGES & QOD --- */
+/* --- BADGES & QOD --- */
 .badge-section { padding: 0 20px; margin-bottom: 20px; }
 .badge-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
 .badge-item { min-width: 80px; background: var(--bg-card); border: 1px solid var(--border); padding: 10px; border-radius: 12px; text-align: center; opacity: 0.5; filter: grayscale(1); transition: 0.3s; }
 .badge-item.unlocked { opacity: 1; filter: grayscale(0); border-color: #fbbf24; background: linear-gradient(180deg, var(--bg-card), #fffbeb); }
 .badge-icon { font-size: 24px; margin-bottom: 5px; display: block; }
 .badge-name { font-size: 10px; font-weight: 700; }
-
 .qod-card { background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%); border: 1px solid #fed7aa; border-radius: 16px; padding: 15px; margin: 0 20px 20px; box-shadow: 0 4px 10px rgba(251, 146, 60, 0.1); }
 .dark-mode .qod-card { background: #2a1b0d; border-color: #431407; }
-.qod-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .qod-tag { background: #f97316; color: white; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-.qod-text { font-weight: 700; font-size: 14px; margin-bottom: 12px; line-height: 1.4; }
-.qod-options { display: grid; gap: 8px; }
-.qod-opt { padding: 10px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; text-align: center; font-weight: 600; }
+.qod-opt { padding: 10px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; font-size: 13px; cursor: pointer; text-align: center; font-weight: 600; margin-bottom:5px; }
 .dark-mode .qod-opt { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); }
 .qod-opt.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #16a34a; }
 .qod-opt.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #dc2626; }
 
-/* --- 5. LISTS & CARDS --- */
+/* --- CONTENT LISTS --- */
 .list-container { padding: 0 20px; }
 .search-box { background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
 .search-box input { border: none; background: transparent; width: 100%; font-size: 14px; color: var(--text-main); outline: none; }
 .filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; }
-.filter-pill { padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap; transition: 0.2s; cursor: pointer; }
+.filter-pill { padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap; cursor: pointer; }
 .filter-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
 .test-card, .note-card, .video-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; position: relative; overflow: hidden; }
-.test-card { padding: 15px; } 
-.note-card { padding: 15px; }
+.test-card, .note-card { padding: 15px; } 
 .video-card { padding: 0; cursor: pointer; }
 .test-card.locked::after { content: "🔒 PRO"; position: absolute; top: 10px; right: 10px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; }
 .t-title { font-weight: 700; font-size: 15px; margin-bottom: 5px; }
 .t-info { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
-.start-btn, .download-btn { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+.start-btn, .download-btn { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; margin-top:5px;}
 .start-btn.locked { background: #fee2e2; color: #ef4444; }
 .download-btn { background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); }
 
 .vid-thumb { width: 100%; height: 160px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
 .vid-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-.play-icon { position: absolute; font-size: 40px; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 .vid-content { padding: 12px; }
-.vid-tag { font-size: 10px; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-bottom: 5px; display: inline-block; }
-.vid-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
 
-/* --- 6. STUDY TABS & SYLLABUS --- */
+/* --- STUDY & SYLLABUS --- */
 .segment-control { display: flex; background: var(--bg-body); padding: 5px; border-radius: 12px; margin: 0 20px 15px; border: 1px solid var(--border); }
-.segment-btn { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+.segment-btn { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 8px; color: var(--text-muted); cursor: pointer; }
 .segment-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
 .syllabus-container { padding: 20px; }
@@ -139,38 +127,73 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .topic-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
 .topic-chk { width: 18px; height: 18px; accent-color: var(--primary); }
 
-/* --- 7. MISC --- */
+/* --- MISC & MODALS --- */
 .news-container { background: linear-gradient(90deg, #4f46e5, #7c3aed); color: white; padding: 8px 15px; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; }
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; outline:none; }
 .nav-bar { position: fixed; bottom: 0; width: 100%; height: var(--nav-height); background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-.nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; transition: 0.2s; cursor: pointer; }
+.nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; cursor: pointer; }
 .nav-item i { font-size: 18px; margin-bottom: 3px; display: block; }
 .nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-2px); }
 .chart-box { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin: 0 20px 20px; }
 .rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+
+/* Maintenance Overlay */
+#maintenanceScreen { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
+
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 </style>
 </head>
 <body>
+
+<div id="maintenanceScreen">
+    <i class="fas fa-tools fa-4x" style="color:var(--primary); margin-bottom:20px;"></i>
+    <h1 style="font-weight:800; margin-bottom:10px;">App is under Maintenance!</h1>
+    <p style="color:grey; font-size:14px;">We are updating the portal with new tests and features. Please check back shortly.</p>
+</div>
 
 <div class="news-container" id="newsSection" style="display:none;">
     <span>📢</span> <marquee id="newsText">Welcome to DSSSB Smart Notes Portal!</marquee>
 </div>
 
-<div id="loader" style="padding: 50px; text-align: center; color: grey;">
-    <i class="fas fa-circle-notch fa-spin fa-2x"></i><p style="margin-top: 10px;">Loading...</p>
+<div id="alertModal" class="modal" style="z-index: 3000;">
+    <div class="modal-content" style="text-align:center;">
+        <i class="fas fa-bell fa-3x" style="color:#ef4444; margin-bottom:15px; animation: pulse 1s infinite;"></i>
+        <h2 style="margin-bottom:10px;">New Announcement!</h2>
+        <p id="alertMsgText" style="font-size:14px; margin-bottom:20px; font-weight:600;"></p>
+        <button onclick="document.getElementById('alertModal').style.display='none'" class="start-btn">Got it</button>
+    </div>
+</div>
+
+<div id="paymentModal" class="modal">
+    <div class="modal-content" style="text-align:center;">
+        <h2 style="color:var(--primary); margin-bottom:5px;">💎 Upgrade to Pro</h2>
+        <p style="font-size:12px; color:grey; margin-bottom:15px;">Unlock all Tests, Videos & Notes!</p>
+        <div style="background:white; padding:10px; display:inline-block; border:1px solid #ddd; border-radius:10px; margin-bottom:15px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=YOUR_UPI_ID@bank&pn=DSSSB_Pro&am=99" style="width:150px;">
+        </div>
+        <p style="font-weight:800; font-size:20px; margin-bottom:5px;">₹99 Only</p>
+        <p style="font-size:11px; color:red; margin-bottom:10px;">Pay via QR & Enter UTR/Ref No below:</p>
+        <input type="text" id="utrInput" placeholder="Enter UTR (12 Digits)" style="width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; margin-bottom:10px; outline:none;">
+        <button onclick="submitPayment()" class="start-btn" style="background:#10b981;">Submit for Approval</button>
+        <button onclick="document.getElementById('paymentModal').style.display='none'" class="start-btn" style="background:transparent; color:grey; border:1px solid #ddd; margin-top:10px;">Cancel</button>
+    </div>
 </div>
 
 <div id="reportModal" class="modal">
     <div class="modal-content">
         <h2 style="margin-bottom:5px;">🚩 Report Issue</h2>
-        <textarea id="reportText" placeholder="Describe the issue..."></textarea>
+        <textarea id="reportText" placeholder="Describe the issue (e.g. Test 2, Q5 is wrong)..."></textarea>
         <div style="display:flex; gap:10px;">
-            <button class="start-btn" style="background:var(--bg-body); color:var(--text-main);" onclick="closeReport()">Cancel</button>
+            <button class="start-btn" style="background:var(--bg-body); color:var(--text-main);" onclick="document.getElementById('reportModal').style.display='none'">Cancel</button>
             <button class="start-btn" onclick="submitReport()">Submit</button>
         </div>
     </div>
+</div>
+
+<div id="loader" style="padding: 50px; text-align: center; color: grey; margin-top:50px;">
+    <i class="fas fa-circle-notch fa-spin fa-2x"></i><p style="margin-top: 10px;">Loading Data...</p>
 </div>
 
 <div id="app" style="display: none;">
@@ -181,7 +204,7 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
             <div class="user-info">
                 <h1 id="uName">Student</h1>
                 <div id="badgePro" class="pro-badge-header" style="display:none; margin-top:5px;"><i class="fas fa-crown"></i> PRO MEMBER</div>
-                <p id="subText" style="margin-top:2px;">Let's crack the exam! 🎯</p>
+                <button id="buyProBtn" class="buy-pro-btn" style="display:none; margin-top:5px;" onclick="openPayment()">💎 Buy Pro</button>
             </div>
         </div>
         <div class="tools">
@@ -198,7 +221,7 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
         <div class="quick-actions">
             <div class="action-item" onclick="window.open('https://t.me/DSSSBRank')"><i class="fab fa-telegram-plane"></i><span>Channel</span></div>
             <div class="action-item" onclick="shareApp()"><i class="fas fa-share-alt"></i><span>Share</span></div>
-            <div class="action-item" onclick="openReport()"><i class="fas fa-exclamation-circle"></i><span>Report</span></div>
+            <div class="action-item" onclick="document.getElementById('reportModal').style.display='flex'"><i class="fas fa-exclamation-circle"></i><span>Report</span></div>
             <div class="action-item" onclick="switchTab('study', document.getElementById('nav-study'))"><i class="fas fa-graduation-cap"></i><span>Study</span></div>
         </div>
 
@@ -219,20 +242,22 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
         </div>
 
         <div class="qod-card">
-            <div class="qod-header"><span class="qod-tag">💡 Daily Question</span><span style="font-size:11px; color:#f97316; font-weight:700;">+2 Pts</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span class="qod-tag">💡 Daily Question</span><span style="font-size:11px; color:#f97316; font-weight:700;">+2 Pts</span>
+            </div>
             <div class="qod-text" id="qodQuestion">Loading...</div>
             <div class="qod-options" id="qodOptions"></div>
         </div>
 
         <div class="chart-box">
-            <div style="font-weight:700; margin-bottom:10px; font-size:14px;">📊 Performance</div>
+            <div style="font-weight:700; margin-bottom:10px; font-size:14px;">📊 Performance Overview</div>
             <div style="height: 180px;"><canvas id="barChart"></canvas></div>
         </div>
     </div>
 
     <div id="tab-tests" class="tab-content" style="display:none;">
         <div class="list-container" style="padding-top:15px;">
-            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="testSearch" placeholder="Search for Tests..." onkeyup="searchTests(this.value)"></div>
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="testSearch" placeholder="Search for Mock Tests..." onkeyup="searchTests(this.value)"></div>
             <div class="filter-scroll">
                 <div class="filter-pill active" onclick="filterTests('all', this)">All</div>
                 <div class="filter-pill" onclick="filterTests('Full Mock', this)">Full Mock</div>
@@ -274,7 +299,7 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
     </div>
 
     <div id="tab-rank" class="tab-content" style="display:none; padding: 20px;">
-        <h2 style="font-size: 18px; margin-bottom: 10px;">🏆 Leaderboard</h2>
+        <h2 style="font-size:18px; margin-bottom:15px; font-weight:800;">🏆 Global Leaderboard</h2>
         <div id="leaderboardList"></div>
     </div>
 
@@ -289,19 +314,16 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
 </div>
 
 <script>
-/* CONFIG */
+/* 1. CONFIGURATION */
 const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let currentUser = "Student";
-let currentUserId = "guest";
-let isPro = false;
-let myScores = [];
-let allTests = [];
-let allNotes = [];
+let currentUser = "Student", currentUserId = "guest", isPro = false;
+let myScores = [], allTests = [], allNotes = [];
+let lastAlertTime = 0; // Prevent alert spam
 
-/* STATIC DATA */
+/* 2. STATIC DATA */
 const syllabusDB = {
     "Reasoning": ["Analogy", "Classification", "Series", "Coding-Decoding", "Blood Relation", "Direction", "Venn Diagram", "Mirror Image", "Dice & Cube", "Ranking"],
     "Maths": ["Number System", "HCF & LCM", "Percentage", "Profit & Loss", "SI & CI", "Time & Work", "Time Speed Distance", "Average", "Ratio", "Mensuration"],
@@ -309,32 +331,58 @@ const syllabusDB = {
     "Hindi": ["Sandhi", "Samas", "Upsarg-Pratyay", "Vilom Shabd", "Paryayvachi", "Muhavare", "Vakya Shuddhi", "Anekarthi Shabd"],
     "GK": ["History", "Geography", "Polity", "Economics", "Science", "Current Affairs", "Static GK"]
 };
-const dailyQ = { q: "Synonym of 'Abundant'?", opt: ["Scarce", "Plentiful", "Rare", "Few"], ans: 1 };
+let fallbackQOD = { q: "Wait, loading question...", opt: ["-", "-", "-", "-"], ans: 0 };
 
-/* INIT */
+/* 3. INITIALIZATION */
 window.onload = function() {
-    // Force Start Timer (Fix Loading Issue)
+    // Safety Timer (Removes loader if DB is slow)
     setTimeout(() => {
         if(document.getElementById('loader').style.display !== 'none') {
             document.getElementById('loader').style.display = 'none';
             document.getElementById('app').style.display = 'block';
         }
-    }, 4000);
+    }, 4500);
 
     const theme = localStorage.getItem('theme');
     if(theme === 'dark') document.body.classList.add('dark-mode');
     
-    checkStreak(); renderDailyQ(); startCountdown(); renderSyllabus();
+    checkStreak(); startCountdown(); renderSyllabus();
 
-    // Listeners
-    db.ref('dsssb_config/news').on('value', snap => {
-        if(snap.exists()) {
-            document.getElementById('newsSection').style.display = 'flex';
-            document.getElementById('newsText').innerText = snap.val();
+    // --- ADMIN SYNC LISTENERS ---
+    
+    // A. Maintenance Mode
+    db.ref('dsssb_config/maintenance').on('value', snap => {
+        if(snap.val() === true) {
+            document.getElementById('maintenanceScreen').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('loader').style.display = 'none';
+        } else {
+            document.getElementById('maintenanceScreen').style.display = 'none';
         }
     });
 
-    // Dynamic QOD
+    // B. Broadcast Alert
+    db.ref('dsssb_config/alert').on('value', snap => {
+        if(snap.exists()) {
+            const data = snap.val();
+            // Show alert only if it's new (checking timestamp)
+            if(data.time && data.time > lastAlertTime && data.msg) {
+                document.getElementById('alertMsgText').innerText = data.msg;
+                document.getElementById('alertModal').style.display = 'flex';
+                lastAlertTime = data.time;
+            }
+        }
+    });
+
+    // C. News Ticker
+    db.ref('dsssb_config/news').on('value', snap => {
+        if(snap.exists() && snap.val() !== "") {
+            document.getElementById('newsSection').style.display = 'flex';
+            document.getElementById('newsText').innerText = snap.val();
+        } else { document.getElementById('newsSection').style.display = 'none'; }
+    });
+
+    // D. Dynamic QOD
     db.ref('dsssb_config/qod').on('value', snap => {
         if(snap.exists()) {
             const d = snap.val();
@@ -342,10 +390,12 @@ window.onload = function() {
             let html = "";
             d.opt.forEach((o, i) => html += `<div class="qod-opt" onclick="checkQOD(this, ${i}, ${d.ans})">${o}</div>`);
             document.getElementById('qodOptions').innerHTML = html;
+        } else {
+            document.getElementById('qodQuestion').innerText = fallbackQOD.q;
         }
     });
 
-    // Telegram Auth
+    // Telegram & Auth
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
@@ -357,14 +407,16 @@ window.onload = function() {
             if(u.photo_url) document.getElementById('uAvatar').innerHTML = `<img src="${u.photo_url}">`;
             else document.getElementById('uAvatar').innerText = u.first_name.charAt(0);
             fetchData(u);
-        } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
-    } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
+        } else fetchData({username: "guest", id: "guest"});
+    } else fetchData({username: "guest", id: "guest"});
 };
 
+/* 4. UTILS & UI */
 function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
-function switchTab(tab, el) { document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none'); document.getElementById('tab-'+tab).style.display = 'block'; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
+function switchTab(tab, el) { document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none'); document.getElementById('tab-'+tab).style.display = 'block'; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); window.scrollTo(0,0); }
 function switchStudy(type, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); document.getElementById('notesSection').style.display = (type === 'notes') ? 'block' : 'none'; document.getElementById('videosSection').style.display = (type === 'videos') ? 'block' : 'none'; }
 
+/* 5. GAMIFICATION & ACTIONS */
 function checkStreak() {
     const last = localStorage.getItem('lastVisit');
     const today = new Date().toDateString();
@@ -373,20 +425,21 @@ function checkStreak() {
     document.getElementById('valStreak').innerText = s;
     if(s >= 3) document.getElementById('badgeStreak').classList.add('unlocked');
 }
-
 function startCountdown() {
-    const target = new Date(2026, 4, 15);
-    const now = new Date();
-    const days = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+    const target = new Date(2026, 4, 15); // Target: 15 May 2026
+    const days = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
     document.getElementById('examTimer').innerText = (days > 0 ? days : 0) + " Days Left";
 }
-
 function shareApp() {
     if (navigator.share) navigator.share({ title: 'DSSSB Pro Portal', text: 'Best Exam Prep App!', url: window.location.href });
-    else { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); }
+    else { navigator.clipboard.writeText(window.location.href); alert("Link copied to clipboard!"); }
 }
 
-/* SYLLABUS */
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'grid'; });
+async function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; document.getElementById('installBtn').style.display='none'; } }
+
+/* 6. SYLLABUS TRACKER */
 function renderSyllabus() {
     const container = document.getElementById('syllabusList');
     let saved = JSON.parse(localStorage.getItem('syllabusProgress') || '{}');
@@ -414,53 +467,30 @@ function calcProgress() {
     if(pct === 100 && window.confetti) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 }
 
-/* QOD */
-function renderDailyQ() {
-    document.getElementById('qodQuestion').innerText = dailyQ.q;
-    let html = "";
-    dailyQ.opt.forEach((o, i) => html += `<div class="qod-opt" onclick="checkQOD(this, ${i}, ${dailyQ.ans})">${o}</div>`);
-    document.getElementById('qodOptions').innerHTML = html;
-}
+/* 7. QOD CHECK */
 function checkQOD(el, idx, correct) {
     document.querySelectorAll('.qod-opt').forEach(o => o.style.pointerEvents = "none");
-    if(idx === correct) el.classList.add('correct'); else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[correct].classList.add('correct'); }
+    if(idx === correct) { el.classList.add('correct'); if(window.confetti) confetti({particleCount: 50, spread: 50}); } 
+    else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[correct].classList.add('correct'); }
 }
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'grid'; });
-async function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; } }
-function openReport() { document.getElementById('reportModal').style.display = 'flex'; }
-function closeReport() { document.getElementById('reportModal').style.display = 'none'; }
+
+/* 8. FORMS & PAYMENTS */
 function submitReport() {
     const txt = document.getElementById('reportText').value;
-    if(!txt) return alert("Write something!");
+    if(!txt) return alert("Please write an issue!");
     db.ref('dsssb_reports').push({ user: currentUser, id: currentUserId, issue: txt, time: firebase.database.ServerValue.TIMESTAMP });
-    alert("Report Sent!"); closeReport();
+    alert("Report Sent Successfully!"); document.getElementById('reportModal').style.display='none'; document.getElementById('reportText').value='';
+}
+function openPayment() { document.getElementById('paymentModal').style.display = 'flex'; }
+function submitPayment() {
+    const utr = document.getElementById('utrInput').value;
+    if(!utr || utr.length < 5) return alert("Invalid UTR/Transaction ID");
+    db.ref('dsssb_payment_requests').push({ name: currentUser, userId: currentUserId, utr: utr, time: Date.now() });
+    alert("Payment submitted! Admin will approve it shortly.");
+    document.getElementById('paymentModal').style.display = 'none';
 }
 
-function searchTests(query) {
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    document.querySelector('.filter-pill').classList.add('active');
-    filterTests('search', null, query);
-}
-function searchNotes(query) {
-    let html = "";
-    const list = allNotes.filter(n => n.title.toLowerCase().includes(query.toLowerCase()));
-    list.forEach(n => html += `<div class="note-card"><div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div><div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div><button class="download-btn" onclick="window.open('${n.url}')">Download PDF</button></div>`);
-    document.getElementById('notesListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No notes found.</div>";
-}
-
-function renderVideos() {
-    db.ref('dsssb_videos_db').once('value', snap => {
-        let html = "";
-        const videos = snap.val() || {};
-        Object.values(videos).reverse().forEach(v => {
-            html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span class="vid-tag">Class</span><div class="vid-title">${v.title}</div></div></div>`;
-        });
-        document.getElementById('videoListContainer').innerHTML = html || "<p style='text-align:center;padding:20px;color:grey'>No videos yet.</p>";
-    });
-}
-
-/* --- FIXED FETCH DATA FUNCTION --- */
+/* 9. MAIN DATA FETCHING (PRO LOGIC FIXED) */
 async function fetchData(user) {
     try {
         const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
@@ -471,37 +501,38 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
 
-        // PRO CHECK LOGIC FIXED
+        // --- ROBUST PRO CHECK ---
         isPro = false;
         if(proSnap.exists()) {
             let myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
             let myId = (user.id || "").toString().trim();
             proSnap.forEach(child => {
-                let dbValue = child.val();
-                let val = (typeof dbValue === 'object') ? (dbValue.username || dbValue.id || "") : dbValue;
-                val = val.toString().toLowerCase().trim().replace("@", "");
-                if (val === myUsername || val === myId) {
-                    isPro = true;
-                }
+                let dbVal = child.val();
+                let v = (typeof dbVal === 'object') ? (dbVal.username || dbVal.id || "") : dbVal;
+                v = v.toString().toLowerCase().trim().replace("@", "");
+                if (v === myUsername || v === myId) { isPro = true; }
             });
         }
 
-        // UPDATE UI FOR PRO
+        // UPDATE UI
         if(isPro) {
             document.getElementById('badgePro').style.display = 'flex';
-            let sub = document.getElementById('subText');
-            if(sub) { sub.innerHTML = "Premium Member 👑"; sub.style.color = "#d97706"; sub.style.fontWeight = "700"; }
+            document.getElementById('buyProBtn').style.display = 'none';
             document.getElementById('badgeScholar').classList.add('unlocked');
         } else {
             document.getElementById('badgePro').style.display = 'none';
+            document.getElementById('buyProBtn').style.display = 'inline-block';
         }
 
-        // LOAD DATA
+        // NOTES
         const notes = notesSnap.val() || {};
         allNotes = Object.values(notes).reverse();
         searchNotes('');
+        
+        // VIDEOS
         renderVideos();
 
+        // STATS & LEADERBOARD
         const res = resultsSnap.val() || {};
         let userMap = {}; let calAtt = 0;
         Object.values(res).forEach(r => {
@@ -524,23 +555,26 @@ async function fetchData(user) {
         renderLeaderboard(lb);
         renderCharts();
         
+        // TESTS
         const tData = testsSnap.val() || {};
         allTests = Object.values(tData);
         filterTests('all', document.querySelector('.filter-pill'));
 
-    } catch(e) { console.error(e); } 
+    } catch(e) { console.error("Data Load Error:", e); } 
     finally {
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
     }
 }
 
+/* 10. SEARCH & RENDERERS */
 function filterTests(cat, el, searchQuery = "") {
     if(el) { document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
     
-    let list = [...allTests].reverse();
+    let list = [...allTests].reverse(); // COPY array
+    
     if (searchQuery) {
-        list = list.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
+        list = list.filter(t => (t.title||"").toLowerCase().includes(searchQuery.toLowerCase()));
     } else if(cat !== 'all' && cat !== 'search') {
         const key = cat.toLowerCase();
         list = list.filter(t => {
@@ -557,38 +591,52 @@ function filterTests(cat, el, searchQuery = "") {
     list.forEach(t => {
         let locked = t.type === 'pro' && !isPro;
         let displayMarks = t.marks || t.qs || '20';
-        let action = locked ? "window.open('https://t.me/DSSSBRank')" : `window.location.href='${t.url}'`;
-        let btnText = locked ? "Unlock Pro" : "Start Test";
-        let btnClass = locked ? "locked" : "";
+        let action = locked ? "openPayment()" : `window.location.href='${t.url}'`;
         
         html += `
         <div class="test-card ${locked?'locked':''}">
             <div class="t-title">${t.title}</div>
             <div class="t-info"><span><i class="far fa-clock"></i> ${t.time}m</span><span><i class="far fa-file-alt"></i> ${t.qs} Qs</span><span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span></div>
-            <button class="start-btn ${btnClass}" onclick="${action}">${btnText}</button>
+            <button class="start-btn ${locked?'locked':''}" onclick="${action}">${locked ? 'Unlock Pro' : 'Start Test'}</button>
         </div>`;
     });
-    document.getElementById('testListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No tests found.</div>";
+    document.getElementById('testListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'><i class='fas fa-search fa-2x' style='margin-bottom:10px;opacity:0.5'></i><br>No tests found.</div>";
+}
+
+function searchNotes(query) {
+    let html = "";
+    const list = allNotes.filter(n => (n.title||"").toLowerCase().includes(query.toLowerCase()));
+    list.forEach(n => html += `<div class="note-card"><div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div><div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div><button class="download-btn" onclick="window.open('${n.url}')">Download PDF</button></div>`);
+    document.getElementById('notesListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'><i class='fas fa-search fa-2x' style='margin-bottom:10px;opacity:0.5'></i><br>No notes found.</div>";
+}
+
+function renderVideos() {
+    db.ref('dsssb_videos_db').once('value', snap => {
+        let html = "";
+        const videos = snap.val() || {};
+        Object.values(videos).reverse().forEach(v => {
+            html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span style="font-size:10px; background:#fee2e2; color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700; margin-bottom:5px; display:inline-block;">Class</span><div style="font-size:14px; font-weight:700; line-height:1.3;">${v.title}</div></div></div>`;
+        });
+        document.getElementById('videoListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No videos yet.</div>";
+    });
 }
 
 function renderLeaderboard(list) {
     let html = "";
     list.slice(0,10).forEach((u,i) => {
-        html += `<div class="rank-row"><div style="display:flex;align-items:center;"><span style="width:25px;height:25px;background:#f3f4f6;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-right:10px;font-size:12px;">${i+1}</span><span style="font-weight:600;">${u.name} ${u.name==currentUser?'(You)':''}</span></div><span style="font-weight:700;">${u.avg.toFixed(1)}</span></div>`;
+        html += `<div class="rank-row"><div style="display:flex;align-items:center;"><span style="width:25px;height:25px;background:#f3f4f6;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-right:10px;font-size:12px;color:#1f2937;">${i+1}</span><span style="font-weight:600;">${u.name} ${u.name==currentUser?'(You)':''}</span></div><span style="font-weight:800;color:var(--primary);">${u.avg.toFixed(1)}</span></div>`;
     });
-    document.getElementById('leaderboardList').innerHTML = html;
+    document.getElementById('leaderboardList').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No scores yet. Attempt a test!</div>";
 }
 
 function renderCharts() {
+    // Prevent chart overlap if re-rendered
+    let chartStatus = Chart.getChart("barChart"); if (chartStatus) chartStatus.destroy();
+    
     new Chart(document.getElementById('barChart'), {
         type: 'bar',
-        data: { labels: ['Math','Eng','Hin','GK','Reas'], datasets: [{ data: [65,80,90,55,75], backgroundColor: ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderRadius: 4 }] },
-        options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { display:false, max: 100 }, y: { grid: { display: false } } }, maintainAspectRatio: false }
-    });
-    new Chart(document.getElementById('lineChart'), {
-        type: 'line',
-        data: { labels: myScores.map((_, i) => `T${i+1}`), datasets: [{ data: myScores, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4, pointRadius: 3 }] },
-        options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true } }, maintainAspectRatio: false }
+        data: { labels: ['Math','Eng','Hin','GK','Reas'], datasets: [{ data: [65,80,90,55,75], backgroundColor: ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderRadius: 6 }] },
+        options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { display:false, max: 100 }, y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } }, maintainAspectRatio: false }
     });
 }
 </script>
