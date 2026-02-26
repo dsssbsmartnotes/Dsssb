@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DSSSB Smart Notes - Student Portal</title>
+<title>DSSSB Smart Notes - Pro Portal</title>
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
+// Dynamic Manifest
 const manifest = {
     "name": "DSSSB Pro Portal",
     "short_name": "DSSSB Rank",
@@ -32,7 +33,7 @@ document.querySelector('#manifest-placeholder').setAttribute('href', URL.createO
 </script>
 
 <style>
-/* --- THEME VARIABLES --- */
+/* --- 1. THEME VARIABLES --- */
 :root {
     --primary: #4f46e5; --primary-light: #e0e7ff;
     --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
@@ -50,7 +51,7 @@ body.dark-mode {
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(--nav-height); transition: 0.3s; }
 
-/* --- HEADER & PROFILE --- */
+/* --- 2. HEADER & PROFILE --- */
 .hero-header { background: var(--bg-card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .user-profile { display: flex; align-items: center; gap: 12px; }
 .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 18px; border: 2px solid var(--primary); overflow: hidden; }
@@ -61,7 +62,7 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .tool-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); display: grid; place-items: center; cursor: pointer; transition: 0.2s; }
 .pro-badge-header { background: linear-gradient(90deg, #FFD700, #FFA500); color: #000; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 11px; display: none; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3); border: 1px solid #eab308; white-space: nowrap; }
 
-/* --- DASHBOARD ELEMENTS --- */
+/* --- 3. HOME DASHBOARD --- */
 .countdown-box { background: linear-gradient(90deg, #1e293b, #0f172a); color: white; padding: 10px 20px; margin: 15px 20px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 .cd-timer { font-size: 16px; font-weight: 800; color: #fbbf24; }
 
@@ -77,7 +78,7 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .fire-anim { animation: burn 0.5s alternate infinite; color: #f97316; }
 @keyframes burn { from { transform: scale(1); } to { transform: scale(1.2); } }
 
-/* --- BADGES --- */
+/* --- 4. BADGES & QOD --- */
 .badge-section { padding: 0 20px; margin-bottom: 20px; }
 .badge-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
 .badge-item { min-width: 80px; background: var(--bg-card); border: 1px solid var(--border); padding: 10px; border-radius: 12px; text-align: center; opacity: 0.5; filter: grayscale(1); transition: 0.3s; }
@@ -85,7 +86,6 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .badge-icon { font-size: 24px; margin-bottom: 5px; display: block; }
 .badge-name { font-size: 10px; font-weight: 700; }
 
-/* --- QOD CARD --- */
 .qod-card { background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%); border: 1px solid #fed7aa; border-radius: 16px; padding: 15px; margin: 0 20px 20px; box-shadow: 0 4px 10px rgba(251, 146, 60, 0.1); }
 .dark-mode .qod-card { background: #2a1b0d; border-color: #431407; }
 .qod-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -97,7 +97,7 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .qod-opt.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #16a34a; }
 .qod-opt.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #dc2626; }
 
-/* --- CARDS & LISTS --- */
+/* --- 5. LISTS & CARDS --- */
 .list-container { padding: 0 20px; }
 .search-box { background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
 .search-box input { border: none; background: transparent; width: 100%; font-size: 14px; color: var(--text-main); outline: none; }
@@ -123,12 +123,11 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .vid-tag { font-size: 10px; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-bottom: 5px; display: inline-block; }
 .vid-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
 
-/* --- STUDY TABS --- */
+/* --- 6. STUDY TABS & SYLLABUS --- */
 .segment-control { display: flex; background: var(--bg-body); padding: 5px; border-radius: 12px; margin: 0 20px 15px; border: 1px solid var(--border); }
 .segment-btn { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
 .segment-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-/* --- SYLLABUS --- */
 .syllabus-container { padding: 20px; }
 .progress-card { background: var(--bg-card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; text-align: center; }
 .prog-ring { width: 100%; height: 10px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin-top: 10px; }
@@ -140,7 +139,7 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .topic-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
 .topic-chk { width: 18px; height: 18px; accent-color: var(--primary); }
 
-/* --- MISC --- */
+/* --- 7. MISC --- */
 .news-container { background: linear-gradient(90deg, #4f46e5, #7c3aed); color: white; padding: 8px 15px; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; }
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -253,12 +252,10 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
                 <div class="segment-btn active" onclick="switchStudy('notes', this)">📄 Notes & PDFs</div>
                 <div class="segment-btn" onclick="switchStudy('videos', this)">🎥 Video Classes</div>
             </div>
-            
             <div id="notesSection" class="list-container">
                 <div class="search-box"><i class="fas fa-search"></i><input type="text" id="noteSearch" placeholder="Search Notes..." onkeyup="searchNotes(this.value)"></div>
                 <div id="notesListContainer"></div>
             </div>
-
             <div id="videosSection" class="list-container" style="display:none;">
                 <div id="videoListContainer"></div>
             </div>
@@ -292,7 +289,7 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
 </div>
 
 <script>
-/* CONFIGURATION */
+/* CONFIG */
 const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -314,25 +311,22 @@ const syllabusDB = {
 };
 const dailyQ = { q: "Synonym of 'Abundant'?", opt: ["Scarce", "Plentiful", "Rare", "Few"], ans: 1 };
 
-/* INITIALIZATION */
+/* INIT */
 window.onload = function() {
-    // 1. Force Start Timer (Fixes "Loading..." issue)
+    // Force Start Timer (Fix Loading Issue)
     setTimeout(() => {
         if(document.getElementById('loader').style.display !== 'none') {
             document.getElementById('loader').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            console.log("Forced start triggered");
         }
     }, 4000);
 
     const theme = localStorage.getItem('theme');
     if(theme === 'dark') document.body.classList.add('dark-mode');
     
-    // Render static parts
     checkStreak(); renderDailyQ(); startCountdown(); renderSyllabus();
 
-    // LISTENERS
-    // 1. News
+    // Listeners
     db.ref('dsssb_config/news').on('value', snap => {
         if(snap.exists()) {
             document.getElementById('newsSection').style.display = 'flex';
@@ -340,7 +334,7 @@ window.onload = function() {
         }
     });
 
-    // 2. QOD (Dynamic)
+    // Dynamic QOD
     db.ref('dsssb_config/qod').on('value', snap => {
         if(snap.exists()) {
             const d = snap.val();
@@ -351,32 +345,7 @@ window.onload = function() {
         }
     });
 
-    // 3. Tests
-    db.ref('dsssb_tests_db').on('value', snap => {
-        const data = snap.val() || {};
-        allTests = Object.values(data);
-        filterTests('all', document.querySelector('.filter-pill')); // Initial Render
-    });
-
-    // 4. Notes
-    db.ref('dsssb_notes_db').on('value', snap => {
-        const data = snap.val() || {};
-        allNotes = Object.values(data).reverse();
-        searchNotes(''); // Initial Render
-    });
-
-    // 5. Videos
-    db.ref('dsssb_videos_db').on('value', snap => {
-        const data = snap.val() || {};
-        const videos = Object.values(data).reverse();
-        let html = "";
-        videos.forEach(v => {
-            html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span class="vid-tag">Class</span><div class="vid-title">${v.title}</div></div></div>`;
-        });
-        document.getElementById('videoListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No videos found.</div>";
-    });
-
-    // Auth
+    // Telegram Auth
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
@@ -387,9 +356,9 @@ window.onload = function() {
             document.getElementById('uName').innerText = u.first_name;
             if(u.photo_url) document.getElementById('uAvatar').innerHTML = `<img src="${u.photo_url}">`;
             else document.getElementById('uAvatar').innerText = u.first_name.charAt(0);
-            fetchUserData(u);
-        } else fetchUserData({username: "guest", id: "guest", first_name: "Guest"});
-    } else fetchUserData({username: "guest", id: "guest", first_name: "Guest"});
+            fetchData(u);
+        } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
+    } else fetchData({username: "guest", id: "guest", first_name: "Guest"});
 };
 
 function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
@@ -480,29 +449,58 @@ function searchNotes(query) {
     document.getElementById('notesListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No notes found.</div>";
 }
 
-/* DATA FETCHING - INDIVIDUAL */
-async function fetchUserData(user) {
+function renderVideos() {
+    db.ref('dsssb_videos_db').once('value', snap => {
+        let html = "";
+        const videos = snap.val() || {};
+        Object.values(videos).reverse().forEach(v => {
+            html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span class="vid-tag">Class</span><div class="vid-title">${v.title}</div></div></div>`;
+        });
+        document.getElementById('videoListContainer').innerHTML = html || "<p style='text-align:center;padding:20px;color:grey'>No videos yet.</p>";
+    });
+}
+
+/* --- FIXED FETCH DATA FUNCTION --- */
+async function fetchData(user) {
     try {
-        const [resultsSnap, proSnap, usersSnap] = await Promise.all([
+        const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
+            db.ref("dsssb_tests_db").once("value"),
             db.ref("dsssb_results_live").once("value"),
             db.ref("dsssb_pro_users").once("value"),
-            db.ref("users").once("value")
+            db.ref("users").once("value"),
+            db.ref("dsssb_notes_db").once("value")
         ]);
 
+        // PRO CHECK LOGIC FIXED
+        isPro = false;
         if(proSnap.exists()) {
-            let uName = (user.username||"").toLowerCase().replace("@","");
-            let uid = (user.id||"").toString();
-            proSnap.forEach(c => {
-                let val = c.val().toString().toLowerCase().replace("@","");
-                if(val === uName || val === uid) isPro = true;
+            let myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
+            let myId = (user.id || "").toString().trim();
+            proSnap.forEach(child => {
+                let dbValue = child.val();
+                let val = (typeof dbValue === 'object') ? (dbValue.username || dbValue.id || "") : dbValue;
+                val = val.toString().toLowerCase().trim().replace("@", "");
+                if (val === myUsername || val === myId) {
+                    isPro = true;
+                }
             });
         }
+
+        // UPDATE UI FOR PRO
         if(isPro) {
             document.getElementById('badgePro').style.display = 'flex';
-            document.getElementById('subText').innerText = "Premium Member 👑";
-            document.getElementById('subText').style.color = "#d97706";
+            let sub = document.getElementById('subText');
+            if(sub) { sub.innerHTML = "Premium Member 👑"; sub.style.color = "#d97706"; sub.style.fontWeight = "700"; }
             document.getElementById('badgeScholar').classList.add('unlocked');
+        } else {
+            document.getElementById('badgePro').style.display = 'none';
         }
+
+        // LOAD DATA
+        const notes = notesSnap.val() || {};
+        allNotes = Object.values(notes).reverse();
+        searchNotes('');
+        renderVideos();
 
         const res = resultsSnap.val() || {};
         let userMap = {}; let calAtt = 0;
@@ -525,19 +523,22 @@ async function fetchUserData(user) {
         
         renderLeaderboard(lb);
         renderCharts();
+        
+        const tData = testsSnap.val() || {};
+        allTests = Object.values(tData);
+        filterTests('all', document.querySelector('.filter-pill'));
 
+    } catch(e) { console.error(e); } 
+    finally {
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-
-    } catch(e) { console.error(e); }
+    }
 }
 
 function filterTests(cat, el, searchQuery = "") {
     if(el) { document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
     
-    // Create copy to prevent reverse bug
     let list = [...allTests].reverse();
-    
     if (searchQuery) {
         list = list.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
     } else if(cat !== 'all' && cat !== 'search') {
@@ -557,7 +558,15 @@ function filterTests(cat, el, searchQuery = "") {
         let locked = t.type === 'pro' && !isPro;
         let displayMarks = t.marks || t.qs || '20';
         let action = locked ? "window.open('https://t.me/DSSSBRank')" : `window.location.href='${t.url}'`;
-        html += `<div class="test-card ${locked?'locked':''}"><div class="t-title">${t.title}</div><div class="t-info"><span><i class="far fa-clock"></i> ${t.time}m</span><span><i class="far fa-file-alt"></i> ${t.qs} Qs</span><span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span></div><button class="start-btn ${locked?'locked':''}" onclick="${action}">${locked ? 'Unlock Pro' : 'Start Test'}</button></div>`;
+        let btnText = locked ? "Unlock Pro" : "Start Test";
+        let btnClass = locked ? "locked" : "";
+        
+        html += `
+        <div class="test-card ${locked?'locked':''}">
+            <div class="t-title">${t.title}</div>
+            <div class="t-info"><span><i class="far fa-clock"></i> ${t.time}m</span><span><i class="far fa-file-alt"></i> ${t.qs} Qs</span><span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span></div>
+            <button class="start-btn ${btnClass}" onclick="${action}">${btnText}</button>
+        </div>`;
     });
     document.getElementById('testListContainer').innerHTML = html || "<div style='text-align:center;padding:20px;color:grey'>No tests found.</div>";
 }
