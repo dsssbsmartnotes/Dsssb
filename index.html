@@ -593,38 +593,40 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
         
-        // --- 100% BULLETPROOF PRO CHECK (ONLY ID MATCHING) ---
-        isPro = false; // Reset to free by default
+                // --- FINAL STRICT PRO CHECK ---
+        isPro = false; // By default sabko FREE rakhein
+        
+        // Current User ID ko clean karein
+        let cid = String(currentUserId).trim();
 
-        // Sirf strict Telegram ID lenge (Username se false matches hote hain)
-        const myId = String(currentUserId).trim();
-
-        // Check: User guest, null, undefined ya blank nahi hona chahiye
-        if (proSnap.exists() && myId !== "" && myId !== "guest" && myId !== "undefined" && myId !== "null") {
-            const proData = proSnap.val();
+        // Agar user guest hai, ya ID khali hai, toh check hi mat karo (Sidha Free)
+        if (cid !== "guest" && cid !== "" && cid !== "undefined" && proSnap.exists()) {
             
-            // Database ki har entry check karein
-            Object.keys(proData).forEach(key => {
-                let entry = proData[key];
-                let dbId = "";
+            // Database mein har ek user check karo
+            proSnap.forEach(function(child) {
+                let dbData = child.val();
+                let dbKey = String(child.key).trim();
+                let checkId = "";
 
-                // Agar admin panel object save karta hai (eg. { id: "12345" })
-                if (typeof entry === 'object' && entry !== null) {
-                    dbId = String(entry.id || entry.userId || entry.user_id || entry.telegram_id || "").trim();
+                // Agar admin panel ne object (JSON) format mein save kiya hai
+                if (typeof dbData === "object" && dbData !== null) {
+                    checkId = String(dbData.userId || dbData.id || dbData.user_id || dbData.telegram_id || "").trim();
                 } 
-                // Agar admin panel direct number/string save karta hai (eg. "12345")
+                // Agar direct ID save ki hai
                 else {
-                    dbId = String(entry).trim();
+                    checkId = String(dbData).trim();
                 }
 
-                // Agar Admin ne Firebase ki key ko hi Telegram ID bana diya ho
-                let stringKey = String(key).trim();
-
-                // EXACT ID MATCH CONDITION (Koi empty string match nahi hogi)
-                if (dbId !== "" && dbId !== "undefined" && dbId !== "null") {
-                    if (dbId === myId || stringKey === myId) {
-                        isPro = true;
-                    }
+                // EXACT MATCHING:
+                // 1. checkId khali nahi hona chahiye
+                // 2. checkId hamari cid se perfectly match hona chahiye
+                if (checkId !== "" && checkId === cid) {
+                    isPro = true;
+                }
+                
+                // 3. Agar Admin panel ne Firebase key ko hi ID bana diya hai
+                if (dbKey !== "" && dbKey === cid) {
+                    isPro = true;
                 }
             });
         }
@@ -640,7 +642,7 @@ async function fetchData(user) {
             document.getElementById('badgeScholar').classList.remove('unlocked');
         }
         // --------------------------------------------------
-
+------------------------
 
 
         // NOTES
