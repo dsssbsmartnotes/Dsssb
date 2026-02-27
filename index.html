@@ -593,28 +593,38 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
 
-        // --- ROBUST PRO CHECK ---
-        isPro = false;
-        if(proSnap.exists()) {
-            let myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
-            let myId = (user.id || "").toString().trim();
-            proSnap.forEach(child => {
-                let dbVal = child.val();
-                let v = (typeof dbVal === 'object') ? (dbVal.username || dbVal.id || "") : dbVal;
-                v = v.toString().toLowerCase().trim().replace("@", "");
-                if (v === myUsername || v === myId) { isPro = true; }
-            });
-        }
+        /* --- ROBUST PRO CHECK (FIXED) --- */
+isPro = false; // Reset first
 
-        // UPDATE UI
-        if(isPro) {
-            document.getElementById('badgePro').style.display = 'flex';
-            document.getElementById('buyProBtn').style.display = 'none';
-            document.getElementById('badgeScholar').classList.add('unlocked');
-        } else {
-            document.getElementById('badgePro').style.display = 'none';
-            document.getElementById('buyProBtn').style.display = 'inline-block';
+if(proSnap.exists() && currentUserId !== "guest") {
+    const proUsers = proSnap.val();
+    const myId = currentUserId.toString().trim();
+    const myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
+
+    // Firebase database se loop chala kar check karein
+    Object.values(proUsers).forEach(val => {
+        if (val) {
+            let dbVal = val.toString().toLowerCase().trim().replace("@", "");
+            if (dbVal === myId || (myUsername !== "" && dbVal === myUsername)) {
+                isPro = true;
+            }
         }
+    });
+} else {
+    isPro = false; // Guest ya No data par hamesha false
+}
+
+// UI UPDATE (Refresh elements)
+if(isPro) {
+    document.getElementById('badgePro').style.display = 'flex';
+    document.getElementById('buyProBtn').style.display = 'none';
+    document.getElementById('badgeScholar').classList.add('unlocked');
+} else {
+    document.getElementById('badgePro').style.display = 'none';
+    document.getElementById('buyProBtn').style.display = 'inline-block';
+    document.getElementById('badgeScholar').classList.remove('unlocked');
+}
+
 
         // NOTES
         const notes = notesSnap.val() || {};
