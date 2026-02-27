@@ -593,37 +593,41 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
 
-        /* --- ROBUST PRO CHECK (FIXED) --- */
-isPro = false; // Reset first
+                // --- ROBUST PRO CHECK (BUG FIXED) ---
+        isPro = false;
+        
+        if (proSnap.exists()) {
+            // ID aur Username ko safe banayein
+            const myId = (user.id || "").toString().trim();
+            const myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
 
-if(proSnap.exists() && currentUserId !== "guest") {
-    const proUsers = proSnap.val();
-    const myId = currentUserId.toString().trim();
-    const myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
+            proSnap.forEach(child => {
+                let dbVal = child.val();
+                
+                // Database ki values ko extract karein (object ho ya direct string)
+                let dbId = (typeof dbVal === 'object' ? (dbVal.id || "") : dbVal).toString().trim();
+                let dbUsername = (typeof dbVal === 'object' ? (dbVal.username || "") : dbVal).toString().toLowerCase().trim().replace("@", "");
 
-    // Firebase database se loop chala kar check karein
-    Object.values(proUsers).forEach(val => {
-        if (val) {
-            let dbVal = val.toString().toLowerCase().trim().replace("@", "");
-            if (dbVal === myId || (myUsername !== "" && dbVal === myUsername)) {
-                isPro = true;
-            }
+                // STRICT CONDITION: Khali string ("") ya "guest" kabhi match nahi hona chahiye
+                let isIdMatch = (myId !== "" && myId !== "guest" && myId === dbId);
+                let isUserMatch = (myUsername !== "" && myUsername !== "guest" && myUsername === dbUsername);
+
+                if (isIdMatch || isUserMatch) {
+                    isPro = true;
+                }
+            });
         }
-    });
-} else {
-    isPro = false; // Guest ya No data par hamesha false
-}
 
-// UI UPDATE (Refresh elements)
-if(isPro) {
-    document.getElementById('badgePro').style.display = 'flex';
-    document.getElementById('buyProBtn').style.display = 'none';
-    document.getElementById('badgeScholar').classList.add('unlocked');
-} else {
-    document.getElementById('badgePro').style.display = 'none';
-    document.getElementById('buyProBtn').style.display = 'inline-block';
-    document.getElementById('badgeScholar').classList.remove('unlocked');
-}
+        // UI UPDATE
+        if(isPro) {
+            document.getElementById('badgePro').style.display = 'flex';
+            document.getElementById('buyProBtn').style.display = 'none';
+            document.getElementById('badgeScholar').classList.add('unlocked');
+        } else {
+            document.getElementById('badgePro').style.display = 'none';
+            document.getElementById('buyProBtn').style.display = 'inline-block';
+            document.getElementById('badgeScholar').classList.remove('unlocked');
+        }
 
 
         // NOTES
