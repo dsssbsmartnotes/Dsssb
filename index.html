@@ -599,18 +599,26 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
 
-        // --- ROBUST PRO CHECK ---
+                // --- ROBUST PRO CHECK ---
         isPro = false;
         if(proSnap.exists()) {
             let myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
             let myId = (user.id || "").toString().trim();
+            
             proSnap.forEach(child => {
                 let dbVal = child.val();
                 let v = (typeof dbVal === 'object') ? (dbVal.username || dbVal.id || "") : dbVal;
                 v = v.toString().toLowerCase().trim().replace("@", "");
-                if (v === myUsername || v === myId) { isPro = true; }
+                
+                // ✅ BUG FIX: खाली (empty) या "guest" एंट्री को मैच होने से रोकें
+                if (v !== "" && v !== "guest") {
+                    if ((myUsername !== "" && v === myUsername) || (myId !== "" && v === myId)) { 
+                        isPro = true; 
+                    }
+                }
             });
         }
+
 
         // UPDATE UI
         if(isPro) {
