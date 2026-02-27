@@ -468,19 +468,20 @@ function checkStreak() {
     const last = localStorage.getItem('lastVisit');
     const today = new Date().toDateString();
     let s = parseInt(localStorage.getItem('streak') || 0);
-    if(last !== today) { const y = new Date(); y.setDate(y.getDate()-1); if(last === y.toDateString()) s++; else s = 1; localStorage.setItem('lastVisit', today); localStorage.setItem('streak', s); }
+    if(last !== today) { 
+        const y = new Date(); y.setDate(y.getDate()-1); 
+        if(last === y.toDateString()) s++; else s = 1; 
+        localStorage.setItem('lastVisit', today); 
+        localStorage.setItem('streak', s); 
+    }
     document.getElementById('valStreak').innerText = s;
     if(s >= 3) document.getElementById('badgeStreak').classList.add('unlocked');
 }
-function start
-Countdown() {
+
+function startCountdown() {
     const target = new Date(2026, 4, 15); 
     const days = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
     document.getElementById('examTimer').innerText = (days > 0 ? days : 0) + " Days Left";
-}
-function shareApp() {
-    if (navigator.share) navigator.share({ title: 'DSSSB Pro Portal', text: 'Best Exam Prep App!', url: window.location.href });
-    else { navigator.clipboard.writeText(window.location.href); alert("Link copied to clipboard!"); }
 }
 
 // PWA Install 
