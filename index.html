@@ -383,9 +383,9 @@ window.onload = function() {
         }
     });
 
-    db.ref('dsssb_config/alert').on('value', snap => {
+        db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
-            const data
+            const data = snap.val(); // ✅ FIXED: Added = snap.val();
             if(data.time && data.time > lastAlertTime && data.msg) {
                 document.getElementById('alertMsgText').innerText = data.msg;
                 document.getElementById('alertModal').style.display = 'flex';
@@ -772,4 +772,6 @@ document.addEventListener('keydown', function(e) {
 </script>
 </body>
 </html>
+
+
 
