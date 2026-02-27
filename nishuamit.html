@@ -108,6 +108,7 @@
                 <input type="text" id="tUrl" placeholder="Link">
                 <select id="tCat"><option>Full Mock</option><option>Maths</option><option>Reasoning</option><option>English</option><option>Hindi</option><option>GK</option></select>
                 <input type="number" id="tTime" placeholder="Mins"><input type="number" id="tQs" placeholder="Questions">
+                <select id="tType"><option value="free">🟢 Free Test</option><option value="pro">👑 Pro Test</option></select>
             </div>
             <button onclick="addTest()">Upload Test</button>
         </div>
@@ -118,12 +119,14 @@
                 <input type="text" id="vTitle" placeholder="Title" style="margin-bottom:10px;">
                 <input type="text" id="vUrl" placeholder="YouTube Link" style="margin-bottom:10px;">
                 <input type="text" id="vThumb" placeholder="Thumb URL (Optional)" style="margin-bottom:10px;">
+                <select id="vType" style="margin-bottom:10px;"><option value="free">🟢 Free Video</option><option value="pro">👑 Pro Video</option></select>
                 <button onclick="addVideo()" style="background:#f59e0b; width:100%;">Add Video</button>
             </div>
             <div class="form-box" style="margin-bottom:0;">
                 <div class="form-title" style="color:#10b981;">📄 Add Note</div>
                 <input type="text" id="nTitle" placeholder="Title" style="margin-bottom:10px;">
                 <input type="text" id="nUrl" placeholder="PDF Link" style="margin-bottom:10px;">
+                <select id="nType" style="margin-bottom:10px;"><option value="free">🟢 Free Note</option><option value="pro">👑 Pro Note</option></select>
                 <button onclick="addNote()" style="background:#10b981; width:100%;">Add Note</button>
             </div>
         </div>
@@ -165,10 +168,11 @@
         <div class="header"><h2>👥 Users & Reports</h2></div>
         
         <div class="form-box" style="background:#fffbeb; border-color:#fbbf24;">
-            <div class="form-title" style="color:#d97706;">👑 Manual Pro Unlock</div>
+            <div class="form-title" style="color:#d97706;">👑 Manual Pro Management</div>
             <div class="input-group">
                 <input type="text" id="proInput" placeholder="User ID or Username">
                 <button onclick="addPro()" style="background:#d97706;">Unlock</button>
+                <button onclick="removePro()" style="background:#ef4444; margin-left:10px;">Remove</button>
             </div>
         </div>
 
@@ -215,14 +219,12 @@ function checkPin() { if(document.getElementById('adminPin').value === "1234") {
 function showSec(id, el) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); el.classList.add('active'); }
 
 function loadData() {
-    // 1. Users
     db.ref('users').on('value', snap => {
         document.getElementById('statUsers').innerText = snap.numChildren();
         const tbody = document.getElementById('userTable'); tbody.innerHTML = '';
         Object.entries(snap.val()||{}).forEach(([k,u]) => tbody.innerHTML += `<tr><td>${u.name}</td><td>${k}</td><td>${u.testsGiven||0}</td><td><button class="btn-del" onclick="delUser('${k}')">Block</button></td></tr>`);
     });
 
-    // 2. Payments
     db.ref('dsssb_payment_requests').on('value', snap => {
         document.getElementById('statPay').innerText = snap.numChildren();
         const tbody = document.getElementById('payTable'); tbody.innerHTML = '';
@@ -231,55 +233,43 @@ function loadData() {
         });
     });
 
-    // 3. Reports
     db.ref('dsssb_reports').on('value', s => {
         document.getElementById('statIssues').innerText = s.numChildren();
         const tbody = document.getElementById('reportTable'); tbody.innerHTML = '';
         Object.entries(s.val()||{}).forEach(([k,r]) => tbody.innerHTML += `<tr><td>${r.user}</td><td>${r.issue}</td><td><button class="btn-del" onclick="resolve('${k}')">Resolve</button></td></tr>`);
     });
 
-    // 4. Content Manager (Tests, Videos, Notes)
     db.ref('dsssb_tests_db').on('value', s => {
         document.getElementById('statTests').innerText = s.numChildren();
         contentCache.tests = s.val() || {};
         renderContentTable();
     });
+    db.ref('dsssb_videos_db').on('value', s => { contentCache.videos = s.val() || {}; renderContentTable(); });
+    db.ref('dsssb_notes_db').on('value', s => { contentCache.notes = s.val() || {}; renderContentTable(); });
     
-    db.ref('dsssb_videos_db').on('value', s => {
-        contentCache.videos = s.val() || {};
-        renderContentTable();
-    });
-    
-    db.ref('dsssb_notes_db').on('value', s => {
-        contentCache.notes = s.val() || {};
-        renderContentTable();
-    });
-    
-    // 5. Activity
     db.ref('dsssb_results_live').limitToLast(10).on('value', s => {
         const tbody = document.getElementById('recentTable'); tbody.innerHTML = '';
         Object.values(s.val()||{}).reverse().forEach(r => tbody.innerHTML += `<tr><td><b>${r.name}</b></td><td>Scored ${r.score} in ${r.testId}</td><td>Just now</td></tr>`);
     });
 }
 
-// Ye function Teeno (Tests, Videos, Notes) ko ek table mein dikhayega!
 function renderContentTable() {
     const tbody = document.getElementById('contentTable'); 
     let html = '';
     
-    // 1. Render Tests
     Object.entries(contentCache.tests).reverse().forEach(([k,v]) => {
-        html += `<tr><td><span style="background:#e0e7ff; color:#4f46e5; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">Test</span></td><td>${v.title}</td><td><button class="btn-del" onclick="delItem('dsssb_tests_db/${k}')">Delete</button></td></tr>`;
+        let badge = v.type === 'pro' ? '👑 Pro' : '🟢 Free';
+        html += `<tr><td><span style="background:#e0e7ff; color:#4f46e5; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">Test</span></td><td>${v.title} <span style="font-size:10px; margin-left:5px;">(${badge})</span></td><td><button class="btn-del" onclick="delItem('dsssb_tests_db/${k}')">Delete</button></td></tr>`;
     });
     
-    // 2. Render Videos
     Object.entries(contentCache.videos).reverse().forEach(([k,v]) => {
-        html += `<tr><td><span style="background:#fef3c7; color:#d97706; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">Video</span></td><td>${v.title}</td><td><button class="btn-del" onclick="delItem('dsssb_videos_db/${k}')">Delete</button></td></tr>`;
+        let badge = v.type === 'pro' ? '👑 Pro' : '🟢 Free';
+        html += `<tr><td><span style="background:#fef3c7; color:#d97706; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">Video</span></td><td>${v.title} <span style="font-size:10px; margin-left:5px;">(${badge})</span></td><td><button class="btn-del" onclick="delItem('dsssb_videos_db/${k}')">Delete</button></td></tr>`;
     });
     
-    // 3. Render Notes
     Object.entries(contentCache.notes).reverse().forEach(([k,v]) => {
-        html += `<tr><td><span style="background:#d1fae5; color:#059669; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">Note</span></td><td>${v.title}</td><td><button class="btn-del" onclick="delItem('dsssb_notes_db/${k}')">Delete</button></td></tr>`;
+        let badge = v.type === 'pro' ? '👑 Pro' : '🟢 Free';
+        html += `<tr><td><span style="background:#d1fae5; color:#059669; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">Note</span></td><td>${v.title} <span style="font-size:10px; margin-left:5px;">(${badge})</span></td><td><button class="btn-del" onclick="delItem('dsssb_notes_db/${k}')">Delete</button></td></tr>`;
     });
     
     tbody.innerHTML = html;
@@ -289,9 +279,10 @@ function renderContentTable() {
 function approve(key, uid) { if(confirm("Approve?")) { db.ref('dsssb_pro_users').push(uid.toString().toLowerCase().trim().replace("@","")); db.ref('dsssb_payment_requests/'+key).remove(); } }
 function reject(key) { if(confirm("Reject?")) db.ref('dsssb_payment_requests/'+key).remove(); }
 
-function addTest() { const d = { title: document.getElementById('tTitle').value, id: document.getElementById('tID').value, url: document.getElementById('tUrl').value, time: document.getElementById('tTime').value, qs: document.getElementById('tQs').value, category: document.getElementById('tCat').value, type:'free' }; if(d.title) db.ref('dsssb_tests_db').push(d).then(() => alert("Test Added!")); }
-function addVideo() { const url = document.getElementById('vUrl').value; const vidId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop(); const d = { title: document.getElementById('vTitle').value, url: url, thumb: document.getElementById('vThumb').value || `https://img.youtube.com/vi/${vidId}/mqdefault.jpg` }; if(d.title) db.ref('dsssb_videos_db').push(d).then(() => alert("Video Added!")); }
-function addNote() { const d = { title: document.getElementById('nTitle').value, url: document.getElementById('nUrl').value }; if(d.title) db.ref('dsssb_notes_db').push(d).then(() => alert("Note Added!")); }
+// ADD FUNCTIONS WITH TYPE (FREE/PRO)
+function addTest() { const d = { title: document.getElementById('tTitle').value, id: document.getElementById('tID').value, url: document.getElementById('tUrl').value, time: document.getElementById('tTime').value, qs: document.getElementById('tQs').value, category: document.getElementById('tCat').value, type: document.getElementById('tType').value }; if(d.title) db.ref('dsssb_tests_db').push(d).then(() => { alert("Test Added!"); }); }
+function addVideo() { const url = document.getElementById('vUrl').value; const vidId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop(); const d = { title: document.getElementById('vTitle').value, url: url, thumb: document.getElementById('vThumb').value || `https://img.youtube.com/vi/${vidId}/mqdefault.jpg`, type: document.getElementById('vType').value }; if(d.title) db.ref('dsssb_videos_db').push(d).then(() => { alert("Video Added!"); }); }
+function addNote() { const d = { title: document.getElementById('nTitle').value, url: document.getElementById('nUrl').value, type: document.getElementById('nType').value }; if(d.title) db.ref('dsssb_notes_db').push(d).then(() => { alert("Note Added!"); }); }
 
 function updateQOD() { const d = { q: document.getElementById('qodQ').value, opt: [document.getElementById('qodO1').value, document.getElementById('qodO2').value, document.getElementById('qodO3').value, document.getElementById('qodO4').value], ans: parseInt(document.getElementById('qodAns').value) }; if(d.q) db.ref('dsssb_config/qod').set(d).then(() => alert("QOD Updated!")); }
 function updateNews() { const txt = document.getElementById('newsInput').value; if(txt) db.ref('dsssb_config/news').set(txt).then(() => alert("News Updated!")); }
@@ -299,7 +290,27 @@ function sendAlert() { const msg = document.getElementById('alertMsg').value; if
 
 function toggleMaintenance(s) { db.ref('dsssb_config/maintenance').set(s).then(() => alert("Mode: " + (s ? "LOCKED" : "UNLOCKED"))); }
 function resetLeaderboard() { if(confirm("Reset scores?")) db.ref('dsssb_results_live').remove().then(() => alert("Done!")); }
-function addPro() { const v = document.getElementById('proInput').value.trim().toLowerCase(); if(v) db.ref('dsssb_pro_users').push(v).then(() => alert("Pro Added!")); }
+
+/* PRO MANAGEMENT */
+function addPro() { 
+    const v = document.getElementById('proInput').value.trim().toLowerCase(); 
+    if(v) db.ref('dsssb_pro_users').push(v).then(() => { alert("Pro Added Successfully! 👑"); document.getElementById('proInput').value = ""; }); 
+}
+
+function removePro() { 
+    const v = document.getElementById('proInput').value.trim().toLowerCase(); 
+    if(!v) return alert("Pehle User ID ya Username daalein!");
+    db.ref('dsssb_pro_users').once('value', snap => {
+        let found = false;
+        snap.forEach(child => {
+            let dbVal = child.val();
+            let checkVal = (typeof dbVal === 'object') ? (dbVal.username || dbVal.id || "") : dbVal;
+            if(checkVal.toString().toLowerCase().trim() === v) { db.ref('dsssb_pro_users/' + child.key).remove(); found = true; }
+        });
+        if(found) alert("Pro Membership Removed Successfully! 🚫"); else alert("Yeh user Pro list mein nahi mila.");
+        document.getElementById('proInput').value = ""; 
+    });
+}
 
 function delUser(k) { if(confirm("Block User?")) db.ref('users/'+k).remove(); }
 function delItem(p) { if(confirm("Are you sure you want to delete this?")) db.ref(p).remove(); }
