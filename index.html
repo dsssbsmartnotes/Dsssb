@@ -592,41 +592,44 @@ async function fetchData(user) {
             db.ref("users").once("value"),
             db.ref("dsssb_notes_db").once("value")
         ]);
+        
+        // --- 100% BULLETPROOF PRO CHECK (ONLY ID MATCHING) ---
+        isPro = false; // Reset to free by default
 
-        // --- SECURE PRO CHECK (NO CONSOLE LOGS) ---
-        isPro = false; // Reset First
+        // Sirf strict Telegram ID lenge (Username se false matches hote hain)
+        const myId = String(currentUserId).trim();
 
-        if (proSnap.exists() && currentUserId !== "guest") {
-            const myId = String(currentUserId).trim();
-            const myUsername = String(user.username || "").toLowerCase().trim().replace("@", "");
-
-            proSnap.forEach(child => {
-                let dbVal = child.val();
-                let dbKey = child.key;
+        // Check: User guest, null, undefined ya blank nahi hona chahiye
+        if (proSnap.exists() && myId !== "" && myId !== "guest" && myId !== "undefined" && myId !== "null") {
+            const proData = proSnap.val();
+            
+            // Database ki har entry check karein
+            Object.keys(proData).forEach(key => {
+                let entry = proData[key];
                 let dbId = "";
-                let dbUsername = "";
 
-                if (typeof dbVal === 'object' && dbVal !== null) {
-                    dbId = String(dbVal.id || dbVal.userId || dbVal.user_id || "").trim();
-                    dbUsername = String(dbVal.username || dbVal.uname || "").toLowerCase().trim().replace("@", "");
-                } else {
-                    dbId = String(dbVal).trim();
-                    dbUsername = String(dbVal).toLowerCase().trim().replace("@", "");
+                // Agar admin panel object save karta hai (eg. { id: "12345" })
+                if (typeof entry === 'object' && entry !== null) {
+                    dbId = String(entry.id || entry.userId || entry.user_id || entry.telegram_id || "").trim();
+                } 
+                // Agar admin panel direct number/string save karta hai (eg. "12345")
+                else {
+                    dbId = String(entry).trim();
                 }
 
-                if (dbKey === myId) { dbId = myId; }
+                // Agar Admin ne Firebase ki key ko hi Telegram ID bana diya ho
+                let stringKey = String(key).trim();
 
-                // Strict Silent Matching
-                if (myId !== "" && dbId === myId) {
-                    isPro = true;
-                }
-                if (myUsername !== "" && dbUsername === myUsername) {
-                    isPro = true;
+                // EXACT ID MATCH CONDITION (Koi empty string match nahi hogi)
+                if (dbId !== "" && dbId !== "undefined" && dbId !== "null") {
+                    if (dbId === myId || stringKey === myId) {
+                        isPro = true;
+                    }
                 }
             });
         }
 
-        // UI UPDATE
+        // --- UI UPDATE ---
         if(isPro) {
             document.getElementById('badgePro').style.display = 'flex';
             document.getElementById('buyProBtn').style.display = 'none';
