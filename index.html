@@ -632,15 +632,64 @@ async function fetchData(user) {
                     } else if (dbKey !== "") {
                          if ((myUsername && dbKey === myUsername) || (myId && dbKey === myId)) {
                             isPro = true;
-                        }
+/* 9. MAIN DATA FETCHING */
+async function fetchData(user) {
+    try {
+        const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
+            db.ref("dsssb_tests_db").once("value"),
+            db.ref("dsssb_results_live").once("value"),
+            db.ref("dsssb_pro_users").once("value"),
+            db.ref("users").once("value"),
+            db.ref("dsssb_notes_db").once("value")
+        ]);
+
+        // --- BULLETPROOF PRO CHECK ---
+        isPro = false; // Default to false ALWAYS
+        
+        // 1. Ensure user object exists and is NOT a guest
+        const isGuestUser = !user || user.id === "guest" || user.username === "guest";
+
+        if(proSnap.exists() && !isGuestUser) {
+            
+            // Extract the user's real ID and Username, ensuring they are strings and cleaned
+            const myUsername = (user.username) ? String(user.username).toLowerCase().trim().replace("@", "") : "";
+            const myId = (user.id) ? String(user.id).trim() : "";
+
+            proSnap.forEach(child => {
+                let dbVal = child.val();
+                let dbKey = String(child.key).toLowerCase().trim().replace("@", "");
+                
+                if (!dbVal) return; // Skip empty entries
+                
+                // Get the value from the database, whether it's an object or a simple string
+                let dbExtractedValue = "";
+                if (typeof dbVal === 'object') {
+                    dbExtractedValue = dbVal.username || dbVal.id || "";
+                } else {
+                    dbExtractedValue = dbVal;
+                }
+                
+                dbExtractedValue = String(dbExtractedValue).toLowerCase().trim().replace("@", "");
+
+                // Check 1: Match against the database Value
+                if (dbExtractedValue !== "") {
+                    if ((myUsername !== "" && dbExtractedValue === myUsername) || 
+                        (myId !== "" && dbExtractedValue === myId)) {
+                        isPro = true;
                     }
-                });
-            }
+                }
+                
+                // Check 2: Match against the database Key
+                if (dbKey !== "") {
+                     if ((myUsername !== "" && dbKey === myUsername) || 
+                         (myId !== "" && dbKey === myId)) {
+                        isPro = true;
+                    }
+                }
+            });
         }
 
-
-
-        // UPDATE UI
+        // UPDATE UI BASED ON STATUS
         if(isPro) {
             document.getElementById('badgePro').style.display = 'flex';
             document.getElementById('buyProBtn').style.display = 'none';
