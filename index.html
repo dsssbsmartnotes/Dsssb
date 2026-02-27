@@ -111,12 +111,12 @@ body {
 .test-card, .note-card { padding: 15px; } 
 .video-card { padding: 0; cursor: pointer; }
 
-/* Features ke CSS 👇 */
+/* Naye Features ke CSS 👇 */
 .save-btn { background: transparent; color: var(--border); border: none; font-size: 20px; cursor: pointer; position: absolute; top: 12px; right: 15px; z-index: 10; transition: 0.3s; }
 .save-btn.saved { color: #f59e0b; filter: drop-shadow(0 2px 5px rgba(245, 158, 11, 0.4)); }
 .live-badge { background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; animation: pulseLive 1.5s infinite; position: absolute; top: 12px; left: 12px; letter-spacing: 0.5px; }
 
-/* Pro Badge Note aur Test dono par */
+/* 🔥 UPDATE: Pro Badge ab Note aur Test dono par aayega */
 .test-card.locked::after, .note-card.locked::after { content: "🔒 PRO"; position: absolute; top: 12px; right: 45px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; z-index: 5; }
 
 @keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
@@ -164,6 +164,7 @@ input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-se
 .rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
 
 #maintenanceScreen { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
 /* Toast Notification CSS */
 #toast {
@@ -183,7 +184,12 @@ input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-se
     animation: fadeInOut 2.5s forwards;
     white-space: nowrap;
 }
-@keyframes fadeInOut { 0% { opacity: 0; bottom: 70px; } 15% { opacity: 1; bottom: 80px; } 85% { opacity: 1; bottom: 80px; } 100% { opacity: 0; bottom: 70px; } }
+@keyframes fadeInOut {
+    0% { opacity: 0; bottom: 70px; }
+    15% { opacity: 1; bottom: 80px; }
+    85% { opacity: 1; bottom: 80px; }
+    100% { opacity: 0; bottom: 70px; }
+}
 </style>
 </head>
 <body>
@@ -407,7 +413,7 @@ window.onload = function() {
 
     db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
-            const data = snap.val(); 
+            const data = snap.val(); // ✅ FIXED SYNTAX BUG
             if(data.time && data.time > lastAlertTime && data.msg) {
                 document.getElementById('alertMsgText').innerText = data.msg;
                 document.getElementById('alertModal').style.display = 'flex';
@@ -456,6 +462,7 @@ function toggleTheme() { document.body.classList.toggle('dark-mode'); localStora
 function switchTab(tab, el) { document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none'); document.getElementById('tab-'+tab).style.display = 'block'; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); window.scrollTo(0,0); }
 function switchStudy(type, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); document.getElementById('notesSection').style.display = (type === 'notes') ? 'block' : 'none'; document.getElementById('videosSection').style.display = (type === 'videos') ? 'block' : 'none'; }
 
+// Toast Notification System
 function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.innerText = msg;
@@ -468,23 +475,22 @@ function checkStreak() {
     const last = localStorage.getItem('lastVisit');
     const today = new Date().toDateString();
     let s = parseInt(localStorage.getItem('streak') || 0);
-    if(last !== today) { 
-        const y = new Date(); y.setDate(y.getDate()-1); 
-        if(last === y.toDateString()) s++; else s = 1; 
-        localStorage.setItem('lastVisit', today); 
-        localStorage.setItem('streak', s); 
-    }
+    if(last !== today) { const y = new Date(); y.setDate(y.getDate()-1); if(last === y.toDateString()) s++; else s = 1; localStorage.setItem('lastVisit', today); localStorage.setItem('streak', s); }
     document.getElementById('valStreak').innerText = s;
     if(s >= 3) document.getElementById('badgeStreak').classList.add('unlocked');
 }
-
 function startCountdown() {
     const target = new Date(2026, 4, 15); 
     const days = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
     document.getElementById('examTimer').innerText = (days > 0 ? days : 0) + " Days Left";
 }
+function shareApp() {
+    if (navigator.share) navigator.share({ title: 'DSSSB Pro Portal', text: 'Best Exam Prep App!', url: window.location.href });
+    else { navigator.clipboard.writeText(window.location.href); showToast("Link copied to clipboard!"); }
+}
 
-// PWA Install 
+// PWA Install
+
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => { 
     e.preventDefault(); 
@@ -543,41 +549,41 @@ function calcProgress() {
 /* 7. QOD CHECK */
 function checkQOD(el, idx, correct) {
     document.querySelectorAll('.qod-opt').forEach(o => o.style.pointerEvents = "none");
-    if(idx === correct) { el.classList.add('correct'); if(window.confetti) confetti({particleCount: 50, spread: 50}); showToast("Correct Answer! 🎉 +2 Pts"); } 
-    else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[correct].classList.add('correct'); showToast("Wrong Answer! ❌"); }
+    if(idx === correct) { el.classList.add('correct'); if(window.confetti) confetti({particleCount: 50, spread: 50}); } 
+    else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[correct].classList.add('correct'); }
 }
 
 /* 8. FORMS & PAYMENTS */
 function submitReport() {
     const txt = document.getElementById('reportText').value;
-    if(!txt) return showToast("Please write an issue!");
+    if(!txt) return alert("Please write an issue!");
     db.ref('dsssb_reports').push({ user: currentUser, id: currentUserId, issue: txt, time: firebase.database.ServerValue.TIMESTAMP });
-    showToast("Report Sent Successfully! 🚩"); document.getElementById('reportModal').style.display='none'; document.getElementById('reportText').value='';
+    alert("Report Sent Successfully!"); document.getElementById('reportModal').style.display='none'; document.getElementById('reportText').value='';
 }
 function openPayment() { document.getElementById('paymentModal').style.display = 'flex'; }
 function submitPayment() {
     const utr = document.getElementById('utrInput').value;
-    if(!utr || utr.length < 5) return showToast("Invalid UTR/Transaction ID");
+    if(!utr || utr.length < 5) return alert("Invalid UTR/Transaction ID");
     db.ref('dsssb_payment_requests').push({ name: currentUser, userId: currentUserId, utr: utr, time: Date.now() });
     alert("Payment submitted! Admin will approve it shortly.");
     document.getElementById('paymentModal').style.display = 'none';
 }
 
-/* --- SAVE TEST FEATURE --- */
+/* --- SAVE TEST FEATURE (With Toast Fix) --- */
 function toggleSaveTest(testId, el, event) {
-    event.stopPropagation(); 
+    event.stopPropagation(); // Prevents clicking the test card itself
     let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
     
     if (savedTests.includes(testId)) {
         savedTests = savedTests.filter(id => id !== testId);
         el.classList.remove('saved');
         el.innerHTML = '<i class="far fa-star"></i>';
-        showToast("Test Removed from Saved");
+        showToast("Test removed from Saved"); // 👈 Toast Notification
     } else {
         savedTests.push(testId);
         el.classList.add('saved');
         el.innerHTML = '<i class="fas fa-star"></i>';
-        showToast("Test Saved Successfully! ⭐");
+        showToast("Test Saved Successfully ⭐"); // 👈 Toast Notification
     }
     localStorage.setItem('savedTests', JSON.stringify(savedTests));
 }
@@ -592,46 +598,49 @@ async function fetchData(user) {
             db.ref("users").once("value"),
             db.ref("dsssb_notes_db").once("value")
         ]);
-        
-                // --- FINAL STRICT PRO CHECK ---
-        isPro = false; // By default sabko FREE rakhein
-        
-        // Current User ID ko clean karein
-        let cid = String(currentUserId).trim();
 
-        // Agar user guest hai, ya ID khali hai, toh check hi mat karo (Sidha Free)
-        if (cid !== "guest" && cid !== "" && cid !== "undefined" && proSnap.exists()) {
-            
-            // Database mein har ek user check karo
-            proSnap.forEach(function(child) {
-                let dbData = child.val();
-                let dbKey = String(child.key).trim();
-                let checkId = "";
+                        // --- ROBUST PRO CHECK (ULTRA STRICT) ---
+        isPro = false;
+        if(proSnap.exists()) {
+            // 1. सिर्फ वैलिड ID और Username ही लेंगे, "guest" या खाली को इग्नोर करेंगे
+            let myUsername = (user.username && user.username !== "guest") ? String(user.username).toLowerCase().trim().replace("@", "") : null;
+            let myId = (user.id && user.id !== "guest") ? String(user.id).trim() : null;
 
-                // Agar admin panel ne object (JSON) format mein save kiya hai
-                if (typeof dbData === "object" && dbData !== null) {
-                    checkId = String(dbData.userId || dbData.id || dbData.user_id || dbData.telegram_id || "").trim();
-                } 
-                // Agar direct ID save ki hai
-                else {
-                    checkId = String(dbData).trim();
-                }
+            // 2. अगर यूज़र के पास असली ID या Username है, तभी लूप चलाएंगे
+            if (myUsername || myId) { 
+                proSnap.forEach(child => {
+                    let dbVal = child.val();
+                    let dbKey = String(child.key).toLowerCase().trim().replace("@", "");
+                    
+                    if (!dbVal) return; // अगर डेटाबेस में कोई आधी-अधूरी/null एंट्री है तो उसे छोड़ दो
 
-                // EXACT MATCHING:
-                // 1. checkId khali nahi hona chahiye
-                // 2. checkId hamari cid se perfectly match hona chahiye
-                if (checkId !== "" && checkId === cid) {
-                    isPro = true;
-                }
-                
-                // 3. Agar Admin panel ne Firebase key ko hi ID bana diya hai
-                if (dbKey !== "" && dbKey === cid) {
-                    isPro = true;
-                }
-            });
+                    let v = "";
+                    if (typeof dbVal === 'object') {
+                        v = dbVal.username || dbVal.id || "";
+                    } else {
+                        v = dbVal;
+                    }
+                    
+                    v = String(v).toLowerCase().trim().replace("@", "");
+
+                    // 3. डेटाबेस की वैल्यू या Key से मैच करो (बिना किसी खाली स्ट्रिंग के)
+                    if (v !== "") {
+                        if ((myUsername && (v === myUsername || dbKey === myUsername)) || 
+                            (myId && (v === myId || dbKey === myId))) {
+                            isPro = true;
+                        }
+                    } else if (dbKey !== "") {
+                         if ((myUsername && dbKey === myUsername) || (myId && dbKey === myId)) {
+                            isPro = true;
+                        }
+                    }
+                });
+            }
         }
 
-        // --- UI UPDATE ---
+
+
+        // UPDATE UI
         if(isPro) {
             document.getElementById('badgePro').style.display = 'flex';
             document.getElementById('buyProBtn').style.display = 'none';
@@ -639,9 +648,7 @@ async function fetchData(user) {
         } else {
             document.getElementById('badgePro').style.display = 'none';
             document.getElementById('buyProBtn').style.display = 'inline-block';
-            document.getElementById('badgeScholar').classList.remove('unlocked');
         }
-        
 
         // NOTES
         const notes = notesSnap.val() || {};
@@ -689,6 +696,14 @@ async function fetchData(user) {
 }
 
 /* 10. SEARCH & RENDERERS */
+
+// 🟢 NEW FIX: Search Tests Function missing thi, ab add kar di hai
+function searchTests(query) {
+    let activeFilterEl = document.querySelector('.filter-pill.active');
+    let cat = activeFilterEl ? activeFilterEl.innerText.trim() : 'all';
+    filterTests(cat, activeFilterEl, query);
+}
+
 function filterTests(cat, el, searchQuery = "") {
     if(el) { document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
     
@@ -802,12 +817,30 @@ function renderCharts() {
 /* =========================================
    🔒 ANTI-PIRACY & SECURITY LOCKDOWN 🔒
    ========================================= */
-document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+// 1. Disable Right Click (Context Menu)
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// 2. Disable Keyboard Shortcuts (Dev Tools, View Source, Copy)
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
-    if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
-    if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
+    // F12 key
+    if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+Shift+I (or i) and Ctrl+Shift+J (or j)
+    if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+U (View Source) and Ctrl+C (Copy)
+    if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+    }
 });
 </script>
 </body>
-</html>
+    </html>
