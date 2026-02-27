@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Debugger</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f3f4f6; }
+        .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 10px; }
+        span { font-weight: bold; color: #4f46e5; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h3>1. Telegram Data</h3>
+        <p>Telegram ID: <span id="tid">Loading...</span></p>
+        <p>Username: <span id="tuser">Loading...</span></p>
+    </div>
+
+    <div class="box">
+        <h3>2. Firebase Data Check</h3>
+        <p>Database Status: <span id="fcheck">Checking...</span></p>
+    </div>
+
+    <div class="box" style="text-align: center;">
+        <h3>3. Final Result</h3>
+        <h1 id="status" style="color: gray;">Loading...</h1>
+    </div>
+
+    <script>
+        // Aapka Firebase Config
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", 
+            authDomain: "dsssbexamportal.firebaseapp.com", 
+            databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            projectId: "dsssbexamportal", 
+            storageBucket: "dsssbexamportal.firebasestorage.app", 
+            messagingSenderId: "853373171134", 
+            appId: "1:853373171134:web:77b967374e6f34311af5ef" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Telegram ID nikalna
+        let tgUser = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user 
+                     ? window.Telegram.WebApp.initDataUnsafe.user 
+                     : null;
+        
+        let myId = tgUser ? String(tgUser.id) : "guest";
+        let myUsername = tgUser ? (tgUser.username || "No Username") : "guest";
+
+        document.getElementById('tid').innerText = myId;
+        document.getElementById('tuser').innerText = myUsername;
+
+        // Firebase Check Karna
+        if(myId === "guest") {
+            document.getElementById('fcheck').innerText = "Guest user hai, skip kiya.";
+            document.getElementById('status').innerText = "FREE USER";
+            document.getElementById('status').style.color = "green";
+        } else {
+            db.ref("dsssb_pro_users").once("value").then(snap => {
+                if (!snap.exists()) {
+                    document.getElementById('fcheck').innerText = "Firebase me 'dsssb_pro_users' ka folder hi nahi hai!";
+                    document.getElementById('status').innerText = "FREE USER";
+                    document.getElementById('status').style.color = "green";
+                    return;
+                }
+                
+                let isPro = false;
+                snap.forEach(child => {
+                    let dbVal = child.val();
+                    let checkId = typeof dbVal === 'object' ? String(dbVal.id || dbVal.userId || "") : String(dbVal);
+                    if (checkId === myId || String(child.key) === myId) {
+                        isPro = true;
+                    }
+                });
+
+                document.getElementById('fcheck').innerText = isPro ? "Aapki ID Firebase me mil gayi!" : "Aapki ID Firebase me NAHI mili.";
+                document.getElementById('status').innerText = isPro ? "PRO USER (Locked)" : "FREE USER";
+                document.getElementById('status').style.color = isPro ? "red" : "green";
+            }).catch(e => {
+                document.getElementById('fcheck').innerText = "Error: " + e.message;
+            });
+        }
+    </script>
+</body>
+</html>
