@@ -80,6 +80,7 @@ body {
 .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 15px 20px; }
 .stat-card { background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
 .stat-val { font-size: 18px; font-weight: 900; color: var(--primary); margin: 4px 0; }
+.stat-val i { font-size: 14px; }
 .stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
 
 /* --- BADGES & QOD --- */
@@ -164,6 +165,31 @@ input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-se
 
 #maintenanceScreen { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* Toast Notification CSS */
+#toast {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    z-index: 9999;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    animation: fadeInOut 2.5s forwards;
+    white-space: nowrap;
+}
+@keyframes fadeInOut {
+    0% { opacity: 0; bottom: 70px; }
+    15% { opacity: 1; bottom: 80px; }
+    85% { opacity: 1; bottom: 80px; }
+    100% { opacity: 0; bottom: 70px; }
+}
 </style>
 </head>
 <body>
@@ -173,6 +199,8 @@ input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-se
     <h1 style="font-weight:800; margin-bottom:10px;">App is under Maintenance!</h1>
     <p style="color:grey; font-size:14px;">We are updating the portal with new tests and features. Please check back shortly.</p>
 </div>
+
+<div id="toast"></div>
 
 <div class="news-container" id="newsSection" style="display:none;">
     <span>📢</span> <marquee id="newsText">Welcome to DSSSB Smart Notes Portal!</marquee>
@@ -383,9 +411,9 @@ window.onload = function() {
         }
     });
 
-        db.ref('dsssb_config/alert').on('value', snap => {
+    db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
-            const data = snap.val(); // ✅ FIXED: Added = snap.val();
+            const data = snap.val(); // ✅ FIXED SYNTAX BUG
             if(data.time && data.time > lastAlertTime && data.msg) {
                 document.getElementById('alertMsgText').innerText = data.msg;
                 document.getElementById('alertModal').style.display = 'flex';
@@ -434,6 +462,14 @@ function toggleTheme() { document.body.classList.toggle('dark-mode'); localStora
 function switchTab(tab, el) { document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none'); document.getElementById('tab-'+tab).style.display = 'block'; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); window.scrollTo(0,0); }
 function switchStudy(type, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); document.getElementById('notesSection').style.display = (type === 'notes') ? 'block' : 'none'; document.getElementById('videosSection').style.display = (type === 'videos') ? 'block' : 'none'; }
 
+// Toast Notification System
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2500);
+}
+
 /* 5. GAMIFICATION & ACTIONS */
 function checkStreak() {
     const last = localStorage.getItem('lastVisit');
@@ -450,10 +486,11 @@ function startCountdown() {
 }
 function shareApp() {
     if (navigator.share) navigator.share({ title: 'DSSSB Pro Portal', text: 'Best Exam Prep App!', url: window.location.href });
-    else { navigator.clipboard.writeText(window.location.href); alert("Link copied to clipboard!"); }
+    else { navigator.clipboard.writeText(window.location.href); showToast("Link copied to clipboard!"); }
 }
 
-// PWA Install 
+// PWA Install
+
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => { 
     e.preventDefault(); 
@@ -532,7 +569,7 @@ function submitPayment() {
     document.getElementById('paymentModal').style.display = 'none';
 }
 
-/* --- SAVE TEST FEATURE --- */
+/* --- SAVE TEST FEATURE (With Toast Fix) --- */
 function toggleSaveTest(testId, el, event) {
     event.stopPropagation(); // Prevents clicking the test card itself
     let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
@@ -541,10 +578,12 @@ function toggleSaveTest(testId, el, event) {
         savedTests = savedTests.filter(id => id !== testId);
         el.classList.remove('saved');
         el.innerHTML = '<i class="far fa-star"></i>';
+        showToast("Test removed from Saved"); // 👈 Toast Notification
     } else {
         savedTests.push(testId);
         el.classList.add('saved');
         el.innerHTML = '<i class="fas fa-star"></i>';
+        showToast("Test Saved Successfully ⭐"); // 👈 Toast Notification
     }
     localStorage.setItem('savedTests', JSON.stringify(savedTests));
 }
@@ -616,7 +655,6 @@ async function fetchData(user) {
         
         // TESTS
         const tData = testsSnap.val() || {};
-        // Map keys to the test objects so we have a unique ID for saving
         allTests = Object.keys(tData).map(key => {
             return { dbKey: key, ...tData[key] };
         });
@@ -630,6 +668,14 @@ async function fetchData(user) {
 }
 
 /* 10. SEARCH & RENDERERS */
+
+// 🟢 NEW FIX: Search Tests Function missing thi, ab add kar di hai
+function searchTests(query) {
+    let activeFilterEl = document.querySelector('.filter-pill.active');
+    let cat = activeFilterEl ? activeFilterEl.innerText.trim() : 'all';
+    filterTests(cat, activeFilterEl, query);
+}
+
 function filterTests(cat, el, searchQuery = "") {
     if(el) { document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
     
@@ -684,7 +730,6 @@ function searchNotes(query) {
     let html = "";
     const list = allNotes.filter(n => (n.title||"").toLowerCase().includes(query.toLowerCase()));
     list.forEach(n => {
-        // 🔥 Check if note is Pro and user is not Pro
         let locked = n.type === 'pro' && !isPro;
         let action = locked ? "openPayment()" : `window.open('${n.url}')`;
         let btnText = locked ? "💎 Unlock Pro" : "Download PDF";
@@ -703,7 +748,6 @@ function renderVideos() {
         let html = "";
         const videos = snap.val() || {};
         Object.values(videos).reverse().forEach(v => {
-            // 🔥 Check if video is Pro and user is not Pro
             let locked = v.type === 'pro' && !isPro;
             let action = locked ? "openPayment()" : `window.open('${v.url}')`;
             let lockBadge = locked ? `<div style="position:absolute; top:10px; right:10px; background:var(--warning); color:white; padding:3px 8px; border-radius:4px; font-size:10px; font-weight:800; z-index:10;">🔒 PRO</div>` : '';
@@ -772,6 +816,3 @@ document.addEventListener('keydown', function(e) {
 </script>
 </body>
 </html>
-
-
-
