@@ -385,7 +385,8 @@ window.onload = function() {
 
     db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
-            const data             if(data.time && data.time > lastAlertTime && data.msg) {
+            const data
+            if(data.time && data.time > lastAlertTime && data.msg) {
                 document.getElementById('alertMsgText').innerText = data.msg;
                 document.getElementById('alertModal').style.display = 'flex';
                 lastAlertTime = data.time;
