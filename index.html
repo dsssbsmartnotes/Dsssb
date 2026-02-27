@@ -114,7 +114,9 @@ body {
 .save-btn { background: transparent; color: var(--border); border: none; font-size: 20px; cursor: pointer; position: absolute; top: 12px; right: 15px; z-index: 10; transition: 0.3s; }
 .save-btn.saved { color: #f59e0b; filter: drop-shadow(0 2px 5px rgba(245, 158, 11, 0.4)); }
 .live-badge { background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; animation: pulseLive 1.5s infinite; position: absolute; top: 12px; left: 12px; letter-spacing: 0.5px; }
-.test-card.locked::after { content: "🔒 PRO"; position: absolute; top: 12px; right: 45px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; z-index: 5; }
+
+/* 🔥 UPDATE: Pro Badge ab Note aur Test dono par aayega */
+.test-card.locked::after, .note-card.locked::after { content: "🔒 PRO"; position: absolute; top: 12px; right: 45px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; z-index: 5; }
 
 @keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 /* 👆 */
@@ -383,8 +385,7 @@ window.onload = function() {
 
     db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
-            const data = snap.val();
-            if(data.time && data.time > lastAlertTime && data.msg) {
+            const data             if(data.time && data.time > lastAlertTime && data.msg) {
                 document.getElementById('alertMsgText').innerText = data.msg;
                 document.getElementById('alertModal').style.display = 'flex';
                 lastAlertTime = data.time;
@@ -681,7 +682,18 @@ function filterTests(cat, el, searchQuery = "") {
 function searchNotes(query) {
     let html = "";
     const list = allNotes.filter(n => (n.title||"").toLowerCase().includes(query.toLowerCase()));
-    list.forEach(n => html += `<div class="note-card"><div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div><div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div><button class="download-btn" onclick="window.open('${n.url}')">Download PDF</button></div>`);
+    list.forEach(n => {
+        // 🔥 Check if note is Pro and user is not Pro
+        let locked = n.type === 'pro' && !isPro;
+        let action = locked ? "openPayment()" : `window.open('${n.url}')`;
+        let btnText = locked ? "💎 Unlock Pro" : "Download PDF";
+        
+        html += `<div class="note-card ${locked?'locked':''}">
+            <div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div>
+            <div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div>
+            <button class="download-btn ${locked?'locked':''}" onclick="${action}">${btnText}</button>
+        </div>`;
+    });
     document.getElementById('notesListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'><i class='fas fa-search fa-2x' style='margin-bottom:10px;opacity:0.5'></i><br>No notes found.</div>";
 }
 
@@ -690,7 +702,23 @@ function renderVideos() {
         let html = "";
         const videos = snap.val() || {};
         Object.values(videos).reverse().forEach(v => {
-            html += `<div class="video-card" onclick="window.open('${v.url}')"><div class="vid-thumb"><img src="${v.thumb}"><i class="fas fa-play-circle play-icon"></i></div><div class="vid-content"><span style="font-size:10px; background:#fee2e2; color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700; margin-bottom:5px; display:inline-block;">Class</span><div style="font-size:14px; font-weight:700; line-height:1.3;">${v.title}</div></div></div>`;
+            // 🔥 Check if video is Pro and user is not Pro
+            let locked = v.type === 'pro' && !isPro;
+            let action = locked ? "openPayment()" : `window.open('${v.url}')`;
+            let lockBadge = locked ? `<div style="position:absolute; top:10px; right:10px; background:var(--warning); color:white; padding:3px 8px; border-radius:4px; font-size:10px; font-weight:800; z-index:10;">🔒 PRO</div>` : '';
+            let playIcon = locked ? '<i class="fas fa-lock play-icon" style="color:#f59e0b;"></i>' : '<i class="fas fa-play-circle play-icon"></i>';
+
+            html += `<div class="video-card" onclick="${action}">
+                <div class="vid-thumb">
+                    ${lockBadge}
+                    <img src="${v.thumb}">
+                    ${playIcon}
+                </div>
+                <div class="vid-content">
+                    <span style="font-size:10px; background:#fee2e2; color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700; margin-bottom:5px; display:inline-block;">Class</span>
+                    <div style="font-size:14px; font-weight:700; line-height:1.3;">${v.title}</div>
+                </div>
+            </div>`;
         });
         document.getElementById('videoListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No videos yet.</div>";
     });
@@ -743,3 +771,4 @@ document.addEventListener('keydown', function(e) {
 </script>
 </body>
 </html>
+
