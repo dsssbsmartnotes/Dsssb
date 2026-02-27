@@ -593,26 +593,34 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
 
-                // --- ROBUST PRO CHECK (BUG FIXED) ---
-        isPro = false;
-        
-        if (proSnap.exists()) {
-            // ID aur Username ko safe banayein
-            const myId = (user.id || "").toString().trim();
-            const myUsername = (user.username || "").toLowerCase().trim().replace("@", "");
+        // --- SECURE PRO CHECK (NO CONSOLE LOGS) ---
+        isPro = false; // Reset First
+
+        if (proSnap.exists() && currentUserId !== "guest") {
+            const myId = String(currentUserId).trim();
+            const myUsername = String(user.username || "").toLowerCase().trim().replace("@", "");
 
             proSnap.forEach(child => {
                 let dbVal = child.val();
-                
-                // Database ki values ko extract karein (object ho ya direct string)
-                let dbId = (typeof dbVal === 'object' ? (dbVal.id || "") : dbVal).toString().trim();
-                let dbUsername = (typeof dbVal === 'object' ? (dbVal.username || "") : dbVal).toString().toLowerCase().trim().replace("@", "");
+                let dbKey = child.key;
+                let dbId = "";
+                let dbUsername = "";
 
-                // STRICT CONDITION: Khali string ("") ya "guest" kabhi match nahi hona chahiye
-                let isIdMatch = (myId !== "" && myId !== "guest" && myId === dbId);
-                let isUserMatch = (myUsername !== "" && myUsername !== "guest" && myUsername === dbUsername);
+                if (typeof dbVal === 'object' && dbVal !== null) {
+                    dbId = String(dbVal.id || dbVal.userId || dbVal.user_id || "").trim();
+                    dbUsername = String(dbVal.username || dbVal.uname || "").toLowerCase().trim().replace("@", "");
+                } else {
+                    dbId = String(dbVal).trim();
+                    dbUsername = String(dbVal).toLowerCase().trim().replace("@", "");
+                }
 
-                if (isIdMatch || isUserMatch) {
+                if (dbKey === myId) { dbId = myId; }
+
+                // Strict Silent Matching
+                if (myId !== "" && dbId === myId) {
+                    isPro = true;
+                }
+                if (myUsername !== "" && dbUsername === myUsername) {
                     isPro = true;
                 }
             });
@@ -628,6 +636,8 @@ async function fetchData(user) {
             document.getElementById('buyProBtn').style.display = 'inline-block';
             document.getElementById('badgeScholar').classList.remove('unlocked');
         }
+        // --------------------------------------------------
+
 
 
         // NOTES
