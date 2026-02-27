@@ -48,7 +48,15 @@ body.dark-mode {
     --border: #374151;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(--nav-height); transition: 0.3s; }
+
+/* 🔒 ANTI-COPY CSS LAYER 🔒 */
+body { 
+    background: var(--bg-body); 
+    color: var(--text-main); 
+    padding-bottom: var(--nav-height); 
+    transition: 0.3s; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
+}
 
 /* --- HEADER & PROFILE --- */
 .hero-header { background: var(--bg-card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
@@ -97,10 +105,20 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .filter-pill { padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap; cursor: pointer; }
 .filter-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
+/* --- TESTS & CARDS --- */
 .test-card, .note-card, .video-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; position: relative; overflow: hidden; }
 .test-card, .note-card { padding: 15px; } 
 .video-card { padding: 0; cursor: pointer; }
-.test-card.locked::after { content: "🔒 PRO"; position: absolute; top: 10px; right: 10px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; }
+
+/* Naye Features ke CSS 👇 */
+.save-btn { background: transparent; color: var(--border); border: none; font-size: 20px; cursor: pointer; position: absolute; top: 12px; right: 15px; z-index: 10; transition: 0.3s; }
+.save-btn.saved { color: #f59e0b; filter: drop-shadow(0 2px 5px rgba(245, 158, 11, 0.4)); }
+.live-badge { background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; animation: pulseLive 1.5s infinite; position: absolute; top: 12px; left: 12px; letter-spacing: 0.5px; }
+.test-card.locked::after { content: "🔒 PRO"; position: absolute; top: 12px; right: 45px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; z-index: 5; }
+
+@keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+/* 👆 */
+
 .t-title { font-weight: 700; font-size: 15px; margin-bottom: 5px; }
 .t-info { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
 .start-btn, .download-btn { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; margin-top:5px;}
@@ -132,6 +150,9 @@ body { background: var(--bg-body); color: var(--text-main); padding-bottom: var(
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; outline:none; }
+/* Input Allow Override */
+input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; user-select: auto; }
+
 .nav-bar { position: fixed; bottom: 0; width: 100%; height: var(--nav-height); background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
 .nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; cursor: pointer; }
 .nav-item i { font-size: 18px; margin-bottom: 3px; display: block; }
@@ -139,9 +160,7 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
 .chart-box { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin: 0 20px 20px; }
 .rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
 
-/* Maintenance Overlay */
 #maintenanceScreen { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
-
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 </style>
 </head>
@@ -262,6 +281,8 @@ textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2p
             <div class="search-box"><i class="fas fa-search"></i><input type="text" id="testSearch" placeholder="Search for Mock Tests..." onkeyup="searchTests(this.value)"></div>
             <div class="filter-scroll">
                 <div class="filter-pill active" onclick="filterTests('all', this)">All</div>
+                <div class="filter-pill" style="color:#ef4444; border-color:#ef4444;" onclick="filterTests('Live', this)">Live 🔴</div>
+                <div class="filter-pill" style="color:#f59e0b; border-color:#f59e0b;" onclick="filterTests('Saved', this)">Saved ⭐</div>
                 <div class="filter-pill" onclick="filterTests('Full Mock', this)">Full Mock</div>
                 <div class="filter-pill" onclick="filterTests('Reasoning', this)">Reasoning</div>
                 <div class="filter-pill" onclick="filterTests('Maths', this)">Maths</div>
@@ -323,7 +344,7 @@ const db = firebase.database();
 
 let currentUser = "Student", currentUserId = "guest", isPro = false;
 let myScores = [], allTests = [], allNotes = [];
-let lastAlertTime = 0; // Prevent alert spam
+let lastAlertTime = 0;
 
 /* 2. STATIC DATA */
 const syllabusDB = {
@@ -337,7 +358,6 @@ let fallbackQOD = { q: "Wait, loading question...", opt: ["-", "-", "-", "-"], a
 
 /* 3. INITIALIZATION */
 window.onload = function() {
-    // Safety Timer (Removes loader if DB is slow)
     setTimeout(() => {
         if(document.getElementById('loader').style.display !== 'none') {
             document.getElementById('loader').style.display = 'none';
@@ -351,8 +371,6 @@ window.onload = function() {
     checkStreak(); startCountdown(); renderSyllabus();
 
     // --- ADMIN SYNC LISTENERS ---
-    
-    // A. Maintenance Mode
     db.ref('dsssb_config/maintenance').on('value', snap => {
         if(snap.val() === true) {
             document.getElementById('maintenanceScreen').style.display = 'flex';
@@ -363,7 +381,6 @@ window.onload = function() {
         }
     });
 
-    // B. Broadcast Alert
     db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
             const data = snap.val();
@@ -375,7 +392,6 @@ window.onload = function() {
         }
     });
 
-    // C. News Ticker
     db.ref('dsssb_config/news').on('value', snap => {
         if(snap.exists() && snap.val() !== "") {
             document.getElementById('newsSection').style.display = 'flex';
@@ -383,7 +399,6 @@ window.onload = function() {
         } else { document.getElementById('newsSection').style.display = 'none'; }
     });
 
-    // D. Dynamic QOD
     db.ref('dsssb_config/qod').on('value', snap => {
         if(snap.exists()) {
             const d = snap.val();
@@ -515,6 +530,23 @@ function submitPayment() {
     document.getElementById('paymentModal').style.display = 'none';
 }
 
+/* --- SAVE TEST FEATURE --- */
+function toggleSaveTest(testId, el, event) {
+    event.stopPropagation(); // Prevents clicking the test card itself
+    let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
+    
+    if (savedTests.includes(testId)) {
+        savedTests = savedTests.filter(id => id !== testId);
+        el.classList.remove('saved');
+        el.innerHTML = '<i class="far fa-star"></i>';
+    } else {
+        savedTests.push(testId);
+        el.classList.add('saved');
+        el.innerHTML = '<i class="fas fa-star"></i>';
+    }
+    localStorage.setItem('savedTests', JSON.stringify(savedTests));
+}
+
 /* 9. MAIN DATA FETCHING */
 async function fetchData(user) {
     try {
@@ -582,7 +614,10 @@ async function fetchData(user) {
         
         // TESTS
         const tData = testsSnap.val() || {};
-        allTests = Object.values(tData);
+        // Map keys to the test objects so we have a unique ID for saving
+        allTests = Object.keys(tData).map(key => {
+            return { dbKey: key, ...tData[key] };
+        });
         filterTests('all', document.querySelector('.filter-pill'));
 
     } catch(e) { console.error("Data Load Error:", e); } 
@@ -597,19 +632,26 @@ function filterTests(cat, el, searchQuery = "") {
     if(el) { document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
     
     let list = [...allTests].reverse(); 
+    let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
     
     if (searchQuery) {
         list = list.filter(t => (t.title||"").toLowerCase().includes(searchQuery.toLowerCase()));
-    } else if(cat !== 'all' && cat !== 'search') {
+    } else if(cat !== 'all') {
         const key = cat.toLowerCase();
-        list = list.filter(t => {
-            const title = (t.title||"").toLowerCase();
-            const c = (t.category||"").toLowerCase();
-            if(key === 'reasoning') return title.includes('reas') || title.includes('logic') || c.includes('reasoning');
-            if(key === 'maths') return title.includes('math') || title.includes('quant') || c.includes('math');
-            if(key === 'gk') return title.includes('gk') || title.includes('general') || c.includes('gk');
-            return title.includes(key) || c.includes(key);
-        });
+        if(key === 'saved') {
+            list = list.filter(t => savedTests.includes(t.dbKey));
+        } else if (key === 'live') {
+            list = list.filter(t => (t.isLive && t.isLive.toString() === 'true'));
+        } else {
+            list = list.filter(t => {
+                const title = (t.title||"").toLowerCase();
+                const c = (t.category||"").toLowerCase();
+                if(key === 'reasoning') return title.includes('reas') || title.includes('logic') || c.includes('reasoning');
+                if(key === 'maths') return title.includes('math') || title.includes('quant') || c.includes('math');
+                if(key === 'gk') return title.includes('gk') || title.includes('general') || c.includes('gk');
+                return title.includes(key) || c.includes(key);
+            });
+        }
     }
     
     let html = "";
@@ -618,9 +660,17 @@ function filterTests(cat, el, searchQuery = "") {
         let displayMarks = t.marks || t.qs || '20';
         let action = locked ? "openPayment()" : `window.location.href='${t.url}'`;
         
+        let isSaved = savedTests.includes(t.dbKey);
+        let saveIcon = isSaved ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+        let saveClass = isSaved ? 'saved' : '';
+        
+        let liveBadgeHTML = (t.isLive && t.isLive.toString() === 'true') ? '<div class="live-badge">🔴 LIVE TEST</div>' : '';
+        
         html += `
         <div class="test-card ${locked?'locked':''}">
-            <div class="t-title">${t.title}</div>
+            ${liveBadgeHTML}
+            <button class="save-btn ${saveClass}" onclick="toggleSaveTest('${t.dbKey}', this, event)">${saveIcon}</button>
+            <div class="t-title" style="${(t.isLive && t.isLive.toString() === 'true') ? 'margin-top:25px;' : ''}">${t.title}</div>
             <div class="t-info"><span><i class="far fa-clock"></i> ${t.time}m</span><span><i class="far fa-file-alt"></i> ${t.qs} Qs</span><span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span></div>
             <button class="start-btn ${locked?'locked':''}" onclick="${action}">${locked ? 'Unlock Pro' : 'Start Test'}</button>
         </div>`;
@@ -662,6 +712,34 @@ function renderCharts() {
         options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { display:false, max: 100 }, y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } }, maintainAspectRatio: false }
     });
 }
+
+/* =========================================
+   🔒 ANTI-PIRACY & SECURITY LOCKDOWN 🔒
+   ========================================= */
+
+// 1. Disable Right Click (Context Menu)
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// 2. Disable Keyboard Shortcuts (Dev Tools, View Source, Copy)
+document.addEventListener('keydown', function(e) {
+    // F12 key
+    if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+Shift+I (or i) and Ctrl+Shift+J (or j)
+    if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+U (View Source) and Ctrl+C (Copy)
+    if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+    }
+});
 </script>
 </body>
 </html>
