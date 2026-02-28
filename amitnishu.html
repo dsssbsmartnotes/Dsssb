@@ -2,208 +2,902 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Admin - Full Control</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DSSSB Smart Notes - Student Portal</title>
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#4f46e5">
+<link rel="manifest" id="manifest-placeholder">
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+const manifest = {
+    "name": "DSSSB Pro Portal",
+    "short_name": "DSSSB Smart Notes",
+    "start_url": window.location.href,
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4f46e5",
+    "icons": [{ "src": "https://dsssbsmartnotes.github.io/llogo.png", "sizes": "192x192", "type": "image/png" }]
+};
+const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+document.querySelector('#manifest-placeholder').setAttribute('href', URL.createObjectURL(blob));
+</script>
+
 <style>
-  * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-  body { background: #f1f5f9; margin: 0; padding: 0; color: #1e293b; }
-  #loginOverlay { position: fixed; inset: 0; background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
-  .login-box { background: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90%; max-width: 350px; }
-  .login-box h2 { margin-top: 0; color: #4f46e5; }
-  .login-box input { width: 100%; padding: 12px; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; outline: none; }
-  .login-box button { width: 100%; background: #4f46e5; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-  #errorMsg { color: #ef4444; font-size: 13px; font-weight: bold; margin-top: 10px; display: none; }
-  #adminContent { display: none; padding: 20px; max-width: 1200px; margin: auto; }
-  .header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #4f46e5, #9333ea); color: white; padding: 20px 25px; border-radius: 16px; margin-bottom: 20px; }
-  .header h2 { margin: 0; font-size: 24px; }
-  .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tab-btn { padding: 12px 25px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-weight: bold; color: #64748b; transition: 0.2s; }
-  .tab-btn.active { background: #4f46e5; color: white; border-color: #4f46e5; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px; }
-  .form-group { margin-bottom: 15px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px; }
-  .form-group input, .form-group select { width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; }
-  .btn-submit { background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
-  table { width: 100%; border-collapse: collapse; min-width: 600px; }
-  .table-container { overflow-x: auto; }
-  th, td { padding: 15px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-  th { background-color: #f8fafc; color: #475569; font-weight: 700; text-transform: uppercase; font-size: 13px; }
-  .btn-del { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
-  .badge-free { background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
-  .badge-pro { background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+/* --- THEME VARIABLES --- */
+:root {
+    --primary: #4f46e5; --primary-light: #e0e7ff;
+    --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    --text-main: #1f2937; --text-muted: #6b7280;
+    --bg-body: #f3f4f6; --bg-card: #ffffff;
+    --border: #e5e7eb;
+    --nav-height: 65px;
+}
+body.dark-mode {
+    --primary: #6366f1; --primary-light: rgba(99, 102, 241, 0.2);
+    --text-main: #f9fafb; --text-muted: #9ca3af;
+    --bg-body: #111827; --bg-card: #1f2937;
+    --border: #374151;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+/* 🔒 ANTI-COPY CSS LAYER 🔒 */
+body { 
+    background: var(--bg-body); 
+    color: var(--text-main); 
+    padding-bottom: var(--nav-height); 
+    transition: 0.3s; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
+}
+
+/* --- HEADER & PROFILE --- */
+.hero-header { background: var(--bg-card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.user-profile { display: flex; align-items: center; gap: 12px; }
+.user-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 18px; border: 2px solid var(--primary); overflow: hidden; }
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-info h1 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+.user-info p { font-size: 11px; color: var(--text-muted); }
+.tools { display: flex; gap: 8px; align-items: center; }
+.tool-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); display: grid; place-items: center; cursor: pointer; transition: 0.2s; }
+.pro-badge-header { background: linear-gradient(90deg, #FFD700, #FFA500); color: #000; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 11px; display: none; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3); border: 1px solid #eab308; white-space: nowrap; }
+.buy-pro-btn { background: #dcfce7; color: #16a34a; font-weight: 800; padding: 6px 12px; border-radius: 20px; font-size: 11px; border: 1px solid #16a34a; cursor: pointer; animation: pulse 2s infinite; }
+
+/* --- HOME WIDGETS --- */
+.countdown-box { background: linear-gradient(90deg, #1e293b, #0f172a); color: white; padding: 10px 20px; margin: 15px 20px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.cd-timer { font-size: 16px; font-weight: 800; color: #fbbf24; }
+.quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px 20px 0; }
+.action-item { background: var(--bg-card); padding: 10px; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+.action-item i { font-size: 18px; color: var(--primary); }
+.action-item span { font-size: 10px; font-weight: 600; color: var(--text-muted); }
+.stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 15px 20px; }
+.stat-card { background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+.stat-val { font-size: 18px; font-weight: 900; color: var(--primary); margin: 4px 0; }
+.stat-val i { font-size: 14px; }
+.stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+
+/* --- BADGES & QOD --- */
+.badge-section { padding: 0 20px; margin-bottom: 20px; }
+.badge-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+.badge-item { min-width: 80px; background: var(--bg-card); border: 1px solid var(--border); padding: 10px; border-radius: 12px; text-align: center; opacity: 0.5; filter: grayscale(1); transition: 0.3s; }
+.badge-item.unlocked { opacity: 1; filter: grayscale(0); border-color: #fbbf24; background: linear-gradient(180deg, var(--bg-card), #fffbeb); }
+.badge-icon { font-size: 24px; margin-bottom: 5px; display: block; }
+.badge-name { font-size: 10px; font-weight: 700; }
+.qod-card { background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%); border: 1px solid #fed7aa; border-radius: 16px; padding: 15px; margin: 0 20px 20px; box-shadow: 0 4px 10px rgba(251, 146, 60, 0.1); }
+.dark-mode .qod-card { background: #2a1b0d; border-color: #431407; }
+.qod-tag { background: #f97316; color: white; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.qod-opt { padding: 10px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; font-size: 13px; cursor: pointer; text-align: center; font-weight: 600; margin-bottom:5px; }
+.dark-mode .qod-opt { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); }
+.qod-opt.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #16a34a; }
+.qod-opt.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #dc2626; }
+
+/* --- CONTENT LISTS --- */
+.list-container { padding: 0 20px; }
+.search-box { background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.search-box input { border: none; background: transparent; width: 100%; font-size: 14px; color: var(--text-main); outline: none; }
+.filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; }
+.filter-pill { padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap; cursor: pointer; }
+.filter-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* --- TESTS & CARDS --- */
+.test-card, .note-card, .video-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; position: relative; overflow: hidden; }
+.test-card, .note-card { padding: 15px; } 
+.video-card { padding: 0; cursor: pointer; }
+
+/* Naye Features ke CSS 👇 */
+.save-btn { background: transparent; color: var(--border); border: none; font-size: 20px; cursor: pointer; position: absolute; top: 12px; right: 15px; z-index: 10; transition: 0.3s; }
+.save-btn.saved { color: #f59e0b; filter: drop-shadow(0 2px 5px rgba(245, 158, 11, 0.4)); }
+.live-badge { background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; animation: pulseLive 1.5s infinite; position: absolute; top: 12px; left: 12px; letter-spacing: 0.5px; }
+
+/* 🔥 UPDATE: Pro Badge ab Note aur Test dono par aayega */
+.test-card.locked::after, .note-card.locked::after { content: "🔒 PRO"; position: absolute; top: 12px; right: 45px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; z-index: 5; }
+
+@keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+/* 👆 */
+
+.t-title { font-weight: 700; font-size: 15px; margin-bottom: 5px; }
+.t-info { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+.start-btn, .download-btn { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; margin-top:5px;}
+.start-btn.locked { background: #fee2e2; color: #ef4444; }
+.download-btn { background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); }
+
+.vid-thumb { width: 100%; height: 160px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+.vid-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+.vid-content { padding: 12px; }
+
+/* --- STUDY & SYLLABUS --- */
+.segment-control { display: flex; background: var(--bg-body); padding: 5px; border-radius: 12px; margin: 0 20px 15px; border: 1px solid var(--border); }
+.segment-btn { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 8px; color: var(--text-muted); cursor: pointer; }
+.segment-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+.syllabus-container { padding: 20px; }
+.progress-card { background: var(--bg-card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; text-align: center; }
+.prog-ring { width: 100%; height: 10px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); width: 0%; transition: width 0.5s; }
+.subject-group { margin-bottom: 15px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.subject-head { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.02); cursor: pointer; font-weight: 700; }
+.topic-list { display: none; padding: 10px; }
+.topic-list.open { display: block; }
+.topic-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.topic-chk { width: 18px; height: 18px; accent-color: var(--primary); }
+
+/* --- MISC & MODALS --- */
+.news-container { background: linear-gradient(90deg, #4f46e5, #7c3aed); color: white; padding: 8px 15px; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+.modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; outline:none; }
+/* Input Allow Override */
+input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; user-select: auto; }
+
+.nav-bar { position: fixed; bottom: 0; width: 100%; height: var(--nav-height); background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+.nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; cursor: pointer; }
+.nav-item i { font-size: 18px; margin-bottom: 3px; display: block; }
+.nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-2px); }
+.chart-box { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin: 0 20px 20px; }
+.rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+
+#maintenanceScreen { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* Toast Notification CSS */
+#toast {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    z-index: 9999;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    animation: fadeInOut 2.5s forwards;
+    white-space: nowrap;
+}
+@keyframes fadeInOut {
+    0% { opacity: 0; bottom: 70px; }
+    15% { opacity: 1; bottom: 80px; }
+    85% { opacity: 1; bottom: 80px; }
+    100% { opacity: 0; bottom: 70px; }
+}
 </style>
 </head>
 <body>
 
-<div id="loginOverlay">
-    <div class="login-box">
-        <h2>🔒 Admin Login</h2>
-        <input type="password" id="adminPass" placeholder="Enter Password">
-        <button onclick="checkAdmin()">LOGIN</button>
-        <p id="errorMsg">Incorrect Password!</p>
+<div id="maintenanceScreen">
+    <i class="fas fa-tools fa-4x" style="color:var(--primary); margin-bottom:20px;"></i>
+    <h1 style="font-weight:800; margin-bottom:10px;">App is under Maintenance!</h1>
+    <p style="color:grey; font-size:14px;">We are updating the portal with new tests and features. Please check back shortly.</p>
+</div>
+
+<div id="toast"></div>
+
+<div class="news-container" id="newsSection" style="display:none;">
+    <span>📢</span> <marquee id="newsText">Welcome to DSSSB Smart Notes Portal!</marquee>
+</div>
+
+<div id="alertModal" class="modal" style="z-index: 3000;">
+    <div class="modal-content" style="text-align:center;">
+        <i class="fas fa-bell fa-3x" style="color:#ef4444; margin-bottom:15px; animation: pulse 1s infinite;"></i>
+        <h2 style="margin-bottom:10px;">New Announcement!</h2>
+        <p id="alertMsgText" style="font-size:14px; margin-bottom:20px; font-weight:600;"></p>
+        <button onclick="document.getElementById('alertModal').style.display='none'" class="start-btn">Got it</button>
     </div>
 </div>
 
-<div id="adminContent">
-    <div class="header">
-        <h2>DSSSB Pro Control Panel</h2>
-        <button onclick="exportToCSV()" style="background:#10b981; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer;">📥 Export Results</button>
+<div id="paymentModal" class="modal">
+    <div class="modal-content" style="text-align:center;">
+        <h2 style="color:var(--primary); margin-bottom:5px;">💎 Upgrade to Pro</h2>
+        <p style="font-size:12px; color:grey; margin-bottom:15px;">Unlock all Tests, Videos & Notes!</p>
+        <div style="background:white; padding:10px; display:inline-block; border:1px solid #ddd; border-radius:10px; margin-bottom:15px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=8587961053@ybl&pn=DSSSB_Pro&am=99" style="width:150px;">
+        </div>
+        <p style="font-weight:800; font-size:20px; margin-bottom:5px;">₹99 Only</p>
+        <p style="font-size:11px; color:red; margin-bottom:10px;">Pay via QR & Enter UTR/Ref No below:</p>
+        <input type="text" id="utrInput" placeholder="Enter UTR (12 Digits)" style="width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; margin-bottom:10px; outline:none;">
+        <button onclick="submitPayment()" class="start-btn" style="background:#10b981;">Submit for Approval</button>
+        <button onclick="document.getElementById('paymentModal').style.display='none'" class="start-btn" style="background:transparent; color:grey; border:1px solid #ddd; margin-top:10px;">Cancel</button>
     </div>
+</div>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('results')">📊 Live Results</button>
-        <button class="tab-btn" onclick="switchTab('tests')">📝 Manage Tests</button>
-        <button class="tab-btn" onclick="switchTab('users')" style="background:#f59e0b; color:white; border:none;">👥 PRO Users List</button>
-    </div>
-
-    <div id="tab-results" class="tab-content active card">
-        <h3>Student Leaderboard</h3>
-        <div class="table-container">
-            <table>
-                <thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Correct</th><th>Wrong</th><th>Time</th></tr></thead>
-                <tbody id="resultsTable"><tr><td colspan="6">Loading...</td></tr></tbody>
-            </table>
+<div id="reportModal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:5px;">🚩 Report Issue</h2>
+        <textarea id="reportText" placeholder="Describe the issue (e.g. Test 2, Q5 is wrong)..."></textarea>
+        <div style="display:flex; gap:10px;">
+            <button class="start-btn" style="background:var(--bg-body); color:var(--text-main);" onclick="document.getElementById('reportModal').style.display='none'">Cancel</button>
+            <button class="start-btn" onclick="submitReport()">Submit</button>
         </div>
     </div>
+</div>
 
-    <div id="tab-tests" class="tab-content">
-        <div class="card" style="max-width: 600px; margin: auto; margin-bottom: 30px;">
-            <h3 style="margin-top:0; color:#4f46e5;">➕ Add New Mock Test</h3>
-            <div class="form-group">
-                <label>Test Type (Free or Pro)</label>
-                <select id="t_type"><option value="free">🟢 FREE Test</option><option value="pro">👑 PRO Test (Locked)</option></select>
+<div id="loader" style="padding: 50px; text-align: center; color: grey; margin-top:50px;">
+    <i class="fas fa-circle-notch fa-spin fa-2x"></i><p style="margin-top: 10px;">Loading Data...</p>
+</div>
+
+<div id="app" style="display: none;">
+
+    <div class="hero-header">
+        <div class="user-profile">
+            <div class="user-avatar" id="uAvatar">S</div>
+            <div class="user-info">
+                <h1 id="uName">Student</h1>
+                <div id="badgePro" class="pro-badge-header" style="display:none; margin-top:5px;">
+                    <i class="fas fa-crown"></i> PRO MEMBER
+                </div>
+                <button id="buyProBtn" class="buy-pro-btn" style="display:none; margin-top:5px;" onclick="openPayment()">💎 Buy Pro</button>
             </div>
-            <div class="form-group">
-                <label>Test Title</label>
-                <input type="text" id="t_title" placeholder="Enter Test Name">
-            </div>
-            <div style="display:flex; gap:15px;">
-                <div class="form-group" style="flex:1;"><label>Questions</label><input type="number" id="t_qs"></div>
-                <div class="form-group" style="flex:1;"><label>Duration (Mins)</label><input type="number" id="t_time"></div>
-            </div>
-            <div class="form-group">
-                <label>HTML File Name</label>
-                <input type="text" id="t_url" placeholder="Testv11.html">
-            </div>
-            <button class="btn-submit" onclick="addTest()">🚀 PUBLISH TEST</button>
         </div>
-        <div class="card">
-            <h3>📚 Active Tests</h3>
-            <div class="table-container">
-                <table>
-                    <thead><tr><th>ID</th><th>Type</th><th>Title</th><th>Link</th><th>Action</th></tr></thead>
-                    <tbody id="testsTable"><tr><td colspan="5">Loading...</td></tr></tbody>
-                </table>
-            </div>
+        <div class="tools">
+            <button class="tool-btn" id="installBtn" style="display:none;" onclick="installApp()"><i class="fas fa-download"></i></button>
+            <button class="tool-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
         </div>
     </div>
 
-    <div id="tab-users" class="tab-content">
-        <div class="card" style="max-width: 600px; margin: auto; margin-bottom: 30px; border-top: 4px solid #f59e0b;">
-            <h3 style="margin-top:0; color:#d97706;">👑 Give PRO Access to Student</h3>
-            <p style="font-size: 13px; color: #64748b; margin-bottom:15px;">Enter the student's Telegram Username (e.g. amit_123) or Telegram User ID to unlock their tests.</p>
-            <div class="form-group">
-                <input type="text" id="pro_uid" placeholder="Enter Telegram Username or ID">
-            </div>
-            <button class="btn-submit" style="background:#f59e0b;" onclick="addProUser()">Grant Access ✅</button>
+    <div id="tab-home" class="tab-content">
+        <div class="countdown-box">
+            <span class="cd-text">🎯 Target Exam</span><span class="cd-timer" id="examTimer">00 Days Left</span>
         </div>
-        <div class="card">
-            <h3>👥 Premium Members List</h3>
-            <div class="table-container">
-                <table>
-                    <thead><tr><th>Telegram Username / ID</th><th>Access Status</th><th>Action</th></tr></thead>
-                    <tbody id="proUsersTable"><tr><td colspan="3">Loading...</td></tr></tbody>
-                </table>
+
+        <div class="quick-actions">
+            <div class="action-item" onclick="window.open('https://t.me/DSSSBRank')"><i class="fab fa-telegram-plane"></i><span>Channel</span></div>
+            <div class="action-item" onclick="shareApp()"><i class="fas fa-share-alt"></i><span>Share</span></div>
+            <div class="action-item" onclick="document.getElementById('reportModal').style.display='flex'"><i class="fas fa-exclamation-circle"></i><span>Report</span></div>
+            <div class="action-item" onclick="switchTab('study', document.getElementById('nav-study'))"><i class="fas fa-graduation-cap"></i><span>Study</span></div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-val" id="valRank">--</div><div class="stat-lbl">Rank</div></div>
+            <div class="stat-card"><div class="stat-val" id="valTests">0</div><div class="stat-lbl">Tests</div></div>
+            <div class="stat-card"><div class="stat-val"><i class="fas fa-fire fire-anim"></i> <span id="valStreak">1</span></div><div class="stat-lbl">Streak</div></div>
+        </div>
+
+        <div class="badge-section">
+            <div style="font-weight:700; margin-bottom:10px; font-size:14px;">🏆 Achievements</div>
+            <div class="badge-grid">
+                <div class="badge-item unlocked"><span class="badge-icon">🐣</span><span class="badge-name">Starter</span></div>
+                <div class="badge-item" id="badgeStreak"><span class="badge-icon">🔥</span><span class="badge-name">On Fire</span></div>
+                <div class="badge-item" id="badgeScholar"><span class="badge-icon">🎓</span><span class="badge-name">Scholar</span></div>
+                <div class="badge-item" id="badgeMachine"><span class="badge-icon">🤖</span><span class="badge-name">Machine</span></div>
+            </div>
+        </div>
+
+        <div class="qod-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span class="qod-tag">💡 Daily Question</span><span style="font-size:11px; color:#f97316; font-weight:700;">+2 Pts</span>
+            </div>
+            <div class="qod-text" id="qodQuestion">Loading...</div>
+            <div class="qod-options" id="qodOptions"></div>
+        </div>
+
+        <div class="chart-box">
+            <div style="font-weight:700; margin-bottom:10px; font-size:14px;">📊 Performance Overview</div>
+            <div style="height: 180px;"><canvas id="barChart"></canvas></div>
+        </div>
+    </div>
+
+    <div id="tab-tests" class="tab-content" style="display:none;">
+        <div class="list-container" style="padding-top:15px;">
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="testSearch" placeholder="Search for Mock Tests..." onkeyup="searchTests(this.value)"></div>
+            <div class="filter-scroll">
+                <div class="filter-pill active" onclick="filterTests('all', this)">All</div>
+                <div class="filter-pill" style="color:#ef4444; border-color:#ef4444;" onclick="filterTests('Live', this)">Live 🔴</div>
+                <div class="filter-pill" style="color:#f59e0b; border-color:#f59e0b;" onclick="filterTests('Saved', this)">Saved ⭐</div>
+                <div class="filter-pill" onclick="filterTests('Full Mock', this)">Full Mock</div>
+                <div class="filter-pill" onclick="filterTests('Reasoning', this)">Reasoning</div>
+                <div class="filter-pill" onclick="filterTests('Maths', this)">Maths</div>
+                <div class="filter-pill" onclick="filterTests('English', this)">English</div>
+                <div class="filter-pill" onclick="filterTests('Hindi', this)">Hindi</div>
+                <div class="filter-pill" onclick="filterTests('GK', this)">GK</div>
+            </div>
+            <div id="testListContainer"></div>
+        </div>
+    </div>
+
+    <div id="tab-study" class="tab-content" style="display:none;">
+        <div style="padding-top:15px;">
+            <div class="segment-control">
+                <div class="segment-btn active" onclick="switchStudy('notes', this)">📄 Notes & PDFs</div>
+                <div class="segment-btn" onclick="switchStudy('videos', this)">🎥 Video Classes</div>
+            </div>
+            <div id="notesSection" class="list-container">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" id="noteSearch" placeholder="Search Notes..." onkeyup="searchNotes(this.value)"></div>
+                <div id="notesListContainer"></div>
+            </div>
+            <div id="videosSection" class="list-container" style="display:none;">
+                <div id="videoListContainer"></div>
             </div>
         </div>
     </div>
+
+    <div id="tab-syllabus" class="tab-content" style="display:none;">
+        <div class="syllabus-container">
+            <h2 style="font-size:20px; font-weight:800; margin-bottom:15px;">📊 Progress Tracker</h2>
+            <div class="progress-card">
+                <div style="display:flex; justify-content:space-between; font-weight:700;"><span>Overall Syllabus</span><span id="progText">0%</span></div>
+                <div class="prog-ring"><div class="prog-fill" id="progFill"></div></div>
+            </div>
+            <div id="syllabusList"></div>
+        </div>
+    </div>
+
+    <div id="tab-rank" class="tab-content" style="display:none; padding: 20px;">
+        <h2 style="font-size:18px; margin-bottom:15px; font-weight:800;">🏆 Global Leaderboard</h2>
+        <div id="leaderboardList"></div>
+    </div>
+
+</div>
+
+<div class="nav-bar">
+    <div class="nav-item active" onclick="switchTab('home', this)"><i class="fas fa-home"></i> Home</div>
+    <div class="nav-item" onclick="switchTab('tests', this)"><i class="fas fa-file-alt"></i> Tests</div>
+    <div class="nav-item" id="nav-study" onclick="switchTab('study', this)"><i class="fas fa-graduation-cap"></i> Study</div>
+    <div class="nav-item" onclick="switchTab('syllabus', this)"><i class="fas fa-tasks"></i> Syllabus</div>
+    <div class="nav-item" onclick="switchTab('rank', this)"><i class="fas fa-trophy"></i> Ranks</div>
 </div>
 
 <script>
-const ADMIN_PASS = "admin786";
-const firebaseConfig = {
-  apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef"
-};
+/* 1. CONFIGURATION */
+const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", authDomain: "dsssbexamportal.firebaseapp.com", databaseURL: "https://dsssbexamportal-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "dsssbexamportal", storageBucket: "dsssbexamportal.firebasestorage.app", messagingSenderId: "853373171134", appId: "1:853373171134:web:77b967374e6f34311af5ef" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-let allData = [];
 
-function checkAdmin() {
-    if(document.getElementById('adminPass').value === ADMIN_PASS) {
-        document.getElementById('loginOverlay').style.display = 'none';
-        document.getElementById('adminContent').style.display = 'block';
-        fetchResults(); fetchTests(); fetchProUsers();
-    } else { document.getElementById('errorMsg').style.display = 'block'; }
-}
+let currentUser = "Student", currentUserId = "guest", isPro = false;
+let myScores = [], allTests = [], allNotes = [];
+let lastAlertTime = 0;
 
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    event.target.classList.add('active');
-    document.getElementById('tab-' + tabId).classList.add('active');
-}
+/* 2. STATIC DATA */
+const syllabusDB = {
+    "Reasoning": ["Analogy", "Classification", "Series", "Coding-Decoding", "Blood Relation", "Direction", "Venn Diagram", "Mirror Image", "Dice & Cube", "Ranking"],
+    "Maths": ["Number System", "HCF & LCM", "Percentage", "Profit & Loss", "SI & CI", "Time & Work", "Time Speed Distance", "Average", "Ratio", "Mensuration"],
+    "English": ["Reading Comprehension", "Synonyms & Antonyms", "Idioms & Phrases", "One Word Substitution", "Spelling Errors", "Spotting Errors", "Sentence Improvement", "Fill in Blanks"],
+    "Hindi": ["Sandhi", "Samas", "Upsarg-Pratyay", "Vilom Shabd", "Paryayvachi", "Muhavare", "Vakya Shuddhi", "Anekarthi Shabd"],
+    "GK": ["History", "Geography", "Polity", "Economics", "Science", "Current Affairs", "Static GK"]
+};
+let fallbackQOD = { q: "Wait, loading question...", opt: ["-", "-", "-", "-"], ans: 0 };
 
-// RESULTS
-function fetchResults() {
-    db.ref("dsssb_results_live").on("value", (snap) => {
-        let attempts = [];
-        snap.forEach(child => { if(child.val().score !== undefined) attempts.push(child.val()); });
-        attempts.sort((a, b) => b.score !== a.score ? b.score - a.score : a.timeTaken - b.timeTaken);
-        allData = attempts;
-        let html = "";
-        attempts.forEach((row, i) => html += `<tr><td><b>#${i+1}</b></td><td>${row.name}</td><td><b style="color:#4f46e5">${row.score}</b></td><td>${row.correct||0}</td><td>${row.wrong||0}</td><td>${Math.floor(row.timeTaken/60)}m ${row.timeTaken%60}s</td></tr>`);
-        document.getElementById('resultsTable').innerHTML = html || '<tr><td colspan="6">No results.</td></tr>';
+/* 3. INITIALIZATION */
+window.onload = function() {
+    setTimeout(() => {
+        if(document.getElementById('loader').style.display !== 'none') {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+        }
+    }, 4500);
+
+    const theme = localStorage.getItem('theme');
+    if(theme === 'dark') document.body.classList.add('dark-mode');
+    
+    checkStreak(); startCountdown(); renderSyllabus();
+
+    // --- ADMIN SYNC LISTENERS ---
+    db.ref('dsssb_config/maintenance').on('value', snap => {
+        if(snap.val() === true) {
+            document.getElementById('maintenanceScreen').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('loader').style.display = 'none';
+        } else {
+            document.getElementById('maintenanceScreen').style.display = 'none';
+        }
     });
-}
-function exportToCSV() {
-    if(allData.length === 0) return alert("No data!");
-    let csv = "Rank,Name,Score,Correct,Wrong,Time\n";
-    allData.forEach((r, i) => csv += `${i+1},${r.name.replace(/,/g,'')},${r.score},${r.correct||0},${r.wrong||0},${r.timeTaken}\n`);
-    const link = document.createElement("a"); link.href = encodeURI("data:text/csv;charset=utf-8," + csv); link.download = "Results.csv"; link.click();
+
+    db.ref('dsssb_config/alert').on('value', snap => {
+        if(snap.exists()) {
+            const data = snap.val(); // ✅ FIXED SYNTAX BUG
+            if(data.time && data.time > lastAlertTime && data.msg) {
+                document.getElementById('alertMsgText').innerText = data.msg;
+                document.getElementById('alertModal').style.display = 'flex';
+                lastAlertTime = data.time;
+            }
+        }
+    });
+
+    db.ref('dsssb_config/news').on('value', snap => {
+        if(snap.exists() && snap.val() !== "") {
+            document.getElementById('newsSection').style.display = 'flex';
+            document.getElementById('newsText').innerText = snap.val();
+        } else { document.getElementById('newsSection').style.display = 'none'; }
+    });
+
+    db.ref('dsssb_config/qod').on('value', snap => {
+        if(snap.exists()) {
+            const d = snap.val();
+            document.getElementById('qodQuestion').innerText = d.q;
+            let html = "";
+            d.opt.forEach((o, i) => html += `<div class="qod-opt" onclick="checkQOD(this, ${i}, ${d.ans})">${o}</div>`);
+            document.getElementById('qodOptions').innerHTML = html;
+        } else {
+            document.getElementById('qodQuestion').innerText = fallbackQOD.q;
+        }
+    });
+
+    // Telegram & Auth
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp; tg.expand();
+        if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
+        if(tg.initDataUnsafe.user) {
+            const u = tg.initDataUnsafe.user;
+            currentUser = u.first_name + (u.last_name ? " " + u.last_name : "");
+            currentUserId = u.id.toString();
+            document.getElementById('uName').innerText = u.first_name;
+            if(u.photo_url) document.getElementById('uAvatar').innerHTML = `<img src="${u.photo_url}">`;
+            else document.getElementById('uAvatar').innerText = u.first_name.charAt(0);
+            fetchData(u);
+        } else fetchData({username: "guest", id: "guest"});
+    } else fetchData({username: "guest", id: "guest"});
+};
+
+/* 4. UTILS & UI */
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function switchTab(tab, el) { document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none'); document.getElementById('tab-'+tab).style.display = 'block'; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); window.scrollTo(0,0); }
+function switchStudy(type, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); document.getElementById('notesSection').style.display = (type === 'notes') ? 'block' : 'none'; document.getElementById('videosSection').style.display = (type === 'videos') ? 'block' : 'none'; }
+
+// Toast Notification System
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2500);
 }
 
-// TESTS
-function fetchTests() {
-    db.ref("dsssb_tests_db").on("value", (snap) => {
-        let html = "";
-        snap.forEach(child => {
-            const t = child.val();
-            let badge = t.type === 'pro' ? '<span class="badge-pro">👑 PRO</span>' : '<span class="badge-free">🟢 FREE</span>';
-            html += `<tr><td>${t.id}</td><td>${badge}</td><td><b>${t.title}</b></td><td>${t.url}</td><td><button class="btn-del" onclick="deleteTest('${t.id}')">Delete</button></td></tr>`;
+/* 5. GAMIFICATION & ACTIONS */
+function checkStreak() {
+    const last = localStorage.getItem('lastVisit');
+    const today = new Date().toDateString();
+    let s = parseInt(localStorage.getItem('streak') || 0);
+    if(last !== today) { const y = new Date(); y.setDate(y.getDate()-1); if(last === y.toDateString()) s++; else s = 1; localStorage.setItem('lastVisit', today); localStorage.setItem('streak', s); }
+    document.getElementById('valStreak').innerText = s;
+    if(s >= 3) document.getElementById('badgeStreak').classList.add('unlocked');
+}
+function startCountdown() {
+    const target = new Date(2026, 4, 15); 
+    const days = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
+    document.getElementById('examTimer').innerText = (days > 0 ? days : 0) + " Days Left";
+}
+function shareApp() {
+    if (navigator.share) navigator.share({ title: 'DSSSB Pro Portal', text: 'Best Exam Prep App!', url: window.location.href });
+    else { navigator.clipboard.writeText(window.location.href); showToast("Link copied to clipboard!"); }
+}
+
+// PWA Install
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => { 
+    e.preventDefault(); 
+    deferredPrompt = e; 
+    document.getElementById('installBtn').style.display = 'grid'; 
+});
+
+async function installApp() { 
+    if(deferredPrompt) { 
+        deferredPrompt.prompt(); 
+        deferredPrompt = null; 
+        document.getElementById('installBtn').style.display='none'; 
+    } 
+    else if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
+        window.Telegram.WebApp.openLink(window.location.href);
+    } 
+    else {
+        alert("App install karne ke liye browser ki settings (⋮) me jaakar 'Add to Home Screen' par click karein.");
+    }
+}
+
+setTimeout(() => {
+    if(document.getElementById('installBtn').style.display === 'none') {
+        document.getElementById('installBtn').style.display = 'grid';
+    }
+}, 3000);
+
+/* 6. SYLLABUS TRACKER */
+function renderSyllabus() {
+    const container = document.getElementById('syllabusList');
+    let saved = JSON.parse(localStorage.getItem('syllabusProgress') || '{}');
+    let html = "";
+    Object.keys(syllabusDB).forEach((sub, i) => {
+        html += `<div class="subject-group"><div class="subject-head" onclick="toggleTopic('sub${i}')"><span>📚 ${sub}</span> <i class="fas fa-chevron-down"></i></div><div class="topic-list" id="sub${i}">`;
+        syllabusDB[sub].forEach(topic => {
+            const key = `${sub}-${topic}`;
+            const checked = saved[key] ? 'checked' : '';
+            html += `<div class="topic-item"><input type="checkbox" class="topic-chk" onchange="updateSyllabus('${key}', this)" ${checked}><span>${topic}</span></div>`;
         });
-        document.getElementById('testsTable').innerHTML = html || '<tr><td colspan="5">No tests.</td></tr>';
+        html += `</div></div>`;
     });
+    container.innerHTML = html;
+    calcProgress();
 }
-function addTest() {
-    const type = document.getElementById('t_type').value, title = document.getElementById('t_title').value.trim(), qs = parseInt(document.getElementById('t_qs').value), time = parseInt(document.getElementById('t_time').value), url = document.getElementById('t_url').value.trim();
-    if(!title || !url) return alert("Fill all fields!");
-    const testId = "mock_" + Date.now(); 
-    db.ref("dsssb_tests_db/" + testId).set({ id: testId, type: type, title: title, qs: qs, time: time, url: url, timestamp: firebase.database.ServerValue.TIMESTAMP })
-      .then(() => { alert("✅ Test Published!"); document.getElementById('t_title').value = ''; document.getElementById('t_url').value = ''; });
+function toggleTopic(id) { document.getElementById(id).classList.toggle('open'); }
+function updateSyllabus(key, el) { let saved = JSON.parse(localStorage.getItem('syllabusProgress') || '{}'); if(el.checked) saved[key] = true; else delete saved[key]; localStorage.setItem('syllabusProgress', JSON.stringify(saved)); calcProgress(); }
+function calcProgress() {
+    let saved = JSON.parse(localStorage.getItem('syllabusProgress') || '{}');
+    let total = 0; Object.values(syllabusDB).forEach(list => total += list.length);
+    let done = Object.keys(saved).length;
+    let pct = Math.round((done/total)*100);
+    document.getElementById('progFill').style.width = pct + "%"; document.getElementById('progText').innerText = pct + "%";
+    if(pct === 100 && window.confetti) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 }
-function deleteTest(id) { if(confirm("Delete this test?")) db.ref("dsssb_tests_db/" + id).remove(); }
 
-// PRO USERS WHITELISTING
-function fetchProUsers() {
-    db.ref("dsssb_pro_users").on("value", (snap) => {
-        let html = "";
-        snap.forEach(child => {
-            html += `<tr><td><b>${child.val().uid}</b></td><td><span class="badge-pro">Active</span></td><td><button class="btn-del" onclick="removeProUser('${child.key}')">Revoke Access</button></td></tr>`;
+/* 7. QOD CHECK */
+function checkQOD(el, idx, correct) {
+    document.querySelectorAll('.qod-opt').forEach(o => o.style.pointerEvents = "none");
+    if(idx === correct) { el.classList.add('correct'); if(window.confetti) confetti({particleCount: 50, spread: 50}); } 
+    else { el.classList.add('wrong'); document.querySelectorAll('.qod-opt')[correct].classList.add('correct'); }
+}
+
+/* 8. FORMS & PAYMENTS */
+function submitReport() {
+    const txt = document.getElementById('reportText').value;
+    if(!txt) return alert("Please write an issue!");
+    db.ref('dsssb_reports').push({ user: currentUser, id: currentUserId, issue: txt, time: firebase.database.ServerValue.TIMESTAMP });
+    alert("Report Sent Successfully!"); document.getElementById('reportModal').style.display='none'; document.getElementById('reportText').value='';
+}
+function openPayment() { document.getElementById('paymentModal').style.display = 'flex'; }
+function submitPayment() {
+    const utr = document.getElementById('utrInput').value;
+    if(!utr || utr.length < 5) return alert("Invalid UTR/Transaction ID");
+    db.ref('dsssb_payment_requests').push({ name: currentUser, userId: currentUserId, utr: utr, time: Date.now() });
+    alert("Payment submitted! Admin will approve it shortly.");
+    document.getElementById('paymentModal').style.display = 'none';
+}
+
+/* --- SAVE TEST FEATURE (With Toast Fix) --- */
+function toggleSaveTest(testId, el, event) {
+    event.stopPropagation(); // Prevents clicking the test card itself
+    let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
+    
+    if (savedTests.includes(testId)) {
+        savedTests = savedTests.filter(id => id !== testId);
+        el.classList.remove('saved');
+        el.innerHTML = '<i class="far fa-star"></i>';
+        showToast("Test removed from Saved"); // 👈 Toast Notification
+    } else {
+        savedTests.push(testId);
+        el.classList.add('saved');
+        el.innerHTML = '<i class="fas fa-star"></i>';
+        showToast("Test Saved Successfully ⭐"); // 👈 Toast Notification
+    }
+    localStorage.setItem('savedTests', JSON.stringify(savedTests));
+}
+
+/* 9. MAIN DATA FETCHING */
+async function fetchData(user) {
+    try {
+        const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
+            db.ref("dsssb_tests_db").once("value"),
+            db.ref("dsssb_results_live").once("value"),
+            db.ref("dsssb_pro_users").once("value"),
+            db.ref("users").once("value"),
+            db.ref("dsssb_notes_db").once("value")
+        ]);
+
+                        // --- ROBUST PRO CHECK (ULTRA STRICT) ---
+        isPro = false;
+        if(proSnap.exists()) {
+            // 1. सिर्फ वैलिड ID और Username ही लेंगे, "guest" या खाली को इग्नोर करेंगे
+            let myUsername = (user.username && user.username !== "guest") ? String(user.username).toLowerCase().trim().replace("@", "") : null;
+            let myId = (user.id && user.id !== "guest") ? String(user.id).trim() : null;
+
+            // 2. अगर यूज़र के पास असली ID या Username है, तभी लूप चलाएंगे
+            if (myUsername || myId) { 
+                proSnap.forEach(child => {
+                    let dbVal = child.val();
+                    let dbKey = String(child.key).toLowerCase().trim().replace("@", "");
+                    
+                    if (!dbVal) return; // अगर डेटाबेस में कोई आधी-अधूरी/null एंट्री है तो उसे छोड़ दो
+
+                    let v = "";
+                    if (typeof dbVal === 'object') {
+                        v = dbVal.username || dbVal.id || "";
+                    } else {
+                        v = dbVal;
+                    }
+                    
+                    v = String(v).toLowerCase().trim().replace("@", "");
+
+                    // 3. डेटाबेस की वैल्यू या Key से मैच करो (बिना किसी खाली स्ट्रिंग के)
+                    if (v !== "") {
+                        if ((myUsername && (v === myUsername || dbKey === myUsername)) || 
+                            (myId && (v === myId || dbKey === myId))) {
+                            isPro = true;
+                        }
+                    } else if (dbKey !== "") {
+                         if ((myUsername && dbKey === myUsername) || (myId && dbKey === myId)) {
+                            isPro = true;
+                        }
+                    }
+                });
+            }
+        }
+
+
+
+        // UPDATE UI
+        if(isPro) {
+            document.getElementById('badgePro').style.display = 'flex';
+            document.getElementById('buyProBtn').style.display = 'none';
+            document.getElementById('badgeScholar').classList.add('unlocked');
+        } else {
+            document.getElementById('badgePro').style.display = 'none';
+            document.getElementById('buyProBtn').style.display = 'inline-block';
+        }
+
+        // NOTES
+        const notes = notesSnap.val() || {};
+        allNotes = Object.values(notes).reverse();
+        searchNotes('');
+        
+        // VIDEOS
+        renderVideos();
+
+                // --- DYNAMIC STATS, RANK & CHARTS ---
+        const res = resultsSnap.val() || {};
+        const testData = testsSnap.val() || {}; 
+        
+        let userMap = {};
+        let myTestCount = 0;
+        let subScores = { 'Maths': [], 'English': [], 'Hindi': [], 'GK': [], 'Reasoning': [] };
+
+        Object.values(res).forEach(r => {
+            let rName = r.name || "Student";
+            if(!userMap[rName]) userMap[rName] = {s:0, c:0, isMe: false};
+            userMap[rName].s += r.score; 
+            userMap[rName].c++;
+
+            let rId = String(r.userId || "").trim();
+            if (rId === String(currentUserId).trim() || rName === currentUser) {
+                userMap[rName].isMe = true; 
+                myTestCount++; 
+                
+                let category = "GK"; 
+                let maxMarks = 20;   
+                
+                if(r.testId && testData[r.testId]) {
+                    category = testData[r.testId].category || "GK";
+                    maxMarks = parseInt(testData[r.testId].qs) || parseInt(testData[r.testId].marks) || 20;
+                } else if (r.category) { 
+                    category = r.category; 
+                }
+
+                let percent = (r.score / maxMarks) * 100;
+                let matchedCat = Object.keys(subScores).find(k => category.toLowerCase().includes(k.toLowerCase()));
+                if(matchedCat) { subScores[matchedCat].push(percent); }
+                else { subScores['GK'].push(percent); } 
+            }
         });
-        document.getElementById('proUsersTable').innerHTML = html || '<tr><td colspan="3">No Premium Users.</td></tr>';
+
+        // Update Dashboard Cards
+        document.getElementById('valTests').innerText = myTestCount;
+        if(myTestCount >= 5) document.getElementById('badgeMachine').classList.add('unlocked');
+
+        let lb = Object.keys(userMap).map(k=>({name: k, avg: userMap[k].s / userMap[k].c, isMe: userMap[k].isMe})).sort((a,b) => b.avg - a.avg);
+        let myRank = lb.findIndex(u => u.isMe) + 1;
+        document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
+
+        renderLeaderboard(lb);
+
+        // Chart Data Calculation
+        let chartAverages = [];
+        ['Maths', 'English', 'Hindi', 'GK', 'Reasoning'].forEach(cat => {
+            let arr = subScores[cat];
+            let avg = arr.length > 0 ? (arr.reduce((a,b)=>a+b, 0) / arr.length) : 0;
+            chartAverages.push(Math.round(avg));
+        });
+
+        renderCharts(chartAverages);
+        
+        // TESTS
+        allTests = Object.keys(testData).map(key => {
+            return { dbKey: key, ...testData[key] };
+        });
+        filterTests('all', document.querySelector('.filter-pill'));
+
+
+    } catch(e) { console.error("Data Load Error:", e); } 
+    finally {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+    }
+}
+
+/* 10. SEARCH & RENDERERS */
+
+// 🟢 NEW FIX: Search Tests Function missing thi, ab add kar di hai
+function searchTests(query) {
+    let activeFilterEl = document.querySelector('.filter-pill.active');
+    let cat = activeFilterEl ? activeFilterEl.innerText.trim() : 'all';
+    filterTests(cat, activeFilterEl, query);
+}
+
+function filterTests(cat, el, searchQuery = "") {
+    if(el) { document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
+    
+    let list = [...allTests].reverse(); 
+    let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
+    
+    if (searchQuery) {
+        list = list.filter(t => (t.title||"").toLowerCase().includes(searchQuery.toLowerCase()));
+    } else if(cat !== 'all') {
+        const key = cat.toLowerCase();
+        if(key === 'saved') {
+            list = list.filter(t => savedTests.includes(t.dbKey));
+        } else if (key === 'live') {
+            list = list.filter(t => (t.isLive && t.isLive.toString() === 'true'));
+        } else {
+            list = list.filter(t => {
+                const title = (t.title||"").toLowerCase();
+                const c = (t.category||"").toLowerCase();
+                if(key === 'reasoning') return title.includes('reas') || title.includes('logic') || c.includes('reasoning');
+                if(key === 'maths') return title.includes('math') || title.includes('quant') || c.includes('math');
+                if(key === 'gk') return title.includes('gk') || title.includes('general') || c.includes('gk');
+                return title.includes(key) || c.includes(key);
+            });
+        }
+    }
+    
+    let html = "";
+    list.forEach(t => {
+        let locked = t.type === 'pro' && !isPro;
+        let displayMarks = t.marks || t.qs || '20';
+        let action = locked ? "openPayment()" : `window.location.href='${t.url}'`;
+        
+        let isSaved = savedTests.includes(t.dbKey);
+        let saveIcon = isSaved ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+        let saveClass = isSaved ? 'saved' : '';
+        
+        let liveBadgeHTML = (t.isLive && t.isLive.toString() === 'true') ? '<div class="live-badge">🔴 LIVE TEST</div>' : '';
+        
+        html += `
+        <div class="test-card ${locked?'locked':''}">
+            ${liveBadgeHTML}
+            <button class="save-btn ${saveClass}" onclick="toggleSaveTest('${t.dbKey}', this, event)">${saveIcon}</button>
+            <div class="t-title" style="${(t.isLive && t.isLive.toString() === 'true') ? 'margin-top:25px;' : ''}">${t.title}</div>
+            <div class="t-info"><span><i class="far fa-clock"></i> ${t.time}m</span><span><i class="far fa-file-alt"></i> ${t.qs} Qs</span><span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span></div>
+            <button class="start-btn ${locked?'locked':''}" onclick="${action}">${locked ? 'Unlock Pro' : 'Start Test'}</button>
+        </div>`;
+    });
+    document.getElementById('testListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'><i class='fas fa-search fa-2x' style='margin-bottom:10px;opacity:0.5'></i><br>No tests found.</div>";
+}
+
+function searchNotes(query) {
+    let html = "";
+    const list = allNotes.filter(n => (n.title||"").toLowerCase().includes(query.toLowerCase()));
+    list.forEach(n => {
+        let locked = n.type === 'pro' && !isPro;
+        let action = locked ? "openPayment()" : `window.open('${n.url}')`;
+        let btnText = locked ? "💎 Unlock Pro" : "Download PDF";
+        
+        html += `<div class="note-card ${locked?'locked':''}">
+            <div class="t-title"><i class="fas fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i> ${n.title}</div>
+            <div class="t-info" style="margin-bottom:15px;">${n.desc || 'PDF Material'}</div>
+            <button class="download-btn ${locked?'locked':''}" onclick="${action}">${btnText}</button>
+        </div>`;
+    });
+    document.getElementById('notesListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'><i class='fas fa-search fa-2x' style='margin-bottom:10px;opacity:0.5'></i><br>No notes found.</div>";
+}
+
+function renderVideos() {
+    db.ref('dsssb_videos_db').once('value', snap => {
+        let html = "";
+        const videos = snap.val() || {};
+        Object.values(videos).reverse().forEach(v => {
+            let locked = v.type === 'pro' && !isPro;
+            let action = locked ? "openPayment()" : `window.open('${v.url}')`;
+            let lockBadge = locked ? `<div style="position:absolute; top:10px; right:10px; background:var(--warning); color:white; padding:3px 8px; border-radius:4px; font-size:10px; font-weight:800; z-index:10;">🔒 PRO</div>` : '';
+            let playIcon = locked ? '<i class="fas fa-lock play-icon" style="color:#f59e0b;"></i>' : '<i class="fas fa-play-circle play-icon"></i>';
+
+            html += `<div class="video-card" onclick="${action}">
+                <div class="vid-thumb">
+                    ${lockBadge}
+                    <img src="${v.thumb}">
+                    ${playIcon}
+                </div>
+                <div class="vid-content">
+                    <span style="font-size:10px; background:#fee2e2; color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700; margin-bottom:5px; display:inline-block;">Class</span>
+                    <div style="font-size:14px; font-weight:700; line-height:1.3;">${v.title}</div>
+                </div>
+            </div>`;
+        });
+        document.getElementById('videoListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No videos yet.</div>";
     });
 }
-function addProUser() {
-    let uid = document.getElementById('pro_uid').value.trim().replace('@', '').toLowerCase();
-    if(!uid) return alert("Enter Username or ID");
-    db.ref("dsssb_pro_users").push({ uid: uid, timestamp: firebase.database.ServerValue.TIMESTAMP })
-      .then(() => { alert("✅ Access Granted!"); document.getElementById('pro_uid').value = ''; });
+
+function renderLeaderboard(list) {
+    let html = "";
+    list.slice(0,10).forEach((u,i) => {
+        html += `<div class="rank-row"><div style="display:flex;align-items:center;"><span style="width:25px;height:25px;background:#f3f4f6;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-right:10px;font-size:12px;color:#1f2937;">${i+1}</span><span style="font-weight:600;">${u.name} ${u.name==currentUser?'(You)':''}</span></div><span style="font-weight:800;color:var(--primary);">${u.avg.toFixed(1)}</span></div>`;
+    });
+    document.getElementById('leaderboardList').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No scores yet. Attempt a test!</div>";
 }
-function removeProUser(key) { if(confirm("Revoke premium access for this user?")) db.ref("dsssb_pro_users/" + key).remove(); }
+
+function renderCharts(dynamicData) {
+    let ctx = document.getElementById('barChart');
+    if(!ctx) return;
+    
+    let chartStatus = Chart.getChart("barChart"); 
+    if (chartStatus) chartStatus.destroy();
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: { 
+            labels: ['Math','Eng','Hin','GK','Reas'], 
+            datasets: [{ 
+                data: dynamicData && dynamicData.length ? dynamicData : [0,0,0,0,0], 
+                backgroundColor: ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'], 
+                borderRadius: 6 
+            }] 
+        },
+        options: { 
+            indexAxis: 'y', 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { display: false },
+                tooltip: { callbacks: { label: function(c) { return c.raw + "% Score"; } } } 
+            }, 
+            scales: { 
+                x: { display:false, max: 100 }, 
+                y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } 
+            } 
+        }
+    });
+}
+
+
+/* =========================================
+   🔒 ANTI-PIRACY & SECURITY LOCKDOWN 🔒
+   ========================================= */
+
+// 1. Disable Right Click (Context Menu)
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// 2. Disable Keyboard Shortcuts (Dev Tools, View Source, Copy)
+document.addEventListener('keydown', function(e) {
+    // F12 key
+    if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+Shift+I (or i) and Ctrl+Shift+J (or j)
+    if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+U (View Source) and Ctrl+C (Copy)
+    if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+    }
+});
 </script>
 </body>
-</html>
+    </html>
