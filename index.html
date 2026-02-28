@@ -591,6 +591,13 @@ function toggleSaveTest(testId, el, event) {
 /* 9. MAIN DATA FETCHING */
 async function fetchData(user) {
     try {
+           // --- LIVE PRESENCE TRACKING FOR ADMIN PANEL ---
+        if(currentUserId !== "guest") {
+            const userRef = db.ref('dsssb_presence/' + currentUserId);
+            userRef.set({ name: currentUser, id: currentUserId, state: 'online', lastActive: firebase.database.ServerValue.TIMESTAMP });
+            userRef.onDisconnect().update({ state: 'offline', lastActive: firebase.database.ServerValue.TIMESTAMP });
+        }
+        
         const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
             db.ref("dsssb_tests_db").once("value"),
             db.ref("dsssb_results_live").once("value"),
@@ -658,35 +665,68 @@ async function fetchData(user) {
         // VIDEOS
         renderVideos();
 
-        // STATS & LEADERBOARD
+                // --- DYNAMIC STATS, RANK & CHARTS ---
         const res = resultsSnap.val() || {};
-        let userMap = {}; let calAtt = 0;
+        const testData = testsSnap.val() || {}; 
+        
+        let userMap = {};
+        let myTestCount = 0;
+        let subScores = { 'Maths': [], 'English': [], 'Hindi': [], 'GK': [], 'Reasoning': [] };
+
         Object.values(res).forEach(r => {
-            if(!userMap[r.name]) userMap[r.name] = {s:0,c:0};
-            userMap[r.name].s += r.score; userMap[r.name].c++;
-            if((r.userId && r.userId==currentUserId) || (!r.userId && r.name==currentUser)) {
-                myScores.push(r.score); calAtt++;
+            let rName = r.name || "Student";
+            if(!userMap[rName]) userMap[rName] = {s:0, c:0, isMe: false};
+            userMap[rName].s += r.score; 
+            userMap[rName].c++;
+
+            let rId = String(r.userId || "").trim();
+            if (rId === String(currentUserId).trim() || rName === currentUser) {
+                userMap[rName].isMe = true; 
+                myTestCount++; 
+                
+                let category = "GK"; 
+                let maxMarks = 20;   
+                
+                if(r.testId && testData[r.testId]) {
+                    category = testData[r.testId].category || "GK";
+                    maxMarks = parseInt(testData[r.testId].qs) || parseInt(testData[r.testId].marks) || 20;
+                } else if (r.category) { 
+                    category = r.category; 
+                }
+
+                let percent = (r.score / maxMarks) * 100;
+                let matchedCat = Object.keys(subScores).find(k => category.toLowerCase().includes(k.toLowerCase()));
+                if(matchedCat) { subScores[matchedCat].push(percent); }
+                else { subScores['GK'].push(percent); } 
             }
         });
 
-        let uData = usersSnap.val() || {};
-        let count = (currentUserId !== 'guest' && uData[currentUserId]) ? uData[currentUserId].testsGiven : calAtt;
-        document.getElementById('valTests').innerText = count || 0;
-        if(count >= 5) document.getElementById('badgeMachine').classList.add('unlocked');
+        // Update Dashboard Cards
+        document.getElementById('valTests').innerText = myTestCount;
+        if(myTestCount >= 5) document.getElementById('badgeMachine').classList.add('unlocked');
 
-        let lb = Object.keys(userMap).map(k=>({name:k, avg:userMap[k].s/userMap[k].c})).sort((a,b)=>b.avg-a.avg);
-        let rank = lb.findIndex(u=>u.name === currentUser) + 1;
-        document.getElementById('valRank').innerText = rank > 0 ? `#${rank}` : '--';
-        
+        let lb = Object.keys(userMap).map(k=>({name: k, avg: userMap[k].s / userMap[k].c, isMe: userMap[k].isMe})).sort((a,b) => b.avg - a.avg);
+        let myRank = lb.findIndex(u => u.isMe) + 1;
+        document.getElementById('valRank').innerText = myRank > 0 ? `#${myRank}` : '--';
+
         renderLeaderboard(lb);
-        renderCharts();
+
+        // Chart Data Calculation
+        let chartAverages = [];
+        ['Maths', 'English', 'Hindi', 'GK', 'Reasoning'].forEach(cat => {
+            let arr = subScores[cat];
+            let avg = arr.length > 0 ? (arr.reduce((a,b)=>a+b, 0) / arr.length) : 0;
+            chartAverages.push(Math.round(avg));
+        });
+
+        renderCharts(chartAverages);
         
         // TESTS
-        const tData = testsSnap.val() || {};
-        allTests = Object.keys(tData).map(key => {
-            return { dbKey: key, ...tData[key] };
+        allTests = Object.keys(testData).map(key => {
+            return { dbKey: key, ...testData[key] };
         });
         filterTests('all', document.querySelector('.filter-pill'));
+
 
     } catch(e) { console.error("Data Load Error:", e); } 
     finally {
@@ -805,14 +845,38 @@ function renderLeaderboard(list) {
     document.getElementById('leaderboardList').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No scores yet. Attempt a test!</div>";
 }
 
-function renderCharts() {
-    let chartStatus = Chart.getChart("barChart"); if (chartStatus) chartStatus.destroy();
-    new Chart(document.getElementById('barChart'), {
+function renderCharts(dynamicData) {
+    let ctx = document.getElementById('barChart');
+    if(!ctx) return;
+    
+    let chartStatus = Chart.getChart("barChart"); 
+    if (chartStatus) chartStatus.destroy();
+
+    new Chart(ctx, {
         type: 'bar',
-        data: { labels: ['Math','Eng','Hin','GK','Reas'], datasets: [{ data: [65,80,90,55,75], backgroundColor: ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderRadius: 6 }] },
-        options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { display:false, max: 100 }, y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } }, maintainAspectRatio: false }
+        data: { 
+            labels: ['Math','Eng','Hin','GK','Reas'], 
+            datasets: [{ 
+                data: dynamicData && dynamicData.length ? dynamicData : [0,0,0,0,0], 
+                backgroundColor: ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'], 
+                borderRadius: 6 
+            }] 
+        },
+        options: { 
+            indexAxis: 'y', 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { display: false },
+                tooltip: { callbacks: { label: function(c) { return c.raw + "% Score"; } } } 
+            }, 
+            scales: { 
+                x: { display:false, max: 100 }, 
+                y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } 
+            } 
+        }
     });
 }
+
 
 /* =========================================
    🔒 ANTI-PIRACY & SECURITY LOCKDOWN 🔒
