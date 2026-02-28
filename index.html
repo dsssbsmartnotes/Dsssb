@@ -772,8 +772,9 @@ function filterTests(cat, el, searchQuery = "") {
         // Yahan par hum check karte hain ki 'id' field maujood hai ya nahi, 
         // warna fallback ke roop mein 'dbKey' bhej dete hain.
         let uniqueTestId = t.id || t.dbKey;
-        let action = locked ? "openPayment()" : `window.location.href='cbt.html?testid=${uniqueTestId}&title=${encodeURIComponent(t.title)}'`;
-        
+        let testTime = t.time || 120; // Agar admin ne time nahi daala to default 120 min lega
+        let action = locked ? "openPayment()" : `window.location.href='cbt.html?testid=${uniqueTestId}&title=${encodeURIComponent(t.title)}&time=${testTime}'`;
+
         let isSaved = savedTests.includes(t.dbKey);
         let saveIcon = isSaved ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
         let saveClass = isSaved ? 'saved' : '';
