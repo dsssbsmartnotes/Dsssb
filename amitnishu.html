@@ -591,6 +591,13 @@ function toggleSaveTest(testId, el, event) {
 /* 9. MAIN DATA FETCHING */
 async function fetchData(user) {
     try {
+           // --- LIVE PRESENCE TRACKING FOR ADMIN PANEL ---
+        if(currentUserId !== "guest") {
+            const userRef = db.ref('dsssb_presence/' + currentUserId);
+            userRef.set({ name: currentUser, id: currentUserId, state: 'online', lastActive: firebase.database.ServerValue.TIMESTAMP });
+            userRef.onDisconnect().update({ state: 'offline', lastActive: firebase.database.ServerValue.TIMESTAMP });
+        }
+        
         const [testsSnap, resultsSnap, proSnap, usersSnap, notesSnap] = await Promise.all([
             db.ref("dsssb_tests_db").once("value"),
             db.ref("dsssb_results_live").once("value"),
