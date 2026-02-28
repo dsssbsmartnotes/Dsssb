@@ -413,7 +413,7 @@ window.onload = function() {
 
     db.ref('dsssb_config/alert').on('value', snap => {
         if(snap.exists()) {
-            const data = snap.val(); // ✅ FIXED SYNTAX BUG
+            const data = snap.val(); 
             if(data.time && data.time > lastAlertTime && data.msg) {
                 document.getElementById('alertMsgText').innerText = data.msg;
                 document.getElementById('alertModal').style.display = 'flex';
@@ -606,20 +606,18 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
 
-                        // --- ROBUST PRO CHECK (ULTRA STRICT) ---
+        // --- ROBUST PRO CHECK (ULTRA STRICT) ---
         isPro = false;
         if(proSnap.exists()) {
-            // 1. सिर्फ वैलिड ID और Username ही लेंगे, "guest" या खाली को इग्नोर करेंगे
             let myUsername = (user.username && user.username !== "guest") ? String(user.username).toLowerCase().trim().replace("@", "") : null;
             let myId = (user.id && user.id !== "guest") ? String(user.id).trim() : null;
 
-            // 2. अगर यूज़र के पास असली ID या Username है, तभी लूप चलाएंगे
             if (myUsername || myId) { 
                 proSnap.forEach(child => {
                     let dbVal = child.val();
                     let dbKey = String(child.key).toLowerCase().trim().replace("@", "");
                     
-                    if (!dbVal) return; // अगर डेटाबेस में कोई आधी-अधूरी/null एंट्री है तो उसे छोड़ दो
+                    if (!dbVal) return; 
 
                     let v = "";
                     if (typeof dbVal === 'object') {
@@ -630,7 +628,6 @@ async function fetchData(user) {
                     
                     v = String(v).toLowerCase().trim().replace("@", "");
 
-                    // 3. डेटाबेस की वैल्यू या Key से मैच करो (बिना किसी खाली स्ट्रिंग के)
                     if (v !== "") {
                         if ((myUsername && (v === myUsername || dbKey === myUsername)) || 
                             (myId && (v === myId || dbKey === myId))) {
@@ -644,8 +641,6 @@ async function fetchData(user) {
                 });
             }
         }
-
-
 
         // UPDATE UI
         if(isPro) {
@@ -665,7 +660,7 @@ async function fetchData(user) {
         // VIDEOS
         renderVideos();
 
-                // --- DYNAMIC STATS, RANK & CHARTS ---
+        // --- DYNAMIC STATS, RANK & CHARTS ---
         const res = resultsSnap.val() || {};
         const testData = testsSnap.val() || {}; 
         
@@ -736,8 +731,6 @@ async function fetchData(user) {
 }
 
 /* 10. SEARCH & RENDERERS */
-
-// 🟢 NEW FIX: Search Tests Function missing thi, ab add kar di hai
 function searchTests(query) {
     let activeFilterEl = document.querySelector('.filter-pill.active');
     let cat = activeFilterEl ? activeFilterEl.innerText.trim() : 'all';
@@ -774,7 +767,12 @@ function filterTests(cat, el, searchQuery = "") {
     list.forEach(t => {
         let locked = t.type === 'pro' && !isPro;
         let displayMarks = t.marks || t.qs || '20';
-        let action = locked ? "openPayment()" : `window.location.href='${t.url}'`;
+        
+        // --- 🔥 NEW FIX: LINK GENERATION 🔥 ---
+        // Yahan par hum check karte hain ki 'id' field maujood hai ya nahi, 
+        // warna fallback ke roop mein 'dbKey' bhej dete hain.
+        let uniqueTestId = t.id || t.dbKey;
+        let action = locked ? "openPayment()" : `window.location.href='cbt.html?testid=${uniqueTestId}&title=${encodeURIComponent(t.title)}'`;
         
         let isSaved = savedTests.includes(t.dbKey);
         let saveIcon = isSaved ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
@@ -907,4 +905,4 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 </body>
-    </html>
+</html>
