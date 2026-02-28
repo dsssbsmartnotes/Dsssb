@@ -185,11 +185,8 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
         <h2 style="margin:0 0 5px 0; color:var(--text-main); font-weight:800;">DSSSB Pro Portal</h2>
         <p style="color:var(--text-muted); font-size:14px; margin-bottom:30px;">Secure Computer Based Test System</p>
         
-        <div style="text-align:left; margin-bottom:5px; font-size:13px; font-weight:600; margin-left:5px;">Full Name</div>
-        <input type="text" id="startNameInput" class="login-input" placeholder="e.g. Rahul Sharma">
-        
-        <div style="text-align:left; margin-bottom:5px; font-size:13px; font-weight:600; margin-left:5px; margin-top:10px;">Access Code</div>
-        <input type="password" id="examPassInput" class="login-input" placeholder="Enter Password">
+        <div style="text-align:left; margin-bottom:5px; font-size:13px; font-weight:600; margin-left:5px;">Candidate Name (Auto-Fetched)</div>
+        <input type="text" id="startNameInput" class="login-input" readonly style="background: rgba(255,255,255,0.1); border-color: var(--primary); cursor: not-allowed; font-weight: bold; text-align: center;">
         
         <div id="resumeBox" style="display:none; margin-top:20px; background:rgba(245, 158, 11, 0.1); padding:15px; border-radius:12px; border:1px solid var(--warning); color:var(--warning); font-size:13px; text-align:left;">
             <b>⚠️ Session Recovered</b><br>
@@ -288,7 +285,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const CURRENT_TEST_ID = urlParams.get('testid') || "TEST_UNKNOWN";
 const CURRENT_TEST_TITLE = urlParams.get('title') || "DSSSB Mock Test";
 
-const PASS_ENCODED = "ZHNzc2IyNDA2"; 
 const TOTAL_TIME_MINS = 120;
 const STORAGE_KEY = "dsssb_cbt_rank_v2";
 const NEGATIVE_MARK = 0.25;
@@ -310,6 +306,15 @@ let secIndices = [];
 function initApp() {
     document.getElementById('displayTitle').innerText = CURRENT_TEST_TITLE;
     document.title = CURRENT_TEST_TITLE;
+
+    // --- FETCH TELEGRAM NAME AUTOMATICALLY ---
+    let tName = "Student";
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
+        let u = window.Telegram.WebApp.initDataUnsafe.user;
+        tName = u.first_name + (u.last_name ? " " + u.last_name : "");
+    }
+    document.getElementById('startNameInput').value = tName;
+    // -----------------------------------------
 
     // Firebase Se Questions Load Karna
     db.ref('dsssb_questions_db/' + CURRENT_TEST_ID).once('value').then(snap => {
@@ -353,9 +358,9 @@ function calcSectionIndices() {
 function validateLogin() {
     if(QUESTIONS.length === 0) return showToast("Loading test data, please wait...", "warning");
     const name = document.getElementById('startNameInput').value.trim();
-    const pass = document.getElementById('examPassInput').value.trim();
-    if(!name) return showToast("Please Enter Your Name", "error");
-    if(btoa(pass) !== PASS_ENCODED) return showToast("Incorrect Password!", "error");
+    
+    if(!name) return showToast("Name is missing!", "error");
+    
     currentState.name = name;
     startGame(false);
 }
@@ -452,8 +457,7 @@ function loadQuestion(idx) {
     
     const optsContainer = document.getElementById('opts');
     optsContainer.innerHTML = optsHtml;
-    optsContainer.querySelectorAll
-('img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); openZoom(img.src); }; });
+    optsContainer.querySelectorAll('img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); openZoom(img.src); }; });
 
     const solBox = document.getElementById('solutionDisplay');
     if(currentState.submitted) {
