@@ -285,7 +285,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const CURRENT_TEST_ID = urlParams.get('testid') || "TEST_UNKNOWN";
 const CURRENT_TEST_TITLE = urlParams.get('title') || "DSSSB Mock Test";
 
-const TOTAL_TIME_MINS = 120;
+// URL se dynamic time fetch karega, warna default 120 minutes lega
+const TOTAL_TIME_MINS = parseInt(urlParams.get('time')) || 120; 
+
 const STORAGE_KEY = "dsssb_cbt_rank_v2";
 const NEGATIVE_MARK = 0.25;
 const TELEGRAM_BOT_TOKEN="8486464606:AAFT_Bd0P2HYqKNPjCm3s7TGgfM4HWmOYvs";
@@ -326,17 +328,20 @@ function initApp() {
                 if (!SECTION_MAP.includes(secName)) SECTION_MAP.push(secName);
             });
             
+            // Check session based on TEST_ID to allow different saves for different tests
+            const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
+            
             currentState.answers = new Array(QUESTIONS.length).fill(null);
             currentState.review = new Array(QUESTIONS.length).fill(false);
             calcSectionIndices();
             
-            const saved = localStorage.getItem(STORAGE_KEY);
+            const saved = localStorage.getItem(specificStorageKey);
             if(saved) {
                 let savedState = JSON.parse(saved);
                 if(savedState.answers && savedState.answers.length === QUESTIONS.length) {
                     document.getElementById('resumeBox').style.display = 'block';
                 } else {
-                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(specificStorageKey);
                 }
             }
         } else {
@@ -381,17 +386,20 @@ function startGame(isResuming) {
 }
 
 function saveState() {
-    if(currentState.submitted) { localStorage.removeItem(STORAGE_KEY); return; }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState));
+    const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
+    if(currentState.submitted) { localStorage.removeItem(specificStorageKey); return; }
+    localStorage.setItem(specificStorageKey, JSON.stringify(currentState));
 }
 
 function loadState() { 
-    const saved = localStorage.getItem(STORAGE_KEY); 
+    const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
+    const saved = localStorage.getItem(specificStorageKey); 
     if(saved) { currentState = JSON.parse(saved); startGame(true); } 
 }
 
 function clearState() { 
-    localStorage.removeItem(STORAGE_KEY); 
+    const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
+    localStorage.removeItem(specificStorageKey); 
     document.getElementById('resumeBox').style.display = 'none'; 
     showToast("Session Cleared", "info"); 
 }
