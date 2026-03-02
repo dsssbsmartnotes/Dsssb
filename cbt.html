@@ -72,12 +72,6 @@ body { display: grid; grid-template-rows: var(--header-height) auto 1fr var(--fo
 .btn-primary { background: var(--gradient-main); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
 .btn-primary:active { transform: scale(0.98); }
 
-/* Bookmark & Share Buttons */
-.btn-bookmark { cursor: pointer; background: transparent; border: none; font-size: 20px; color: var(--border-color); transition: 0.2s; padding: 0 5px; }
-.btn-bookmark.active { color: var(--warning); text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
-.btn-share { background: #25D366; color: #fff; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-share:hover { background: #1ebd5a; }
-
 header { background: var(--gradient-header); box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 50; height: var(--header-height); color: white; }
 .brand { font-weight: 900; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 .header-tools { display: flex; gap: 10px; align-items: center; }
@@ -94,7 +88,7 @@ header { background: var(--gradient-header); box-shadow: 0 4px 20px rgba(0,0,0,0
 
 #mainArea { padding: 20px; overflow-y: auto; display: none; position: relative; }
 .q-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 25px; box-shadow: var(--shadow-sm); margin-bottom: 25px; transition: transform 0.2s; }
-.q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; font-size: 14px; color: var(--text-muted); font-weight: 600; }
+.q-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; font-size: 14px; color: var(--text-muted); font-weight: 600; }
 .q-text { font-size: 17px; line-height: 1.6; margin-bottom: 20px; font-weight: 500; color: var(--text-main); }
 .q-text img, .opt img { max-width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 8px; }
 
@@ -198,8 +192,7 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
             <b>⚠️ Session Recovered</b><br>
             We found an incomplete test saved on this device.
             <div style="margin-top:12px; display:flex; gap:10px;">
-                <button onclick="loadState()" style="padding:8px 15px; background:var(--warning); color:white; border:none;
-border-radius:8px; cursor:pointer; font-weight:bold;">Resume Test</button>
+                <button onclick="loadState()" style="padding:8px 15px; background:var(--warning); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Resume Test</button>
                 <button onclick="clearState()" style="padding:8px 15px; background:none; border:1px solid var(--warning); color:var(--warning); border-radius:8px; cursor:pointer; font-weight:bold;">Start New</button>
             </div>
         </div>
@@ -223,10 +216,7 @@ border-radius:8px; cursor:pointer; font-weight:bold;">Resume Test</button>
 <div id="mainArea">
     <div class="q-card">
         <div class="q-header">
-            <span style="display:flex; align-items:center; gap:8px;">
-                <span style="background:var(--primary); color:#fff; padding:2px 8px; border-radius:6px; font-size:12px;">Q.<span id="qNumDisp">1</span></span>
-                <button id="bookmarkBtn" class="btn-bookmark" onclick="toggleBookmark()" title="Save Question">⭐</button>
-            </span>
+            <span style="display:flex; align-items:center; gap:8px;"><span style="background:var(--primary); color:#fff; padding:2px 8px; border-radius:6px; font-size:12px;">Q.<span id="qNumDisp">1</span></span></span>
             <span style="font-family:monospace; font-size:14px;"><span style="color:var(--success)">+1.0</span> &nbsp;|&nbsp; <span style="color:var(--danger)">-0.25</span></span>
         </div>
         <div id="qContent" class="q-text"></div>
@@ -294,19 +284,21 @@ const DB_REF_NAME = "dsssb_results_live";
 const urlParams = new URLSearchParams(window.location.search);
 const CURRENT_TEST_ID = urlParams.get('testid') || "TEST_UNKNOWN";
 const CURRENT_TEST_TITLE = urlParams.get('title') || "DSSSB Mock Test";
+
+// URL se dynamic time fetch karega, warna default 120 minutes lega
 const TOTAL_TIME_MINS = parseInt(urlParams.get('time')) || 120; 
 
 const STORAGE_KEY = "dsssb_cbt_rank_v2";
 const NEGATIVE_MARK = 0.25;
 const TELEGRAM_BOT_TOKEN="8486464606:AAFT_Bd0P2HYqKNPjCm3s7TGgfM4HWmOYvs";
 const TELEGRAM_CHAT_ID="@dsssbcbtresult";
+const PASSING_MARKS = 3; 
 
-// FETCHED FROM DB
-let PASSING_MARKS = 0; 
+// DYNAMIC QUESTIONS & SECTIONS FROM FIREBASE
 let QUESTIONS = [];
 let SECTION_MAP = [];
 
-let currentState = { idx: 0, answers: [], review: [], bookmarks: [], time: TOTAL_TIME_MINS * 60, secIdx: 0, submitted: false, name: "" };
+let currentState = { idx: 0, answers: [], review: [], time: TOTAL_TIME_MINS * 60, secIdx: 0, submitted: false, name: "" };
 let timerInt;
 let secIndices = [];
 
@@ -326,14 +318,6 @@ function initApp() {
     document.getElementById('startNameInput').value = tName;
     // -----------------------------------------
 
-    // Fetch Test Info (To get CUTOFF)
-    db.ref('dsssb_tests_db/' + CURRENT_TEST_ID).once('value').then(testSnap => {
-        if(testSnap.exists()) {
-            let testData = testSnap.val();
-            PASSING_MARKS = parseFloat(testData.cutoff) || 0; 
-        }
-    });
-
     // Firebase Se Questions Load Karna
     db.ref('dsssb_questions_db/' + CURRENT_TEST_ID).once('value').then(snap => {
         if(snap.exists()) {
@@ -344,19 +328,17 @@ function initApp() {
                 if (!SECTION_MAP.includes(secName)) SECTION_MAP.push(secName);
             });
             
+            // Check session based on TEST_ID to allow different saves for different tests
             const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
             
             currentState.answers = new Array(QUESTIONS.length).fill(null);
             currentState.review = new Array(QUESTIONS.length).fill(false);
-            currentState.bookmarks = new Array(QUESTIONS.length).fill(false);
             calcSectionIndices();
             
             const saved = localStorage.getItem(specificStorageKey);
             if(saved) {
                 let savedState = JSON.parse(saved);
                 if(savedState.answers && savedState.answers.length === QUESTIONS.length) {
-                    if(!savedState.bookmarks) savedState.bookmarks = new Array(QUESTIONS.length).fill(false);
-                    currentState = savedState;
                     document.getElementById('resumeBox').style.display = 'block';
                 } else {
                     localStorage.removeItem(specificStorageKey);
@@ -449,414 +431,497 @@ function jumpSection(secIndex) {
 function loadQuestion(idx) {
     currentState.idx = idx; 
     const q = QUESTIONS[idx]; 
-    const isHindi = document.getElementById('langBtn').innerText === "EN"; // Toggle Logic
-
-    // Progress
-    document.getElementById('qNumDisp').innerText = (idx + 1);
+    const isHindi = document.getElementById('langBtn').innerText === "HI";
     
-    // Check Section
-    let currentSecName = q.section || "General";
-    let newSecIdx = SECTION_MAP.indexOf(currentSecName);
-    if(newSecIdx !== currentState.secIdx && !currentState.submitted) {
-        currentState.secIdx = newSecIdx;
+    const qSecIdx = SECTION_MAP.indexOf(q.section || "General");
+    if(qSecIdx !== -1 && qSecIdx !== currentState.secIdx) {
+        currentState.secIdx = qSecIdx;
         renderSectionTabs();
     }
 
-    // Bookmark Status
-    const bkmBtn = document.getElementById('bookmarkBtn');
-    if(currentState.bookmarks && currentState.bookmarks[idx]) {
-        bkmBtn.classList.add('active');
-        bkmBtn.innerText = "🌟";
-    } else {
-        bkmBtn.classList.remove('active');
-        bkmBtn.innerText = "⭐";
-    }
-
-    // Question Text
-    let qHTML = isHindi ? (q.q_hi || q.q_en) : q.q_en;
-    document.getElementById('qContent').innerHTML = qHTML;
-
-    // Options
-    let ops = isHindi ? (q.op_hi || q.op_en) : q.op_en;
-    let optHtml = "";
+    document.getElementById('qNumDisp').innerText = idx + 1;
     
-    const letters = ['A', 'B', 'C', 'D'];
+    const contentDiv = document.getElementById('qContent');
+    contentDiv.innerHTML = isHindi ? (q.q_hi || q.q_en) : (q.q_en || q.q_hi);
+    contentDiv.querySelectorAll('img').forEach(img => { img.onclick = () => openZoom(img.src); });
 
-    ops.forEach((o, i) => {
-        let cls = "opt";
-        let isSel = currentState.answers[idx] === String(i + 1);
-        if(isSel) cls += " sel";
+    let optsHtml = ""; 
+    const correctIdx = parseInt(q.ans) - 1;
+    const optsArr = isHindi ? (q.op_hi || q.op_en) : (q.op_en || q.op_hi);
+    
+    optsArr.forEach((opt, i) => {
+        let cls = "opt"; 
+        const myAns = currentState.answers[idx];
         
-        // RESULT MODE LOGIC
-        if(currentState.submitted) {
-            cls += " disabled";
-            let correctAns = String(q.ans);
-            if(String(i + 1) === correctAns) {
-                cls += " correct-ans";
-            } else if(isSel && String(i + 1) !== correctAns) {
-                cls += " wrong-ans";
-            }
-            optHtml += `<div class="${cls}"><div class="opt-badge">${letters[i]}</div><div>${o}</div></div>`;
+        if (currentState.submitted) {
+            if (i === correctIdx) cls += " correct-ans";
+            else if (i === myAns && i !== correctIdx) cls += " wrong-ans";
         } else {
-            optHtml += `<div class="${cls}" onclick="selOpt(${i+1})"><div class="opt-badge">${letters[i]}</div><div>${o}</div></div>`;
+            if(myAns === i) cls += " sel";
         }
+
+        optsHtml += `<div class="${cls}" onclick="selectAns(${i})"><div class="opt-badge">${String.fromCharCode(65+i)}</div><div style="width:100%">${opt}</div></div>`;
     });
     
-    document.getElementById('opts').innerHTML = optHtml;
+    const optsContainer = document.getElementById('opts');
+    optsContainer.innerHTML = optsHtml;
+    optsContainer.querySelectorAll('img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); openZoom(img.src); }; });
 
-    // Solution Logic
-    let solBox = document.getElementById('solutionDisplay');
+    const solBox = document.getElementById('solutionDisplay');
     if(currentState.submitted) {
-        solBox.style.display = "block";
-        if(q.solution) {
-            solBox.innerHTML = `
-                <div style="background:var(--primary-light); padding:10px 15px; border-radius:10px 10px 0 0; font-weight:700; color:var(--primary-dark); border:1px solid rgba(99, 102, 241, 0.2); border-bottom:none;">
-                    💡 Solution
-                </div>
-                <div style="border:1px solid rgba(99, 102, 241, 0.2); border-radius:0 0 10px 10px; padding:15px; background:#fff;">
-                    ${q.solution}
-                </div>
-            `;
-        } else {
-            solBox.innerHTML = `<div style="padding:15px; border:1px dashed var(--border-color); border-radius:10px; text-align:center; color:var(--text-muted); font-size:14px;">Detailed solution not available for this question.</div>`;
-        }
+        solBox.innerHTML = `<b>💡 Solution:</b><br>${q.solution || 'No solution provided.'}`;
+        solBox.style.display = 'block';
     } else {
-        solBox.style.display = "none";
+        solBox.style.display = 'none';
     }
 
-    // Button Logic
-    const nBtn = document.getElementById('nextBtn');
-    if(currentState.submitted) {
-        if(idx === QUESTIONS.length - 1) {
-            nBtn.innerText = "Finish Review";
-            nBtn.onclick = togglePalette;
-        } else {
-            nBtn.innerText = "Next Question";
-            nBtn.onclick = next;
-        }
-    } else {
-        if(idx === QUESTIONS.length - 1) nBtn.innerText = "Save & Submit";
-        else nBtn.innerText = "Save & Next";
-        nBtn.onclick = next;
-    }
-
-    // Render MathJax if equation exists
-    if(qHTML.includes('$') || optHtml.includes('$')) {
-        setTimeout(() => { if(window.MathJax) MathJax.typesetPromise(); }, 50);
-    }
-    
-    // Image Zoom Feature
-    setTimeout(() => {
-        document.querySelectorAll('.q-text img, .opt img').forEach(img => {
-            img.onclick = () => {
-                document.getElementById('zoomImg').src = img.src;
-                document.getElementById('zoomModal').style.display = 'flex';
-            }
-        });
-    }, 100);
+    updateNavButtons(); 
+    renderPalette(); 
+    if(window.MathJax) MathJax.typesetPromise();
 }
 
-function selOpt(v) { if(currentState.submitted) return; currentState.answers[currentState.idx] = String(v); loadQuestion(currentState.idx); }
-function clearResponse() { if(currentState.submitted) return; currentState.answers[currentState.idx] = null; currentState.review[currentState.idx] = false; loadQuestion(currentState.idx); showToast("Response Cleared", "info"); }
-function markReview() { if(currentState.submitted) return; currentState.review[currentState.idx] = !currentState.review[currentState.idx]; showToast(currentState.review[currentState.idx] ? "Marked for Review" : "Unmarked from Review", "warning"); loadQuestion(currentState.idx); }
-
-function toggleBookmark() {
-    if(!currentState.bookmarks) currentState.bookmarks = new Array(QUESTIONS.length).fill(false);
-    currentState.bookmarks[currentState.idx] = !currentState.bookmarks[currentState.idx];
-    showToast(currentState.bookmarks[currentState.idx] ? "Question Saved! ⭐" : "Question Removed", "info");
-    loadQuestion(currentState.idx);
+function selectAns(i) { 
+    if(currentState.submitted) return; 
+    currentState.answers[currentState.idx] = i; 
+    loadQuestion(currentState.idx); 
+    saveState(); 
 }
 
 function next() {
-    if(!currentState.submitted) {
-        if(!currentState.answers[currentState.idx]) showToast("Saved without answering", "info");
-        else showToast("Response Saved", "success");
-    }
-    
     if(currentState.idx < QUESTIONS.length - 1) {
-        currentState.idx++;
-        loadQuestion(currentState.idx);
-    } else if(!currentState.submitted) {
-        togglePalette();
-    }
-}
-
-function prev() { if(currentState.idx > 0) { currentState.idx--; loadQuestion(currentState.idx); } }
-
-/* =========================
-   PALETTE & NAVIGATION
-   ========================= */
-function togglePalette() {
-    const p = document.getElementById('palettePanel');
-    const over = document.getElementById('paletteOverlay');
-    if(p.classList.contains('show')) {
-        p.classList.remove('show');
-        over.style.display = "none";
-    } else {
-        buildPalette();
-        p.classList.add('show');
-        over.style.display = "block";
-    }
-}
-
-function buildPalette() {
-    const grid = document.getElementById('paletteGrid');
-    let html = "";
-    QUESTIONS.forEach((q, i) => {
-        let cls = "qbtn";
-        if(currentState.submitted) {
-            let userAns = currentState.answers[i];
-            let actualAns = String(q.ans);
-            if(!userAns) cls += " p-skip";
-            else if(userAns === actualAns) cls += " p-correct";
-            else cls += " p-wrong";
-        } else {
-            if(i === currentState.idx) cls += " current";
-            else if(currentState.answers[i]) cls += " answered";
-            else if(currentState.review[i]) cls += " review";
+        if (currentState.submitted) {
+            loadQuestion(currentState.idx + 1);
+            return;
         }
-        
-        // Show star on palette if bookmarked
-        let starHtml = (currentState.bookmarks && currentState.bookmarks[i]) ? '<span style="color:var(--warning); font-size:10px; position:absolute; top:-5px; right:-2px;">★</span>' : '';
-        
-        html += `<button class="${cls}" style="position:relative;" onclick="jump(${i})">${i+1}${starHtml}</button>`;
-    });
-    grid.innerHTML = html;
+
+        const nextQ = QUESTIONS[currentState.idx + 1]; 
+        const currQ = QUESTIONS[currentState.idx];
+        if((nextQ.section || "General") !== (currQ.section || "General")) {
+            if(confirm(`Finish ${(currQ.section || "General")} section?`)) { 
+                currentState.secIdx++; 
+                renderSectionTabs(); 
+                loadQuestion(currentState.idx + 1); 
+            }
+        } else { 
+            loadQuestion(currentState.idx + 1); 
+        }
+    } else { 
+        if(!currentState.submitted) submitTest();
+        else showToast("End of Questions", "info");
+    }
 }
 
-function jump(i) {
-    togglePalette();
-    currentState.idx = i;
-    loadQuestion(i);
-}
-
-/* =========================
-   SUBMISSION & RESULTS (CUT-OFF INTEGRATED)
-   ========================= */
-function submitTest() {
-    if(currentState.submitted) {
-        showResult();
+function prev() {
+    if (currentState.submitted) {
+        if(currentState.idx > 0) loadQuestion(currentState.idx - 1);
         return;
     }
-    
-    if(confirm("Are you sure you want to SUBMIT the test? You cannot change your answers after this.")) {
-        clearInterval(timerInt);
-        currentState.submitted = true;
-        saveState(); 
-        togglePalette();
-        document.getElementById('mainSubmitBtn').innerText = "View Final Result";
-        
-        let correct = 0, wrong = 0, skip = 0;
-        QUESTIONS.forEach((q, i) => {
-            let uAns = currentState.answers[i];
-            if(!uAns) skip++;
-            else if(uAns === String(q.ans)) correct++;
-            else wrong++;
-        });
-
-        let finalScore = (correct * 1.0) - (wrong * NEGATIVE_MARK);
-        
-        // Push Result to Firebase
-        let resultData = {
-            testId: CURRENT_TEST_ID,
-            name: currentState.name,
-            score: finalScore.toFixed(2),
-            timeTaken: (TOTAL_TIME_MINS * 60) - currentState.time,
-            timestamp: Date.now(),
-            total: QUESTIONS.length,
-            correct: correct,
-            wrong: wrong
-        };
-
-        db.ref(DB_REF_NAME).push(resultData).then(() => {
-            sendToTelegram(resultData);
-        });
-
-        loadQuestion(0);
-        showResult();
+    const currQ = QUESTIONS[currentState.idx];
+    if(currentState.idx > 0) {
+        const prevQ = QUESTIONS[currentState.idx - 1];
+        if((prevQ.section || "General") === (currQ.section || "General")) { loadQuestion(currentState.idx - 1); } 
+        else { showToast("You are in a locked section flow", "warning"); }
     }
 }
 
-function showResult() {
-    let c = 0, w = 0, s = 0;
-    QUESTIONS.forEach((q, i) => {
-        let u = currentState.answers[i];
-        if(!u) s++; else if(u === String(q.ans)) c++; else w++;
-    });
-
-    let maxScore = QUESTIONS.length;
-    let finalScore = (c * 1.0) - (w * NEGATIVE_MARK);
-    let accuracy = c + w > 0 ? ((c / (c + w)) * 100).toFixed(1) : 0;
-    
-    // --- CUT-OFF LOGIC ---
-    let cutoffHtml = "";
-    if(PASSING_MARKS > 0) {
-        let hasPassed = finalScore >= PASSING_MARKS;
-        let badgeColor = hasPassed ? "var(--success)" : "var(--danger)";
-        let badgeBg = hasPassed ? "var(--success-bg)" : "var(--danger-bg)";
-        let badgeText = hasPassed ? "🎉 Cleared Cut-off" : "❌ Not Cleared";
-        
-        cutoffHtml = `
-            <div style="background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeColor}; padding:15px; border-radius:12px; text-align:center; margin-bottom:20px; font-weight:800; font-size:18px; display:flex; flex-direction:column; gap:5px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">
-                <span>${badgeText}</span>
-                <span style="font-size:12px; font-weight:600; opacity:0.8;">Test Cut-off was: ${PASSING_MARKS} Marks</span>
-            </div>
-        `;
+function updateNavButtons() {
+    const btn = document.getElementById('nextBtn');
+    if(currentState.idx === QUESTIONS.length - 1) { 
+        btn.innerText = currentState.submitted ? "End Review" : "Finish Exam"; 
+        if (!currentState.submitted) btn.style.background = "var(--danger)"; 
+    } else { 
+        btn.innerText = currentState.submitted ? "Next >" : "Save & Next"; 
+        if (!currentState.submitted) btn.style.background = "var(--gradient-main)"; 
     }
-    // ----------------------
-
-    let secHtml = "";
-    SECTION_MAP.forEach(sec => {
-        let sc = 0, sw = 0, ss = 0, st = 0;
-        QUESTIONS.forEach((q, i) => {
-            if((q.section || "General") === sec) {
-                st++;
-                let u = currentState.answers[i];
-                if(!u) ss++; else if(u === String(q.ans)) sc++; else sw++;
-            }
-        });
-        let secScore = (sc * 1.0) - (sw * NEGATIVE_MARK);
-        
-        secHtml += `
-            <div style="padding:15px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
-                <div><div style="font-weight:700; color:var(--text-main); font-size:14px;">${sec}</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">C:${sc} | W:${sw} | S:${ss}</div></div>
-                <div style="font-weight:800; color:var(--primary); font-size:16px;">${secScore.toFixed(2)}</div>
-            </div>
-        `;
-    });
-
-    // Score Share Text Generator
-    let shareText = `🚀 I just scored *${finalScore.toFixed(2)}/${maxScore}* in ${CURRENT_TEST_TITLE} on DSSSB Pro Portal!\n\nCan you beat my score? 😎\n👉 Test Link: https://t.me/dsssb_pro_exam_bot`;
-    let encodedShare = encodeURIComponent(shareText);
-
-    document.getElementById('resultContent').innerHTML = `
-        <div class="analysis-container" id="pdfArea">
-            
-            ${cutoffHtml}
-
-            <div class="card-dashboard" style="background:var(--gradient-main); color:white; text-align:center; padding:30px 20px;">
-                <h3 style="margin:0 0 5px; opacity:0.9; font-size:16px;">Your Final Score</h3>
-                <div style="font-size:48px; font-weight:900; line-height:1;">${finalScore.toFixed(2)}<span style="font-size:20px; opacity:0.7;">/${maxScore}</span></div>
-            </div>
-
-            <div class="score-summary">
-                <div class="score-item"><h4>Target Rank</h4><p style="color:var(--warning);">Calculating...</p></div>
-                <div class="score-item"><h4>Accuracy</h4><p>${accuracy}%</p></div>
-            </div>
-
-            <div class="card-dashboard">
-                <div class="section-title">Attempt Overview</div>
-                <div class="attempt-summary">
-                    <div class="attempt-box at-total">Total<span>${maxScore}</span></div>
-                    <div class="attempt-box at-correct">Correct<span>${c}</span></div>
-                    <div class="attempt-box at-wrong">Wrong<span>${w}</span></div>
-                    <div class="attempt-box at-unattempted">Skipped<span>${s}</span></div>
-                </div>
-            </div>
-
-            <div class="card-dashboard" style="padding:0; overflow:hidden;">
-                <div style="padding:15px; border-bottom:1px solid var(--border-color); font-weight:800; font-size:14px; color:var(--text-muted); background:var(--bg-body);">SECTION-WISE PERFORMANCE</div>
-                ${secHtml}
-            </div>
-        </div>
-        
-        <a href="https://t.me/share/url?url=${encodedShare}" target="_blank" style="text-decoration:none;">
-            <button class="btn-share">↗️ Share Score on Telegram</button>
-        </a>
-
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="btn-primary" onclick="closeResult()" style="flex:1;">Review Answers</button>
-            <button class="btn-primary" onclick="downloadPDF()" style="flex:1; background:#0f172a;">📄 Download PDF</button>
-        </div>
-    `;
-
-    document.getElementById('resultModal').style.display = "flex";
 }
 
-/* =========================
-   UTILITIES & EXTRAS
-   ========================= */
 function startTimer() {
+    clearInterval(timerInt);
     timerInt = setInterval(() => {
-        if(currentState.time <= 0) { clearInterval(timerInt); alert("Time's up! Auto-submitting..."); submitTest(); return; }
+        if(currentState.submitted) return;
+        if(currentState.time <= 0) { submitTest(); return; }
         currentState.time--;
-        let m = Math.floor(currentState.time / 60); let s = currentState.time % 60;
-        let tBadge = document.getElementById('timer');
-        tBadge.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-        if(currentState.time < 300) { tBadge.classList.add('low'); }
+        const m = Math.floor(currentState.time / 60).toString().padStart(2,'0');
+        const s = (currentState.time % 60).toString().padStart(2,'0');
+        const el = document.getElementById('timer');
+        el.innerText = `${m}:${s}`;
+        if(currentState.time < 300) el.classList.add('low');
     }, 1000);
 }
 
-function sendToTelegram(data) {
-    let msg = `🏆 *New Submission: ${CURRENT_TEST_ID}*\n\n👤 *Name:* ${data.name}\n📈 *Score:* ${data.score} / ${data.total}\n✅ *Correct:* ${data.correct} | ❌ *Wrong:* ${data.wrong}\n⏱️ *Time:* ${Math.floor(data.timeTaken/60)}m ${data.timeTaken%60}s`;
-    let url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-    fetch(url).catch(e => console.log("TG Error:", e));
+function showToast(msg, type="info") {
+    const container = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = `toast ${type}`;
+    let icon = "ℹ️"; if(type==="success") icon = "✅"; if(type==="error") icon = "❌"; if(type==="warning") icon = "⚠️";
+    t.innerHTML = `<span>${icon}</span> <span>${msg}</span>`; container.appendChild(t); setTimeout(() => t.remove(), 3000);
 }
 
-function showToast(msg, type) {
-    let box = document.getElementById('toast-container');
-    let t = document.createElement('div');
-    t.className = `toast ${type}`;
-    let icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
-    t.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
-    box.appendChild(t);
-    setTimeout(() => { t.style.animation = "slideUp 0.4s reverse"; setTimeout(()=>t.remove(), 350); }, 2500);
+function togglePalette() { 
+    const p = document.getElementById('palettePanel'); const o = document.getElementById('paletteOverlay');
+    if(p.classList.contains('show')) { p.classList.remove('show'); o.style.display = 'none'; } else { p.classList.add('show'); o.style.display = 'block'; }
 }
 
+function renderPalette() {
+    const grid = document.getElementById('paletteGrid'); grid.innerHTML = "";
+    QUESTIONS.forEach((q, i) => {
+        const myAns = currentState.answers[i]; 
+        let cls = "qbtn";
+        
+        if (currentState.submitted) {
+            const correctIdx = parseInt(q.ans) - 1;
+            if (myAns === correctIdx) cls += " p-correct";
+            else if (myAns !== null && myAns !== correctIdx) cls += " p-wrong";
+            else cls += " p-skip";
+            if(currentState.review[i]) cls += " review"; 
+        } else {
+            if(i === currentState.idx) cls += " current"; 
+            else if(myAns !== null) cls += " answered"; 
+            else if(currentState.review[i]) cls += " review";
+        }
+        
+        // --- JUMP LOGIC: Only active section is clickable ---
+        let isAccessible = currentState.submitted;
+        if (!currentState.submitted) {
+            let startIdx = secIndices[currentState.secIdx];
+            let endIdx = (currentState.secIdx === SECTION_MAP.length - 1) ? QUESTIONS.length : secIndices[currentState.secIdx + 1];
+            
+            // Agar question current section ke andar hai, toh Accessible hoga
+            if (i >= startIdx && i < endIdx) {
+                isAccessible = true;
+            }
+        }
+        
+        const btn = document.createElement('button'); btn.className = cls; btn.innerText = i + 1;
+        
+        if(isAccessible) { 
+            btn.onclick = () => { loadQuestion(i); if(window.innerWidth < 768) togglePalette(); }; 
+            btn.style.cursor = "pointer";
+        } else {
+            // Locked questions visually disabled
+            btn.style.opacity = "0.2";
+            btn.style.cursor = "not-allowed";
+            btn.style.background = "var(--border-color)";
+            btn.style.color = "var(--text-muted)";
+        }
+        grid.appendChild(btn);
+    });
+}
+
+function markReview() { currentState.review[currentState.idx] = !currentState.review[currentState.idx]; loadQuestion(currentState.idx); }
+function clearResponse() { currentState.answers[currentState.idx] = null; loadQuestion(currentState.idx); }
 function toggleTheme() { document.body.classList.toggle('dark-mode'); }
-function toggleLang() { let btn = document.getElementById('langBtn'); btn.innerText = btn.innerText === "EN" ? "HI" : "EN"; loadQuestion(currentState.idx); }
-function toggleFS() { if(!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(e=>{}); } else { document.exitFullscreen(); } }
-function closeResult() { document.getElementById('resultModal').style.display = "none"; }
-function closeZoom() { document.getElementById('zoomModal').style.display = "none"; }
-function closeTg() { document.getElementById('tgPopup').style.display = "none"; }
+function toggleLang() { const btn = document.getElementById('langBtn'); btn.innerText = btn.innerText === "HI" ? "EN" : "HI"; loadQuestion(currentState.idx); }
+function openZoom(src) { document.getElementById('zoomImg').src = src; document.getElementById('zoomModal').style.display = 'flex'; }
+function closeZoom() { document.getElementById('zoomModal').style.display = 'none'; }
+function toggleFS() { !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen(); }
+function closeTg(){ document.getElementById('tgPopup').style.display = "none"; }
+function closeResult() { document.getElementById('resultModal').style.display = 'none'; }
+
+function sendResultToTelegram(name,score,c,w,s,time,accuracy){
+ fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{
+  method:"POST", headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+   chat_id:TELEGRAM_CHAT_ID,
+   text:`📘 DSSSB Mock Test (Pro)\n\n👤 Name: ${name}\n⏱ Time: ${time}\n✅ Correct: ${c}\n❌ Wrong: ${w}\n➖ Skipped: ${s}\n🎯 Score: ${score}\n📊 Accuracy: ${accuracy}%\n\n🔥 DSSSB Smart Notes`
+  })
+ });
+}
+
+/* =========================
+   TESTBOOK RANK HELPERS
+   ========================= */
+function fmt(s){
+  s = Math.max(0, s);
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+}
+
+function renderComparisonBar(label, userVal, maxVal, topperVal, maxTopperVal, unit = "", isReverse = false) {
+  const userPct = (userVal > 0) ? Math.min(100, (userVal / maxVal) * 100) : 0;
+  const topperPct = Math.min(100, (topperVal / maxTopperVal) * 100) || 0;
+
+  return `
+  <div class="bar-section">
+    <div class="bar-label"><span>${label}</span></div>
+    <div style="display:grid; grid-template-columns: 60px 1fr 80px; gap:10px; align-items:center; margin-bottom:6px;">
+       <span style="font-size:12px; font-weight:700; color:var(--primary);">YOU</span>
+       <div class="bar-track"><div class="bar-fill fill-you" style="width:${userPct}%"></div></div>
+       <span style="font-size:12px; font-weight:700; text-align:right; color:var(--text-main);">${userVal}${unit}</span>
+    </div>
+    <div style="display:grid; grid-template-columns: 60px 1fr 80px; gap:10px; align-items:center;">
+       <span style="font-size:12px; font-weight:700; color:var(--success);">TOPPER</span>
+       <div class="bar-track"><div class="bar-fill fill-topper" style="width:${topperPct}%"></div></div>
+       <span style="font-size:12px; font-weight:700; text-align:right; color:var(--text-main);">${topperVal}${unit}</span>
+    </div>
+  </div>`;
+}
+
+// Fetch Ranks & Toppers directly from Live DB
+function getRanksAndToppers(myScore, myTime) {
+    return db.ref(DB_REF_NAME).once("value").then(snapshot => {
+        let attempts = [];
+        snapshot.forEach(child => {
+            const val = child.val();
+            // Sirf current test ID ka data uthayenge rank ke liye
+            if(val && val.score !== undefined && val.testId === CURRENT_TEST_ID) {
+                attempts.push(val);
+            }
+        });
+
+        attempts.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.timeTaken - b.timeTaken;
+        });
+
+        const total = attempts.length;
+        let rank = total + 1; 
+
+        // Find Rank
+        for (let i = 0; i < attempts.length; i++) {
+            if (attempts[i].score === myScore && attempts[i].timeTaken === myTime) {
+                rank = i + 1; break;
+            }
+        }
+
+        // Percentile
+        const below = attempts.filter(a => a.score < myScore || (a.score === myScore && a.timeTaken > myTime)).length;
+        const percentile = total ? ((below / total) * 100).toFixed(2) : "0.00";
+
+        return { 
+            rank, 
+            percentile, 
+            total,
+            toppersList: attempts.slice(0, 10) 
+        };
+    });
+}
+
+/* =========================
+   SUBMISSION & DASHBOARD
+   ========================= */
+function submitTest() {
+    if(!currentState.submitted) { if(!confirm("Are you sure you want to Submit?")) return; }
+    currentState.submitted = true; 
+    clearInterval(timerInt); 
+    saveState();
+    
+    renderPalette();
+    renderSectionTabs();
+
+    let totalScore = 0, correct = 0, wrong = 0, skipped = 0;
+    let sectionScores = {};
+
+    QUESTIONS.forEach((q, i) => {
+        const secName = q.section || "General";
+        if(!sectionScores[secName]) sectionScores[secName] = {c:0, w:0, s:0, total:0};
+        sectionScores[secName].total++;
+        
+        const correctIdx = parseInt(q.ans) - 1;
+        const myAns = currentState.answers[i];
+        
+        if(myAns === null) {
+            skipped++; sectionScores[secName].s++;
+        } else if(myAns === correctIdx) { 
+            correct++; totalScore += 1; sectionScores[secName].c++; 
+        } else { 
+            wrong++; totalScore -= 0.25; sectionScores[secName].w++; 
+        }
+    });
+
+    const attempted = correct + wrong;
+    const accuracy = attempted > 0 ? ((correct/attempted)*100).toFixed(1) : 0;
+    const timeSpentSeconds = (TOTAL_TIME_MINS * 60) - currentState.time;
+    const timeStr = `${Math.floor(timeSpentSeconds/60)}m ${timeSpentSeconds%60}s`;
+
+    // Bacche ki Telegram ID nikalna
+    let tId = "guest";
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
+        tId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+    }
+
+    const userData = {
+        name: currentState.name,
+        userId: tId,             
+        testId: CURRENT_TEST_ID, 
+        score: parseFloat(totalScore.toFixed(2)),
+        timeTaken: timeSpentSeconds,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        correct: correct,
+        wrong: wrong
+    };
+    
+    // UI Loading State
+    const resBox = document.getElementById('resultContent');
+    resBox.innerHTML = `<div class="card-dashboard" style="text-align:center; padding:50px;">
+                            <div style="font-size:30px; animation: pulse 1s infinite;">🔄</div>
+                            <h2 style="color:var(--primary);">Generating Detailed Analysis...</h2>
+                            <p style="color:var(--text-muted);">Calculating your Rank & Percentile against Toppers</p>
+                        </div>`;
+    document.getElementById('resultModal').style.display = 'flex';
+    document.getElementById('mainSubmitBtn').style.display = 'none';
+
+    // Save to Firebase & Get Data
+    db.ref(DB_REF_NAME).push(userData)
+    .then(() => {
+        sendResultToTelegram(currentState.name, totalScore.toFixed(2), correct, wrong, skipped, timeStr, accuracy);
+        return getRanksAndToppers(userData.score, userData.timeTaken);
+    })
+    .then(data => {
+        let topperStats = { score: 0, accuracy: 0, correct: 0, wrong: 0, time: 0 };
+        if (data.toppersList.length > 0) {
+            let t = data.toppersList[0];
+            let tAtt = (t.correct || 0) + (t.wrong || 0);
+            topperStats = {
+                score: t.score,
+                accuracy: tAtt > 0 ? (((t.correct || 0) / tAtt) * 100).toFixed(1) : 0,
+                correct: t.correct || 0,
+                wrong: t.wrong || 0,
+                time: t.timeTaken
+            };
+        }
+
+        // --- GENERATE TESTBOOK STYLE DASHBOARD HTML ---
+        let html = `
+        <div id="pdfContent" class="analysis-container">
+            
+            <div style="text-align:center; padding: 10px 0 20px 0;">
+                <h2 style="color:var(--primary); margin:0; font-size:24px;">DSSSB MOCK TEST REPORT</h2>
+                <p style="color:var(--text-muted); margin:5px 0 0 0;">${CURRENT_TEST_TITLE}</p>
+            </div>
+
+            <div class="card-dashboard">
+                <div class="info-grid">
+                    <div><b>Name:</b> ${currentState.name}</div>
+                    <div><b>Status:</b> ${totalScore >= PASSING_MARKS ? '<span style="color:var(--success)">QUALIFIED 🏆</span>' : '<span style="color:var(--danger)">NOT QUALIFIED ❌</span>'}</div>
+                </div>
+            </div>
+
+            <div class="card-dashboard score-summary">
+                <div class="score-item">
+                    <h4>🏆 Rank</h4>
+                    <p>${data.rank} / ${data.total}</p>
+                </div>
+                <div class="score-item">
+                    <h4>📊 Percentile</h4>
+                    <p>${data.percentile}%</p>
+                </div>
+                <div class="score-item">
+                    <h4>🧮 Score</h4>
+                    <p>${totalScore.toFixed(2)}</p>
+                </div>
+                <div class="score-item">
+                    <h4>⏱ Time</h4>
+                    <p>${fmt(timeSpentSeconds)}</p>
+                </div>
+            </div>
+
+            <div class="card-dashboard attempt-summary">
+               <div class="attempt-box at-correct">✅ Correct<span>${correct}</span></div>
+               <div class="attempt-box at-wrong">❌ Wrong<span>${wrong}</span></div>
+               <div class="attempt-box at-unattempted">🟡 Skipped<span>${skipped}</span></div>
+               <div class="attempt-box at-total">✍️ Attempted<span>${attempted} / ${QUESTIONS.length}</span></div>
+            </div>
+
+            <div class="card-dashboard">
+                <h3 class="section-title">📊 You vs Topper</h3>
+                ${renderComparisonBar("Score", totalScore.toFixed(2), QUESTIONS.length, topperStats.score, QUESTIONS.length)}
+                ${renderComparisonBar("Accuracy", accuracy, 100, topperStats.accuracy, 100, "%")}
+                ${renderComparisonBar("Correct", correct, QUESTIONS.length, topperStats.correct, QUESTIONS.length)}
+                ${renderComparisonBar("Time Taken", timeSpentSeconds, TOTAL_TIME_MINS*60, topperStats.time, TOTAL_TIME_MINS*60)}
+            </div>
+
+            <div class="card-dashboard">
+                <h3 class="section-title">🏆 Top 10 Leaderboard</h3>
+                <div style="overflow-x:auto">
+                    <table class="topper-table">
+                        <tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr>
+                        ${data.toppersList.map((t, idx) => `
+                        <tr style="${t.name === currentState.name ? 'background:var(--success-bg); font-weight:bold;' : ''}">
+                            <td>${idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '#' + (idx + 1)))}</td>
+                            <td>${t.name} ${t.name === currentState.name ? '(You)' : ''}</td>
+                            <td><b>${t.score}</b></td>
+                            <td>${fmt(t.timeTaken)}</td>
+                        </tr>
+                        `).join('')}
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-grid" style="margin-top:20px; display: grid; gap: 20px;">
+                <div class="card-dashboard" style="height:250px;"><canvas id="pieChart"></canvas></div>
+                <div class="card-dashboard" style="height:250px;"><canvas id="barChart"></canvas></div>
+            </div>
+
+            <h3 style="margin-top:40px; border-left:5px solid var(--primary); padding-left:15px; color:var(--text-main);">Detailed Question Analysis</h3>
+        `;
+
+        QUESTIONS.forEach((q, i) => {
+            const correctIdx = parseInt(q.ans) - 1;
+            const myAns = currentState.answers[i];
+            let statusBadge = "";
+            if(myAns === null) statusBadge = `<span style="background:#94a3b8; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">SKIPPED</span>`;
+            else if(myAns === correctIdx) statusBadge = `<span style="background:#10b981; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">CORRECT</span>`;
+            else statusBadge = `<span style="background:#ef4444; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">WRONG</span>`;
+            
+            const isHindi = document.getElementById('langBtn').innerText === "HI";
+            const qText = isHindi ? (q.q_hi || q.q_en) : (q.q_en || q.q_hi);
+            const optionsArr = isHindi ? (q.op_hi || q.op_en) : (q.op_en || q.op_hi);
+
+            html += `
+                <div class="card-dashboard" style="margin-bottom:15px; padding:20px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-muted); font-size:13px;">
+                        <b>Q.${i+1} <span style="font-weight:normal; margin-left:10px;">(${q.section || "General"})</span></b> ${statusBadge}
+                    </div>
+                    <div style="font-weight:500; margin-bottom:15px; color:var(--text-main); font-size:16px;">${qText}</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; background:var(--bg-body); padding:12px; border-radius:8px;">
+                        <div><b style="color:var(--text-muted);">Your Answer:</b> <br>${myAns !== null ? String.fromCharCode(65+myAns)+') '+optionsArr[myAns] : 'Not Attempted'}</div>
+                        <div><b style="color:var(--text-muted);">Correct Answer:</b> <br><span style="color:var(--success); font-weight:bold;">${String.fromCharCode(65+correctIdx)+') '+optionsArr[correctIdx]}</span></div>
+                    </div>
+                    <div style="margin-top:15px; background:var(--primary-light); padding:15px; border-left:4px solid var(--primary); color:var(--primary-dark); font-size:14px; border-radius:4px;"><b>💡 Solution:</b><br>${q.solution || 'No solution provided.'}</div>
+                </div>
+            `;
+        });
+
+        html += `</div>`; 
+        html += `<div style="text-align:center; margin-top:30px; padding-bottom:30px;">
+                    <button onclick="downloadPDF()" class="btn-primary" style="width:auto; padding:12px 30px;">Download PDF Report 📥</button>
+                    <button onclick="window.location.href='index.html'" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--success); box-shadow:none; margin-left:10px;">Back to Dashboard 🏠</button>
+                 </div>`;
+
+        resBox.innerHTML = html;
+
+        // Initialize Charts inside the new HTML
+        new Chart(document.getElementById('pieChart'), { type: 'doughnut', data: { labels: ['Correct', 'Wrong', 'Skipped'], datasets: [{ data: [correct, wrong, skipped], backgroundColor: ['#10b981', '#ef4444', '#cbd5e1'], borderWidth:0 }] }, options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false } });
+        const labels = Object.keys(sectionScores);
+        new Chart(document.getElementById('barChart'), { type: 'bar', data: { labels: labels, datasets: [ { label: 'Correct', data: labels.map(k => sectionScores[k].c), backgroundColor: '#10b981' }, { label: 'Wrong', data: labels.map(k => sectionScores[k].w), backgroundColor: '#ef4444' } ] }, options: { scales: { x: { stacked: true, grid:{display:false} }, y: { stacked: true } }, maintainAspectRatio: false, borderRadius:4 } });
+
+        if(window.MathJax) MathJax.typesetPromise();
+    })
+    .catch((error) => {
+        console.error("Result Generation FAILED:", error);
+        resBox.innerHTML = `<h3 style="color:red; text-align:center;">Network Error. Please try again.</h3>`;
+    });
+}
 
 function downloadPDF() {
-    const element = document.getElementById('pdfArea');
+    const element = document.getElementById('pdfContent');
     const opt = {
-        margin: 10,
-        filename: `${currentState.name}_Result_${CURRENT_TEST_ID}.pdf`,
+        margin: [5, 5, 5, 5],
+        filename: `${currentState.name}_DSSSB_Report.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: { scale: 1.5, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).save();
 }
 
-/* =========================
-   🚨 PRO SECURITY LAYER (ANTI-CHEATING v2.0) 🚨
-   ========================= */
-
-// 1. Disable Right Click
-document.addEventListener('contextmenu', event => {
-    event.preventDefault();
-    showToast("⚠️ Right-click is disabled in Exam Mode!", "error");
-});
-
-// 2. ULTIMATE Developer Keys Lock
-document.onkeydown = function(e) {
-    if (e.keyCode === 123) { showToast("⚠️ Developer tools blocked!", "error"); return false; } // F12
-    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) { showToast("⚠️ Developer tools blocked!", "error"); return false; } // Ctrl+Shift+I
-    if (e.ctrlKey && e.shiftKey && e.keyCode === 74) { showToast("⚠️ Console blocked!", "error"); return false; } // Ctrl+Shift+J
-    if (e.ctrlKey && e.shiftKey && e.keyCode === 67) { showToast("⚠️ Element selection blocked!", "error"); return false; } // Ctrl+Shift+C
-    if (e.ctrlKey && e.keyCode === 85) { showToast("⚠️ View Source disabled!", "error"); return false; } // Ctrl+U
-    if (e.ctrlKey && e.keyCode === 80) { showToast("⚠️ Printing not allowed!", "error"); return false; } // Ctrl+P
-    if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86)) { showToast("⚠️ Copy/Paste disabled!", "error"); return false; } // Ctrl+C/V
-};
-
-// 3. Disable Dragging Images
-document.addEventListener('dragstart', e => { e.preventDefault(); });
-
-// 4. Disable Copy, Cut & Paste Events
-document.addEventListener('copy', e => { e.preventDefault(); showToast("⚠️ Copying is prohibited!", "error"); });
-document.addEventListener('cut', e => e.preventDefault());
-document.addEventListener('paste', e => e.preventDefault());
-
-// 5. Tab Switch Detection
-document.addEventListener("visibilitychange", () => {
-    if (document.hidden && !currentState.submitted) {
-        showToast("🚨 WARNING: Tab switching detected! Your activity is monitored.", "error");
+// Anti-Piracy Security Code
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) || (e.ctrlKey && ['U', 'C'].includes(e.key.toUpperCase()))) {
+        e.preventDefault(); return false;
     }
 });
 </script>
 </body>
-  </html>
+</html>
