@@ -5,6 +5,8 @@
 <title>DSSSB CBT Professional Portal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+<meta name="theme-color" content="#4f46e5">
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -216,9 +218,13 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
 <div id="mainArea">
     <div class="q-card">
         <div class="q-header">
-            <span style="display:flex; align-items:center; gap:8px;"><span style="background:var(--primary); color:#fff; padding:2px 8px; border-radius:6px; font-size:12px;">Q.<span id="qNumDisp">1</span></span></span>
+            <span style="display:flex; align-items:center; gap:12px;">
+                <span style="background:var(--primary); color:#fff; padding:2px 8px; border-radius:6px; font-size:12px;">Q.<span id="qNumDisp">1</span></span>
+                <button id="bookmarkBtn" onclick="toggleBookmark()" style="background:transparent; border:none; cursor:pointer; font-size:18px; padding:0; transition:0.2s;" title="Bookmark for Revision">🔖</button>
+            </span>
             <span style="font-family:monospace; font-size:14px;"><span style="color:var(--success)">+1.0</span> &nbsp;|&nbsp; <span style="color:var(--danger)">-0.25</span></span>
         </div>
+        
         <div id="qContent" class="q-text"></div>
         <div id="opts"></div>
         <div id="solutionDisplay" class="sol-box" style="display:none; margin-top:20px;"></div>
@@ -285,14 +291,15 @@ const urlParams = new URLSearchParams(window.location.search);
 const CURRENT_TEST_ID = urlParams.get('testid') || "TEST_UNKNOWN";
 const CURRENT_TEST_TITLE = urlParams.get('title') || "DSSSB Mock Test";
 
-// URL se dynamic time fetch karega, warna default 120 minutes lega
 const TOTAL_TIME_MINS = parseInt(urlParams.get('time')) || 120; 
 
 const STORAGE_KEY = "dsssb_cbt_rank_v2";
 const NEGATIVE_MARK = 0.25;
 const TELEGRAM_BOT_TOKEN="8486464606:AAFT_Bd0P2HYqKNPjCm3s7TGgfM4HWmOYvs";
 const TELEGRAM_CHAT_ID="@dsssbcbtresult";
-const PASSING_MARKS = 3; 
+
+// DYNAMIC CUTOFF VARIABLE
+let DYNAMIC_CUTOFF = 0; 
 
 // DYNAMIC QUESTIONS & SECTIONS FROM FIREBASE
 let QUESTIONS = [];
@@ -309,16 +316,22 @@ function initApp() {
     document.getElementById('displayTitle').innerText = CURRENT_TEST_TITLE;
     document.title = CURRENT_TEST_TITLE;
 
-    // --- FETCH TELEGRAM NAME AUTOMATICALLY ---
     let tName = "Student";
     if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
         let u = window.Telegram.WebApp.initDataUnsafe.user;
         tName = u.first_name + (u.last_name ? " " + u.last_name : "");
     }
     document.getElementById('startNameInput').value = tName;
-    // -----------------------------------------
 
-    // Firebase Se Questions Load Karna
+    // --- FIREBASE FETCH: DYNAMIC CUT-OFF ---
+    db.ref('dsssb_tests_meta/' + CURRENT_TEST_ID + '/cutoff').once('value').then(snap => {
+        if(snap.exists()) {
+            DYNAMIC_CUTOFF = parseFloat(snap.val());
+        } else {
+            DYNAMIC_CUTOFF = 40; // Default cutoff if admin hasn't set one
+        }
+    });
+
     db.ref('dsssb_questions_db/' + CURRENT_TEST_ID).once('value').then(snap => {
         if(snap.exists()) {
             QUESTIONS = snap.val();
@@ -328,7 +341,6 @@ function initApp() {
                 if (!SECTION_MAP.includes(secName)) SECTION_MAP.push(secName);
             });
             
-            // Check session based on TEST_ID to allow different saves for different tests
             const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
             
             currentState.answers = new Array(QUESTIONS.length).fill(null);
@@ -363,7 +375,6 @@ function calcSectionIndices() {
 function validateLogin() {
     if(QUESTIONS.length === 0) return showToast("Loading test data, please wait...", "warning");
     const name = document.getElementById('startNameInput').value.trim();
-    
     if(!name) return showToast("Name is missing!", "error");
     
     currentState.name = name;
@@ -475,9 +486,39 @@ function loadQuestion(idx) {
         solBox.style.display = 'none';
     }
 
+    // --- BOOKMARK CHECK ---
+    let bms = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {};
+    let qk = CURRENT_TEST_ID + "_Q" + idx;
+    document.getElementById('bookmarkBtn').innerText = bms[qk] ? "⭐" : "🔖";
+
     updateNavButtons(); 
     renderPalette(); 
-    if(window.MathJax) MathJax.typesetPromise();
+    
+    // --- MATHJAX OPTIMIZED (Lazy Loading) ---
+    if(window.MathJax) {
+        MathJax.typesetPromise([
+            document.getElementById('qContent'), 
+            document.getElementById('opts'),
+            document.getElementById('solutionDisplay')
+        ]);
+    }
+}
+
+// --- NEW BOOKMARK LOGIC ---
+function toggleBookmark() {
+    let bookmarks = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {};
+    let qKey = CURRENT_TEST_ID + "_Q" + currentState.idx;
+    
+    if(bookmarks[qKey]) {
+        delete bookmarks[qKey];
+        showToast("Bookmark Removed", "info");
+        document.getElementById('bookmarkBtn').innerText = "🔖";
+    } else {
+        bookmarks[qKey] = QUESTIONS[currentState.idx];
+        showToast("Question Bookmarked ⭐", "success");
+        document.getElementById('bookmarkBtn').innerText = "⭐";
+    }
+    localStorage.setItem('dsssb_bookmarks', JSON.stringify(bookmarks));
 }
 
 function selectAns(i) { 
@@ -578,13 +619,10 @@ function renderPalette() {
             else if(currentState.review[i]) cls += " review";
         }
         
-        // --- JUMP LOGIC: Only active section is clickable ---
         let isAccessible = currentState.submitted;
         if (!currentState.submitted) {
             let startIdx = secIndices[currentState.secIdx];
             let endIdx = (currentState.secIdx === SECTION_MAP.length - 1) ? QUESTIONS.length : secIndices[currentState.secIdx + 1];
-            
-            // Agar question current section ke andar hai, toh Accessible hoga
             if (i >= startIdx && i < endIdx) {
                 isAccessible = true;
             }
@@ -596,7 +634,6 @@ function renderPalette() {
             btn.onclick = () => { loadQuestion(i); if(window.innerWidth < 768) togglePalette(); }; 
             btn.style.cursor = "pointer";
         } else {
-            // Locked questions visually disabled
             btn.style.opacity = "0.2";
             btn.style.cursor = "not-allowed";
             btn.style.background = "var(--border-color)";
@@ -626,9 +663,6 @@ function sendResultToTelegram(name,score,c,w,s,time,accuracy){
  });
 }
 
-/* =========================
-   TESTBOOK RANK HELPERS
-   ========================= */
 function fmt(s){
   s = Math.max(0, s);
   const m = Math.floor(s/60);
@@ -656,13 +690,11 @@ function renderComparisonBar(label, userVal, maxVal, topperVal, maxTopperVal, un
   </div>`;
 }
 
-// Fetch Ranks & Toppers directly from Live DB
 function getRanksAndToppers(myScore, myTime) {
     return db.ref(DB_REF_NAME).once("value").then(snapshot => {
         let attempts = [];
         snapshot.forEach(child => {
             const val = child.val();
-            // Sirf current test ID ka data uthayenge rank ke liye
             if(val && val.score !== undefined && val.testId === CURRENT_TEST_ID) {
                 attempts.push(val);
             }
@@ -676,29 +708,19 @@ function getRanksAndToppers(myScore, myTime) {
         const total = attempts.length;
         let rank = total + 1; 
 
-        // Find Rank
         for (let i = 0; i < attempts.length; i++) {
             if (attempts[i].score === myScore && attempts[i].timeTaken === myTime) {
                 rank = i + 1; break;
             }
         }
 
-        // Percentile
         const below = attempts.filter(a => a.score < myScore || (a.score === myScore && a.timeTaken > myTime)).length;
         const percentile = total ? ((below / total) * 100).toFixed(2) : "0.00";
 
-        return { 
-            rank, 
-            percentile, 
-            total,
-            toppersList: attempts.slice(0, 10) 
-        };
+        return { rank, percentile, total, toppersList: attempts.slice(0, 10) };
     });
 }
 
-/* =========================
-   SUBMISSION & DASHBOARD
-   ========================= */
 function submitTest() {
     if(!currentState.submitted) { if(!confirm("Are you sure you want to Submit?")) return; }
     currentState.submitted = true; 
@@ -733,7 +755,6 @@ function submitTest() {
     const timeSpentSeconds = (TOTAL_TIME_MINS * 60) - currentState.time;
     const timeStr = `${Math.floor(timeSpentSeconds/60)}m ${timeSpentSeconds%60}s`;
 
-    // Bacche ki Telegram ID nikalna
     let tId = "guest";
     if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
         tId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
@@ -750,7 +771,6 @@ function submitTest() {
         wrong: wrong
     };
     
-    // UI Loading State
     const resBox = document.getElementById('resultContent');
     resBox.innerHTML = `<div class="card-dashboard" style="text-align:center; padding:50px;">
                             <div style="font-size:30px; animation: pulse 1s infinite;">🔄</div>
@@ -760,7 +780,6 @@ function submitTest() {
     document.getElementById('resultModal').style.display = 'flex';
     document.getElementById('mainSubmitBtn').style.display = 'none';
 
-    // Save to Firebase & Get Data
     db.ref(DB_REF_NAME).push(userData)
     .then(() => {
         sendResultToTelegram(currentState.name, totalScore.toFixed(2), correct, wrong, skipped, timeStr, accuracy);
@@ -780,7 +799,7 @@ function submitTest() {
             };
         }
 
-        // --- GENERATE TESTBOOK STYLE DASHBOARD HTML ---
+        // --- DYNAMIC CUTOFF INCORPORATED HERE ---
         let html = `
         <div id="pdfContent" class="analysis-container">
             
@@ -792,7 +811,7 @@ function submitTest() {
             <div class="card-dashboard">
                 <div class="info-grid">
                     <div><b>Name:</b> ${currentState.name}</div>
-                    <div><b>Status:</b> ${totalScore >= PASSING_MARKS ? '<span style="color:var(--success)">QUALIFIED 🏆</span>' : '<span style="color:var(--danger)">NOT QUALIFIED ❌</span>'}</div>
+                    <div><b>Status:</b> ${totalScore >= DYNAMIC_CUTOFF ? '<span style="color:var(--success)">QUALIFIED 🏆</span>' : '<span style="color:var(--danger)">NOT QUALIFIED ❌</span>'} <span style="font-size:11px; color:var(--text-muted);">(Cut-off: ${DYNAMIC_CUTOFF})</span></div>
                 </div>
             </div>
 
@@ -890,12 +909,14 @@ function submitTest() {
 
         resBox.innerHTML = html;
 
-        // Initialize Charts inside the new HTML
         new Chart(document.getElementById('pieChart'), { type: 'doughnut', data: { labels: ['Correct', 'Wrong', 'Skipped'], datasets: [{ data: [correct, wrong, skipped], backgroundColor: ['#10b981', '#ef4444', '#cbd5e1'], borderWidth:0 }] }, options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false } });
         const labels = Object.keys(sectionScores);
         new Chart(document.getElementById('barChart'), { type: 'bar', data: { labels: labels, datasets: [ { label: 'Correct', data: labels.map(k => sectionScores[k].c), backgroundColor: '#10b981' }, { label: 'Wrong', data: labels.map(k => sectionScores[k].w), backgroundColor: '#ef4444' } ] }, options: { scales: { x: { stacked: true, grid:{display:false} }, y: { stacked: true } }, maintainAspectRatio: false, borderRadius:4 } });
 
-        if(window.MathJax) MathJax.typesetPromise();
+        // --- MATHJAX OPTIMIZED (Lazy Loading for Report) ---
+        if(window.MathJax) {
+            MathJax.typesetPromise([document.getElementById('pdfContent')]);
+        }
     })
     .catch((error) => {
         console.error("Result Generation FAILED:", error);
@@ -922,6 +943,31 @@ document.addEventListener('keydown', e => {
         e.preventDefault(); return false;
     }
 });
+
+// --- ANTI-CHEATING V2.0 (Tab Switch & Window Blur Detection) ---
+let warningCount = 0;
+const MAX_WARNINGS = 3;
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden && !currentState.submitted && document.getElementById('startScreen').style.display === 'none') {
+        warningCount++;
+        if (warningCount >= MAX_WARNINGS) {
+            alert(`🚨 SECURITY BREACH: You left the exam screen ${MAX_WARNINGS} times. Your test is being automatically submitted.`);
+            submitTest();
+        } else {
+            alert(`⚠️ WARNING ${warningCount}/${MAX_WARNINGS}:\nPlease do not switch tabs or minimize the window during the exam. Your test will be auto-submitted after ${MAX_WARNINGS} warnings.`);
+        }
+    }
+});
+
+// --- REGISTER SERVICE WORKER FOR PWA ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker Registered!', reg.scope))
+        .catch(err => console.error('Service Worker Registration Failed!', err));
+    });
+}
 </script>
 </body>
-</html>
+  </html>
