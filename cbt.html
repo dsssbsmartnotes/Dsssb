@@ -199,7 +199,7 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
             </div>
         </div>
         
-        <button class="btn-primary" onclick="validateLogin()">START EXAM ➔</button>
+        <button class="btn-primary" id="startExamBtn" onclick="validateLogin()">START EXAM ➔</button>
     </div>
 </div>
 
@@ -227,9 +227,9 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
         
         <div id="qContent" class="q-text"></div>
         <div id="opts"></div>
-        <div id="solutionDisplay" class="sol-box" style="display:none; margin-top:20px;"></div>
+        <div id="solutionDisplay" class="sol-box" style="display:none; margin-top:20px; background:var(--primary-light); padding:15px; border-left:4px solid var(--primary); color:var(--primary-dark); font-size:14px; border-radius:4px;"></div>
         
-        <div style="margin-top:25px; display:flex; gap:15px;">
+        <div id="actionButtons" style="margin-top:25px; display:flex; gap:15px;">
             <button class="nav-btn" style="border:1px solid var(--warning); color:var(--warning); flex:1; background:transparent;" onclick="markReview()">⭐ Mark for Review</button>
             <button class="nav-btn" style="border:1px solid var(--text-muted); color:var(--text-muted); flex:1; background:transparent;" onclick="clearResponse()">↺ Clear Response</button>
         </div>
@@ -290,18 +290,17 @@ const DB_REF_NAME = "dsssb_results_live";
 const urlParams = new URLSearchParams(window.location.search);
 const CURRENT_TEST_ID = urlParams.get('testid') || "TEST_UNKNOWN";
 const CURRENT_TEST_TITLE = urlParams.get('title') || "DSSSB Mock Test";
-
 const TOTAL_TIME_MINS = parseInt(urlParams.get('time')) || 120; 
+
+// 🌟 NAYA: DETECT SOLUTION MODE 🌟
+const TEST_MODE = urlParams.get('mode') || "exam"; 
 
 const STORAGE_KEY = "dsssb_cbt_rank_v2";
 const NEGATIVE_MARK = 0.25;
 const TELEGRAM_BOT_TOKEN="8486464606:AAFT_Bd0P2HYqKNPjCm3s7TGgfM4HWmOYvs";
 const TELEGRAM_CHAT_ID="@dsssbcbtresult";
 
-// DYNAMIC CUTOFF VARIABLE
 let DYNAMIC_CUTOFF = 0; 
-
-// DYNAMIC QUESTIONS & SECTIONS FROM FIREBASE
 let QUESTIONS = [];
 let SECTION_MAP = [];
 
@@ -321,15 +320,19 @@ function initApp() {
         let u = window.Telegram.WebApp.initDataUnsafe.user;
         tName = u.first_name + (u.last_name ? " " + u.last_name : "");
     }
-    document.getElementById('startNameInput').value = tName;
+    
+    // 🌟 NAYA: IF SOLUTION MODE, CHANGE START SCREEN UI 🌟
+    if (TEST_MODE === 'solution') {
+        document.getElementById('startNameInput').value = tName + " (Solution Mode)";
+        document.getElementById('startExamBtn').innerText = "VIEW SOLUTIONS ➔";
+        document.getElementById('timer').style.display = 'none'; // Hide timer
+    } else {
+        document.getElementById('startNameInput').value = tName;
+    }
 
-    // --- FIREBASE FETCH: DYNAMIC CUT-OFF ---
     db.ref('dsssb_tests_meta/' + CURRENT_TEST_ID + '/cutoff').once('value').then(snap => {
-        if(snap.exists()) {
-            DYNAMIC_CUTOFF = parseFloat(snap.val());
-        } else {
-            DYNAMIC_CUTOFF = 40; // Default cutoff if admin hasn't set one
-        }
+        if(snap.exists()) DYNAMIC_CUTOFF = parseFloat(snap.val());
+        else DYNAMIC_CUTOFF = 40; 
     });
 
     db.ref('dsssb_questions_db/' + CURRENT_TEST_ID).once('value').then(snap => {
@@ -342,18 +345,32 @@ function initApp() {
             });
             
             const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
-            
-            currentState.answers = new Array(QUESTIONS.length).fill(null);
-            currentState.review = new Array(QUESTIONS.length).fill(false);
             calcSectionIndices();
             
-            const saved = localStorage.getItem(specificStorageKey);
-            if(saved) {
-                let savedState = JSON.parse(saved);
-                if(savedState.answers && savedState.answers.length === QUESTIONS.length) {
-                    document.getElementById('resumeBox').style.display = 'block';
+            // 🌟 NAYA LOGIC: HANDLE SAVED STATE FOR SOLUTION MODE 🌟
+            if (TEST_MODE === 'solution') {
+                const finalSaved = localStorage.getItem(specificStorageKey + "_final");
+                if (finalSaved) {
+                    currentState = JSON.parse(finalSaved);
                 } else {
-                    localStorage.removeItem(specificStorageKey);
+                    // Agar final answer nahi mile toh default empty state le lo
+                    currentState.answers = new Array(QUESTIONS.length).fill(null);
+                    currentState.review = new Array(QUESTIONS.length).fill(false);
+                }
+                currentState.submitted = true; 
+                document.getElementById('resumeBox').style.display = 'none'; // No resume in solution mode
+            } else {
+                // NORMAL EXAM MODE LOGIC
+                currentState.answers = new Array(QUESTIONS.length).fill(null);
+                currentState.review = new Array(QUESTIONS.length).fill(false);
+                const saved = localStorage.getItem(specificStorageKey);
+                if(saved) {
+                    let savedState = JSON.parse(saved);
+                    if(savedState.answers && savedState.answers.length === QUESTIONS.length) {
+                        document.getElementById('resumeBox').style.display = 'block';
+                    } else {
+                        localStorage.removeItem(specificStorageKey);
+                    }
                 }
             }
         } else {
@@ -387,16 +404,24 @@ function startGame(isResuming) {
     document.getElementById('mainArea').style.display = 'block';
     document.querySelector('footer').style.display = 'flex';
     renderSectionTabs();
-    if(!isResuming) currentState.idx = secIndices[0];
+    if(!isResuming && TEST_MODE !== 'solution') currentState.idx = secIndices[0];
     loadQuestion(currentState.idx);
-    startTimer();
-    setInterval(saveState, 5000); 
-    showToast(`Welcome, ${currentState.name} 🚀`, "success");
     toggleFS(); 
-    if(!isResuming) document.getElementById('tgPopup').style.display = "block"; 
+    
+    // 🌟 NAYA: HIDE ELEMENTS IF IN SOLUTION MODE 🌟
+    if (TEST_MODE === 'solution') {
+        document.getElementById('mainSubmitBtn').style.display = 'none'; 
+        showToast(`Showing Solutions...`, "success");
+    } else {
+        startTimer();
+        setInterval(saveState, 5000); 
+        showToast(`Welcome, ${currentState.name} 🚀`, "success");
+        if(!isResuming) document.getElementById('tgPopup').style.display = "block"; 
+    }
 }
 
 function saveState() {
+    if (TEST_MODE === 'solution') return; // Solution mode mein kuch naya save nahi karna
     const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
     if(currentState.submitted) { localStorage.removeItem(specificStorageKey); return; }
     localStorage.setItem(specificStorageKey, JSON.stringify(currentState));
@@ -479,11 +504,15 @@ function loadQuestion(idx) {
     optsContainer.querySelectorAll('img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); openZoom(img.src); }; });
 
     const solBox = document.getElementById('solutionDisplay');
+    const actionBtns = document.getElementById('actionButtons');
+
     if(currentState.submitted) {
-        solBox.innerHTML = `<b>💡 Solution:</b><br>${q.solution || 'No solution provided.'}`;
+        solBox.innerHTML = `<b>💡 Solution:</b><br>${q.solution || 'No detailed solution provided.'}`;
         solBox.style.display = 'block';
+        if(actionBtns) actionBtns.style.display = 'none'; // Hide Clear/Review buttons
     } else {
         solBox.style.display = 'none';
+        if(actionBtns) actionBtns.style.display = 'flex';
     }
 
     // --- BOOKMARK CHECK ---
@@ -504,7 +533,6 @@ function loadQuestion(idx) {
     }
 }
 
-// --- NEW BOOKMARK LOGIC ---
 function toggleBookmark() {
     let bookmarks = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {};
     let qKey = CURRENT_TEST_ID + "_Q" + currentState.idx;
@@ -547,8 +575,12 @@ function next() {
             loadQuestion(currentState.idx + 1); 
         }
     } else { 
-        if(!currentState.submitted) submitTest();
-        else showToast("End of Questions", "info");
+        if(!currentState.submitted) {
+            submitTest();
+        } else {
+            showToast("End of Questions. Redirecting to Dashboard...", "info");
+            setTimeout(() => { window.location.href = "index.html"; }, 1500);
+        }
     }
 }
 
@@ -721,11 +753,17 @@ function getRanksAndToppers(myScore, myTime) {
     });
 }
 
-function submitTest() {
-    if(!currentState.submitted) { if(!confirm("Are you sure you want to Submit?")) return; }
+async function submitTest() {
+    if(currentState.submitted) return;
+    if(!confirm("Are you sure you want to Submit?")) return;
+    
     currentState.submitted = true; 
     clearInterval(timerInt); 
-    saveState();
+    
+    // Auto-Save the final state so student can view solutions later
+    const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
+    localStorage.setItem(specificStorageKey + "_final", JSON.stringify(currentState));
+    localStorage.removeItem(specificStorageKey); // Clear active session
     
     renderPalette();
     renderSectionTabs();
@@ -799,7 +837,6 @@ function submitTest() {
             };
         }
 
-        // --- DYNAMIC CUTOFF INCORPORATED HERE ---
         let html = `
         <div id="pdfContent" class="analysis-container">
             
@@ -871,7 +908,7 @@ function submitTest() {
                 <div class="card-dashboard" style="height:250px;"><canvas id="barChart"></canvas></div>
             </div>
 
-            <h3 style="margin-top:40px; border-left:5px solid var(--primary); padding-left:15px; color:var(--text-main);">Detailed Question Analysis</h3>
+                        <h3 style="margin-top:40px; border-left:5px solid var(--primary); padding-left:15px; color:var(--text-main);">Detailed Question Analysis</h3>
         `;
 
         QUESTIONS.forEach((q, i) => {
@@ -902,9 +939,12 @@ function submitTest() {
         });
 
         html += `</div>`; 
+        
+        // 🌟 NAYA: BACK TO DASHBOARD AND REVIEW SOLUTIONS BUTTONS 🌟
         html += `<div style="text-align:center; margin-top:30px; padding-bottom:30px;">
-                    <button onclick="downloadPDF()" class="btn-primary" style="width:auto; padding:12px 30px;">Download PDF Report 📥</button>
-                    <button onclick="window.location.href='index.html'" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--success); box-shadow:none; margin-left:10px;">Back to Dashboard 🏠</button>
+                    <button onclick="downloadPDF()" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--bg-body); color:var(--primary); border:2px solid var(--primary); box-shadow:none;">Download PDF Report 📥</button>
+                    <button onclick="reviewSolutions()" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--success); margin-left:10px;">Review Solutions 👁️</button>
+                    <button onclick="window.location.href='index.html'" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--primary); margin-left:10px; margin-top:10px;">Back to Home 🏠</button>
                  </div>`;
 
         resBox.innerHTML = html;
@@ -922,6 +962,18 @@ function submitTest() {
         console.error("Result Generation FAILED:", error);
         resBox.innerHTML = `<h3 style="color:red; text-align:center;">Network Error. Please try again.</h3>`;
     });
+}
+
+function reviewSolutions() {
+    document.getElementById('resultModal').style.display = 'none';
+    showToast("Solution Mode Activated", "success");
+    // Interface update for solution mode
+    document.getElementById('timer').style.display = 'none';
+    document.getElementById('mainSubmitBtn').style.display = 'none';
+    TEST_MODE = 'solution'; // Toggle mode explicitly
+    loadQuestion(0);
+    renderSectionTabs();
+    window.scrollTo(0,0);
 }
 
 function downloadPDF() {
@@ -949,6 +1001,7 @@ let warningCount = 0;
 const MAX_WARNINGS = 3;
 
 document.addEventListener("visibilitychange", () => {
+    if (TEST_MODE === 'solution') return; // Solution me disable tab warning
     if (document.hidden && !currentState.submitted && document.getElementById('startScreen').style.display === 'none') {
         warningCount++;
         if (warningCount >= MAX_WARNINGS) {
@@ -970,4 +1023,4 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 </body>
-  </html>
+</html>
