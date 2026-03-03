@@ -18,6 +18,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+  svg: { fontCache: 'global' },
+  startup: { typeset: false }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<script>
 const manifest = {
     "name": "DSSSB Pro Portal",
     "short_name": "DSSSB Smart Notes",
@@ -111,16 +120,13 @@ body {
 .test-card, .note-card { padding: 15px; } 
 .video-card { padding: 0; cursor: pointer; }
 
-/* Naye Features ke CSS 👇 */
 .save-btn { background: transparent; color: var(--border); border: none; font-size: 20px; cursor: pointer; position: absolute; top: 12px; right: 15px; z-index: 10; transition: 0.3s; }
 .save-btn.saved { color: #f59e0b; filter: drop-shadow(0 2px 5px rgba(245, 158, 11, 0.4)); }
 .live-badge { background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; animation: pulseLive 1.5s infinite; position: absolute; top: 12px; left: 12px; letter-spacing: 0.5px; }
 
-/* 🔥 UPDATE: Pro Badge ab Note aur Test dono par aayega */
 .test-card.locked::after, .note-card.locked::after { content: "🔒 PRO"; position: absolute; top: 12px; right: 45px; background: var(--warning); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; z-index: 5; }
 
 @keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-/* 👆 */
 
 .t-title { font-weight: 700; font-size: 15px; margin-bottom: 5px; }
 .t-info { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
@@ -153,11 +159,10 @@ body {
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: var(--bg-card); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 textarea { width: 100%; height: 100px; padding: 10px; margin: 15px 0; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-body); color: var(--text-main); resize: none; outline:none; }
-/* Input Allow Override */
 input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; user-select: auto; }
 
 .nav-bar { position: fixed; bottom: 0; width: 100%; height: var(--nav-height); background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-.nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; cursor: pointer; }
+.nav-item { text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 600; opacity: 0.6; cursor: pointer; flex: 1; }
 .nav-item i { font-size: 18px; margin-bottom: 3px; display: block; }
 .nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-2px); }
 .chart-box { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin: 0 20px 20px; }
@@ -356,6 +361,11 @@ input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-se
         <div id="leaderboardList"></div>
     </div>
 
+    <div id="tab-bookmarks" class="tab-content" style="display:none; padding: 20px;">
+        <h2 style="font-size:18px; margin-bottom:15px; font-weight:800;">⭐ My Saved Questions</h2>
+        <div id="bookmarksListContainer"></div>
+    </div>
+
 </div>
 
 <div class="nav-bar">
@@ -364,6 +374,7 @@ input, textarea { -webkit-user-select: auto; -moz-user-select: auto; -ms-user-se
     <div class="nav-item" id="nav-study" onclick="switchTab('study', this)"><i class="fas fa-graduation-cap"></i> Study</div>
     <div class="nav-item" onclick="switchTab('syllabus', this)"><i class="fas fa-tasks"></i> Syllabus</div>
     <div class="nav-item" onclick="switchTab('rank', this)"><i class="fas fa-trophy"></i> Ranks</div>
+    <div class="nav-item" onclick="switchTab('bookmarks', this)"><i class="fas fa-bookmark"></i> Saved Qs</div>
 </div>
 
 <script>
@@ -459,7 +470,20 @@ window.onload = function() {
 
 /* 4. UTILS & UI */
 function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
-function switchTab(tab, el) { document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none'); document.getElementById('tab-'+tab).style.display = 'block'; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); window.scrollTo(0,0); }
+
+function switchTab(tab, el) { 
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none'); 
+    document.getElementById('tab-'+tab).style.display = 'block'; 
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); 
+    el.classList.add('active'); 
+    window.scrollTo(0,0); 
+    
+    // --- Render Bookmarks Only When Tab is Opened ---
+    if(tab === 'bookmarks') {
+        renderBookmarks();
+    }
+}
+
 function switchStudy(type, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); document.getElementById('notesSection').style.display = (type === 'notes') ? 'block' : 'none'; document.getElementById('videosSection').style.display = (type === 'videos') ? 'block' : 'none'; }
 
 // Toast Notification System
@@ -490,7 +514,6 @@ function shareApp() {
 }
 
 // PWA Install
-
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => { 
     e.preventDefault(); 
@@ -571,27 +594,85 @@ function submitPayment() {
 
 /* --- SAVE TEST FEATURE (With Toast Fix) --- */
 function toggleSaveTest(testId, el, event) {
-    event.stopPropagation(); // Prevents clicking the test card itself
+    event.stopPropagation(); 
     let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
     
     if (savedTests.includes(testId)) {
         savedTests = savedTests.filter(id => id !== testId);
         el.classList.remove('saved');
         el.innerHTML = '<i class="far fa-star"></i>';
-        showToast("Test removed from Saved"); // 👈 Toast Notification
+        showToast("Test removed from Saved"); 
     } else {
         savedTests.push(testId);
         el.classList.add('saved');
         el.innerHTML = '<i class="fas fa-star"></i>';
-        showToast("Test Saved Successfully ⭐"); // 👈 Toast Notification
+        showToast("Test Saved Successfully ⭐"); 
     }
     localStorage.setItem('savedTests', JSON.stringify(savedTests));
+}
+
+/* 🔥 NAYA FEATURE: BOOKMARKS RENDERER (Detailed Questions) 🔥 */
+function renderBookmarks() {
+    const container = document.getElementById('bookmarksListContainer');
+    let bms = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {};
+    let keys = Object.keys(bms);
+    
+    if(keys.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+            <i class="far fa-star fa-3x" style="margin-bottom:15px; opacity:0.5;"></i>
+            <h3>No Bookmarks Yet</h3>
+            <p style="font-size:12px; margin-top:5px;">While giving a mock test, click the 🔖 icon on any question to save it here for quick revision.</p>
+        </div>`;
+        return;
+    }
+
+    let html = "";
+    keys.reverse().forEach(k => {
+        let q = bms[k];
+        let correctIdx = parseInt(q.ans) - 1;
+        // Check for bilingual format
+        let qText = q.q_hi || q.q_en;
+        let optArr = q.op_hi || q.op_en;
+        let correctAnsText = optArr && optArr[correctIdx] ? optArr[correctIdx] : "Not Specified";
+
+        html += `
+        <div class="test-card" style="margin-bottom:15px; border-left:4px solid var(--warning);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                <span style="font-size:11px; background:var(--warning); color:#fff; padding:2px 6px; border-radius:4px; font-weight:800;">${q.section || 'General'}</span>
+                <button onclick="removeBookmark('${k}')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:14px;"><i class="fas fa-trash"></i> Remove</button>
+            </div>
+            
+            <div style="font-weight:600; font-size:14px; margin-bottom:15px; color:var(--text-main);">
+                ${qText}
+            </div>
+            
+            <div style="background:var(--bg-body); padding:10px; border-radius:8px; border:1px solid var(--border);">
+                <div style="font-size:12px; font-weight:700; color:var(--success); margin-bottom:5px;">✅ Answer: ${String.fromCharCode(65+correctIdx)}) ${correctAnsText}</div>
+                <hr style="border:none; border-top:1px dashed var(--border); margin:8px 0;">
+                <div style="font-size:12px; color:var(--text-muted);"><b>💡 Solution:</b><br>${q.solution || 'No detailed solution provided.'}</div>
+            </div>
+        </div>`;
+    });
+    
+    container.innerHTML = html;
+    
+    // Parse Math Equations if exist
+    if(window.MathJax) { MathJax.typesetPromise([container]); }
+}
+
+function removeBookmark(key) {
+    if(confirm("Are you sure you want to remove this question?")) {
+        let bms = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {};
+        delete bms[key];
+        localStorage.setItem('dsssb_bookmarks', JSON.stringify(bms));
+        renderBookmarks(); // Refresh UI
+        showToast("Bookmark Removed 🗑️");
+    }
 }
 
 /* 9. MAIN DATA FETCHING */
 async function fetchData(user) {
     try {
-           // --- LIVE PRESENCE TRACKING FOR ADMIN PANEL ---
         if(currentUserId !== "guest") {
             const userRef = db.ref('dsssb_presence/' + currentUserId);
             userRef.set({ name: currentUser, id: currentUserId, state: 'online', lastActive: firebase.database.ServerValue.TIMESTAMP });
@@ -671,7 +752,12 @@ async function fetchData(user) {
         Object.values(res).forEach(r => {
             let rName = r.name || "Student";
             if(!userMap[rName]) userMap[rName] = {s:0, c:0, isMe: false};
-            userMap[rName].s += r.score; 
+            
+            // --- 🔥 FIX FOR NaN ISSUE IN LEADERBOARD 🔥 ---
+            let safeScore = parseFloat(r.score);
+            if(isNaN(safeScore)) safeScore = 0;
+            
+            userMap[rName].s += safeScore; 
             userMap[rName].c++;
 
             let rId = String(r.userId || "").trim();
@@ -689,7 +775,7 @@ async function fetchData(user) {
                     category = r.category; 
                 }
 
-                let percent = (r.score / maxMarks) * 100;
+                let percent = (safeScore / maxMarks) * 100;
                 let matchedCat = Object.keys(subScores).find(k => category.toLowerCase().includes(k.toLowerCase()));
                 if(matchedCat) { subScores[matchedCat].push(percent); }
                 else { subScores['GK'].push(percent); } 
@@ -721,7 +807,6 @@ async function fetchData(user) {
             return { dbKey: key, ...testData[key] };
         });
         filterTests('all', document.querySelector('.filter-pill'));
-
 
     } catch(e) { console.error("Data Load Error:", e); } 
     finally {
@@ -768,11 +853,8 @@ function filterTests(cat, el, searchQuery = "") {
         let locked = t.type === 'pro' && !isPro;
         let displayMarks = t.marks || t.qs || '20';
         
-        // --- 🔥 NEW FIX: LINK GENERATION 🔥 ---
-        // Yahan par hum check karte hain ki 'id' field maujood hai ya nahi, 
-        // warna fallback ke roop mein 'dbKey' bhej dete hain.
         let uniqueTestId = t.id || t.dbKey;
-        let testTime = t.time || 120; // Agar admin ne time nahi daala to default 120 min lega
+        let testTime = t.time || 120; 
         let action = locked ? "openPayment()" : `window.location.href='cbt.html?testid=${uniqueTestId}&title=${encodeURIComponent(t.title)}&time=${testTime}'`;
 
         let isSaved = savedTests.includes(t.dbKey);
@@ -836,10 +918,13 @@ function renderVideos() {
     });
 }
 
+// --- 🔥 FIX FOR NaN ISSUE IN LEADERBOARD UI 🔥 ---
 function renderLeaderboard(list) {
     let html = "";
     list.slice(0,10).forEach((u,i) => {
-        html += `<div class="rank-row"><div style="display:flex;align-items:center;"><span style="width:25px;height:25px;background:#f3f4f6;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-right:10px;font-size:12px;color:#1f2937;">${i+1}</span><span style="font-weight:600;">${u.name} ${u.name==currentUser?'(You)':''}</span></div><span style="font-weight:800;color:var(--primary);">${u.avg.toFixed(1)}</span></div>`;
+        let avgScore = isNaN(u.avg) ? 0 : u.avg; 
+        
+        html += `<div class="rank-row"><div style="display:flex;align-items:center;"><span style="width:25px;height:25px;background:#f3f4f6;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-right:10px;font-size:12px;color:#1f2937;">${i+1}</span><span style="font-weight:600;">${u.name} ${u.name==currentUser?'(You)':''}</span></div><span style="font-weight:800;color:var(--primary);">${avgScore.toFixed(1)}</span></div>`;
     });
     document.getElementById('leaderboardList').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No scores yet. Attempt a test!</div>";
 }
@@ -876,33 +961,16 @@ function renderCharts(dynamicData) {
     });
 }
 
-
 /* =========================================
    🔒 ANTI-PIRACY & SECURITY LOCKDOWN 🔒
    ========================================= */
 
-// 1. Disable Right Click (Context Menu)
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-});
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 
-// 2. Disable Keyboard Shortcuts (Dev Tools, View Source, Copy)
 document.addEventListener('keydown', function(e) {
-    // F12 key
-    if (e.key === 'F12' || e.keyCode === 123) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+Shift+I (or i) and Ctrl+Shift+J (or j)
-    if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+U (View Source) and Ctrl+C (Copy)
-    if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) {
-        e.preventDefault();
-        return false;
-    }
+    if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
+    if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
 });
 </script>
 </body>
