@@ -12,6 +12,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
@@ -69,7 +71,7 @@ body { display: grid; grid-template-rows: var(--header-height) auto 1fr var(--fo
 
 .full-overlay { position: fixed; inset: 0; background: var(--bg-body-gradient); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; overflow-y: auto; }
 .login-card { background: var(--bg-card); padding: 40px 30px; border-radius: 24px; box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; text-align: center; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); }
-.login-input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid var(--border-color); border-radius: 12px; background: rgba(255,255,255,0.05); color: var(--text-main); font-size: 16px; transition: 0.3s; }
+.login-input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid var(--border-color); border-radius: 12px; background: rgba(255,255,255,0.05); color: var(--text-main); font-size: 16px; transition: 0.3s; text-align: center;}
 .login-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
 .btn-primary { background: var(--gradient-main); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
 .btn-primary:active { transform: scale(0.98); }
@@ -79,7 +81,7 @@ header { background: var(--gradient-header); box-shadow: 0 4px 20px rgba(0,0,0,0
 .header-tools { display: flex; gap: 10px; align-items: center; }
 .timer-badge { background: rgba(255,255,255,0.2); color: #fff; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-family: 'Courier New', monospace; font-size: 16px; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px); }
 .timer-badge.low { background: rgba(239, 68, 68, 0.9); animation: pulse 1s infinite; }
-.nav-btn { padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; background: rgba(255,255,255,0.15); color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.nav-btn { padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; background: rgba(255,255,255,0.15); color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
 .nav-btn:hover { background: rgba(255,255,255,0.3); }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
@@ -94,8 +96,15 @@ header { background: var(--gradient-header); box-shadow: 0 4px 20px rgba(0,0,0,0
 .q-text { font-size: 17px; line-height: 1.6; margin-bottom: 20px; font-weight: 500; color: var(--text-main); }
 .q-text img, .opt img { max-width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 8px; }
 
+/* 🌟 NAYA: OPTIONS HAPTIC POP ANIMATION 🌟 */
+@keyframes popClick {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
 .opt { display: flex; align-items: center; padding: 14px; border: 2px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); background: var(--bg-card); font-size: 15px; position: relative; overflow: hidden; }
 .opt:hover { border-color: var(--primary); background: var(--primary-light); transform: translateY(-2px); }
+.opt:active { animation: popClick 0.2s ease; } /* Pop Effect */
 .opt.sel { background: var(--primary-light); border-color: var(--primary); font-weight: 600; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2); }
 .opt-badge { width: 30px; height: 30px; border-radius: 50%; background: var(--bg-body); border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 12px; font-weight: 800; flex-shrink: 0; color: var(--text-muted); transition: 0.2s; }
 .opt.sel .opt-badge { background: var(--primary); border-color: var(--primary); color: #fff; }
@@ -103,6 +112,21 @@ header { background: var(--gradient-header); box-shadow: 0 4px 20px rgba(0,0,0,0
 .opt.correct-ans .opt-badge { background: var(--success); border-color: var(--success); color: #fff; }
 .opt.wrong-ans { border-color: var(--danger); background: var(--danger-bg); }
 .opt.wrong-ans .opt-badge { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+/* 🌟 NAYA: EXPERT SOLUTION BOX UI 🌟 */
+.sol-box { margin-top: 25px; border-radius: 12px; overflow: hidden; display: none; animation: slideUp 0.4s ease; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15); }
+.sol-header { background: var(--gradient-main); color: white; padding: 12px 20px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.sol-body { padding: 20px; font-size: 14px; line-height: 1.6; color: var(--text-main); background: var(--primary-light); border-left: 4px solid var(--primary); }
+.sol-body b { color: var(--primary-dark); }
+
+/* 🌟 NAYA: SPLIT-SCREEN PASSAGE MODE 🌟 */
+.passage-container { display: none; background: #fffbeb; border: 1px solid #fde68a; padding: 20px; border-radius: 12px; margin-bottom: 20px; max-height: 250px; overflow-y: auto; font-size: 14px; line-height: 1.6; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
+.dark-mode .passage-container { background: #2a1b0d; border-color: #431407; }
+@media(min-width: 900px) {
+  .split-mode { display: flex; gap: 25px; align-items: flex-start; }
+  .split-mode .passage-container { flex: 1; max-height: 600px; position: sticky; top: 0; margin-bottom: 0; }
+  .split-mode .qna-container { flex: 1; }
+}
 
 footer { background: var(--bg-card); padding: 0 15px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; gap: 12px; display: none; z-index: 40; align-items: center; height: var(--footer-height); box-shadow: 0 -4px 20px rgba(0,0,0,0.05); }
 footer .nav-btn { height: 44px; flex: 1; max-width: 140px; background: transparent; border: 2px solid var(--border-color); color: var(--text-main); }
@@ -188,7 +212,7 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
         <p style="color:var(--text-muted); font-size:14px; margin-bottom:30px;">Secure Computer Based Test System</p>
         
         <div style="text-align:left; margin-bottom:5px; font-size:13px; font-weight:600; margin-left:5px;">Candidate Name (Auto-Fetched)</div>
-        <input type="text" id="startNameInput" class="login-input" readonly style="background: rgba(255,255,255,0.1); border-color: var(--primary); cursor: not-allowed; font-weight: bold; text-align: center;">
+        <input type="text" id="startNameInput" class="login-input" readonly style="background: rgba(255,255,255,0.1); border-color: var(--primary); cursor: not-allowed; font-weight: bold;">
         
         <div id="resumeBox" style="display:none; margin-top:20px; background:rgba(245, 158, 11, 0.1); padding:15px; border-radius:12px; border:1px solid var(--warning); color:var(--warning); font-size:13px; text-align:left;">
             <b>⚠️ Session Recovered</b><br>
@@ -199,7 +223,7 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
             </div>
         </div>
         
-        <button class="btn-primary" id="startExamBtn" onclick="validateLogin()">START EXAM ➔</button>
+        <button class="btn-primary" onclick="validateLogin()">START EXAM ➔</button>
     </div>
 </div>
 
@@ -207,9 +231,9 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
     <div class="brand"><span>🛡️</span> <span id="displayTitle" style="font-size: 16px;">DSSSB CBT</span></div>
     <div class="header-tools">
         <div id="timer" class="timer-badge">120:00</div>
-        <button class="nav-btn" onclick="toggleTheme()" title="Dark Mode">🌙</button>
+        <button class="nav-btn" onclick="toggleTheme()" title="Dark Mode"><i class="fas fa-moon"></i></button>
         <button class="nav-btn" onclick="toggleLang()" id="langBtn" style="width:40px;">HI</button>
-        <button class="nav-btn" onclick="toggleFS()" title="Fullscreen">⛶</button>
+        <button class="nav-btn" onclick="toggleFS()" title="Fullscreen"><i class="fas fa-expand"></i></button>
     </div>
 </header>
 
@@ -220,18 +244,28 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
         <div class="q-header">
             <span style="display:flex; align-items:center; gap:12px;">
                 <span style="background:var(--primary); color:#fff; padding:2px 8px; border-radius:6px; font-size:12px;">Q.<span id="qNumDisp">1</span></span>
-                <button id="bookmarkBtn" onclick="toggleBookmark()" style="background:transparent; border:none; cursor:pointer; font-size:18px; padding:0; transition:0.2s;" title="Bookmark for Revision">🔖</button>
+                <button id="bookmarkBtn" onclick="toggleBookmark()" style="background:transparent; border:none; cursor:pointer; font-size:18px; padding:0; transition:0.2s;" title="Bookmark for Revision"><i class="far fa-bookmark"></i></button>
             </span>
             <span style="font-family:monospace; font-size:14px;"><span style="color:var(--success)">+1.0</span> &nbsp;|&nbsp; <span style="color:var(--danger)">-0.25</span></span>
         </div>
         
-        <div id="qContent" class="q-text"></div>
-        <div id="opts"></div>
-        <div id="solutionDisplay" class="sol-box" style="display:none; margin-top:20px; background:var(--primary-light); padding:15px; border-left:4px solid var(--primary); color:var(--primary-dark); font-size:14px; border-radius:4px;"></div>
+        <div id="splitWrapper">
+            <div id="passageArea" class="passage-container"></div>
+            
+            <div class="qna-container" style="width: 100%;">
+                <div id="qContent" class="q-text"></div>
+                <div id="opts"></div>
+                
+                <div id="solutionDisplay" class="sol-box">
+                    <div class="sol-header"><i class="fas fa-lightbulb"></i> Expert Explanation</div>
+                    <div class="sol-body" id="solBodyContent"></div>
+                </div>
+            </div>
+        </div>
         
         <div id="actionButtons" style="margin-top:25px; display:flex; gap:15px;">
-            <button class="nav-btn" style="border:1px solid var(--warning); color:var(--warning); flex:1; background:transparent;" onclick="markReview()">⭐ Mark for Review</button>
-            <button class="nav-btn" style="border:1px solid var(--text-muted); color:var(--text-muted); flex:1; background:transparent;" onclick="clearResponse()">↺ Clear Response</button>
+            <button class="nav-btn" style="border:1px solid var(--warning); color:var(--warning); flex:1; background:transparent;" onclick="markReview()"><i class="fas fa-star"></i> Mark for Review</button>
+            <button class="nav-btn" style="border:1px solid var(--text-muted); color:var(--text-muted); flex:1; background:transparent;" onclick="clearResponse()"><i class="fas fa-undo"></i> Clear Response</button>
         </div>
     </div>
     <div style="height:40px;"></div>
@@ -259,9 +293,9 @@ footer .nav-btn.primary { background: var(--gradient-main); color: #fff; border:
 </div>
 
 <footer>
-    <button class="nav-btn btn-grid" onclick="togglePalette()">▦ Grid</button>
-    <button class="nav-btn" onclick="prev()">Before</button>
-    <button class="nav-btn primary" id="nextBtn" onclick="next()">Save & Next</button>
+    <button class="nav-btn btn-grid" onclick="togglePalette()"><i class="fas fa-th"></i> Grid</button>
+    <button class="nav-btn" onclick="prev()"><i class="fas fa-chevron-left"></i> Before</button>
+    <button class="nav-btn primary" id="nextBtn" onclick="next()">Save & Next <i class="fas fa-chevron-right"></i></button>
 </footer>
 
 <script>
@@ -293,7 +327,7 @@ const CURRENT_TEST_TITLE = urlParams.get('title') || "DSSSB Mock Test";
 const TOTAL_TIME_MINS = parseInt(urlParams.get('time')) || 120; 
 
 // 🌟 NAYA: DETECT SOLUTION MODE 🌟
-const TEST_MODE = urlParams.get('mode') || "exam"; 
+let TEST_MODE = urlParams.get('mode') || "exam"; 
 
 const STORAGE_KEY = "dsssb_cbt_rank_v2";
 const NEGATIVE_MARK = 0.25;
@@ -321,10 +355,10 @@ function initApp() {
         tName = u.first_name + (u.last_name ? " " + u.last_name : "");
     }
     
-    // 🌟 NAYA: IF SOLUTION MODE, CHANGE START SCREEN UI 🌟
+    // 🌟 IF SOLUTION MODE, CHANGE START SCREEN UI 🌟
     if (TEST_MODE === 'solution') {
         document.getElementById('startNameInput').value = tName + " (Solution Mode)";
-        document.getElementById('startExamBtn').innerText = "VIEW SOLUTIONS ➔";
+        document.querySelector('.btn-primary').innerText = "VIEW SOLUTIONS ➔";
         document.getElementById('timer').style.display = 'none'; // Hide timer
     } else {
         document.getElementById('startNameInput').value = tName;
@@ -347,13 +381,12 @@ function initApp() {
             const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
             calcSectionIndices();
             
-            // 🌟 NAYA LOGIC: HANDLE SAVED STATE FOR SOLUTION MODE 🌟
+            // 🌟 HANDLE SAVED STATE FOR SOLUTION MODE 🌟
             if (TEST_MODE === 'solution') {
                 const finalSaved = localStorage.getItem(specificStorageKey + "_final");
                 if (finalSaved) {
                     currentState = JSON.parse(finalSaved);
                 } else {
-                    // Agar final answer nahi mile toh default empty state le lo
                     currentState.answers = new Array(QUESTIONS.length).fill(null);
                     currentState.review = new Array(QUESTIONS.length).fill(false);
                 }
@@ -408,10 +441,10 @@ function startGame(isResuming) {
     loadQuestion(currentState.idx);
     toggleFS(); 
     
-    // 🌟 NAYA: HIDE ELEMENTS IF IN SOLUTION MODE 🌟
+    // 🌟 HIDE ELEMENTS IF IN SOLUTION MODE 🌟
     if (TEST_MODE === 'solution') {
         document.getElementById('mainSubmitBtn').style.display = 'none'; 
-        showToast(`Showing Solutions...`, "success");
+        showToast(`Showing Solutions...`, "info");
     } else {
         startTimer();
         setInterval(saveState, 5000); 
@@ -477,6 +510,18 @@ function loadQuestion(idx) {
 
     document.getElementById('qNumDisp').innerText = idx + 1;
     
+    // 🌟 SMART PASSAGE LOGIC 🌟
+    const passageDiv = document.getElementById('passageArea');
+    const splitWrapper = document.getElementById('splitWrapper');
+    if(q.passage) {
+        passageDiv.innerHTML = `<div style="font-weight:800; color:var(--warning); margin-bottom:10px;"><i class="fas fa-book-open"></i> Read the Passage:</div>${q.passage}`;
+        passageDiv.style.display = 'block';
+        if(window.innerWidth >= 900) splitWrapper.classList.add('split-mode');
+    } else {
+        passageDiv.style.display = 'none';
+        splitWrapper.classList.remove('split-mode');
+    }
+
     const contentDiv = document.getElementById('qContent');
     contentDiv.innerHTML = isHindi ? (q.q_hi || q.q_en) : (q.q_en || q.q_hi);
     contentDiv.querySelectorAll('img').forEach(img => { img.onclick = () => openZoom(img.src); });
@@ -503,11 +548,13 @@ function loadQuestion(idx) {
     optsContainer.innerHTML = optsHtml;
     optsContainer.querySelectorAll('img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); openZoom(img.src); }; });
 
+    // 🌟 EXPERT SOLUTION BOX 🌟
     const solBox = document.getElementById('solutionDisplay');
+    const solBody = document.getElementById('solBodyContent');
     const actionBtns = document.getElementById('actionButtons');
 
     if(currentState.submitted) {
-        solBox.innerHTML = `<b>💡 Solution:</b><br>${q.solution || 'No detailed solution provided.'}`;
+        solBody.innerHTML = q.solution || 'No detailed solution provided.';
         solBox.style.display = 'block';
         if(actionBtns) actionBtns.style.display = 'none'; // Hide Clear/Review buttons
     } else {
@@ -518,7 +565,7 @@ function loadQuestion(idx) {
     // --- BOOKMARK CHECK ---
     let bms = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {};
     let qk = CURRENT_TEST_ID + "_Q" + idx;
-    document.getElementById('bookmarkBtn').innerText = bms[qk] ? "⭐" : "🔖";
+    document.getElementById('bookmarkBtn').innerHTML = bms[qk] ? '<i class="fas fa-star" style="color:#f59e0b;"></i>' : '<i class="far fa-bookmark"></i>';
 
     updateNavButtons(); 
     renderPalette(); 
@@ -528,7 +575,8 @@ function loadQuestion(idx) {
         MathJax.typesetPromise([
             document.getElementById('qContent'), 
             document.getElementById('opts'),
-            document.getElementById('solutionDisplay')
+            document.getElementById('solutionDisplay'),
+            document.getElementById('passageArea')
         ]);
     }
 }
@@ -540,17 +588,21 @@ function toggleBookmark() {
     if(bookmarks[qKey]) {
         delete bookmarks[qKey];
         showToast("Bookmark Removed", "info");
-        document.getElementById('bookmarkBtn').innerText = "🔖";
+        document.getElementById('bookmarkBtn').innerHTML = '<i class="far fa-bookmark"></i>';
     } else {
         bookmarks[qKey] = QUESTIONS[currentState.idx];
         showToast("Question Bookmarked ⭐", "success");
-        document.getElementById('bookmarkBtn').innerText = "⭐";
+        document.getElementById('bookmarkBtn').innerHTML = '<i class="fas fa-star" style="color:#f59e0b;"></i>';
     }
     localStorage.setItem('dsssb_bookmarks', JSON.stringify(bookmarks));
 }
 
 function selectAns(i) { 
     if(currentState.submitted) return; 
+    
+    // 🌟 HAPTIC FEEDBACK VIBRATION 🌟
+    if(navigator.vibrate) { navigator.vibrate(40); }
+    
     currentState.answers[currentState.idx] = i; 
     loadQuestion(currentState.idx); 
     saveState(); 
@@ -575,10 +627,9 @@ function next() {
             loadQuestion(currentState.idx + 1); 
         }
     } else { 
-        if(!currentState.submitted) {
-            submitTest();
-        } else {
-            showToast("End of Questions. Redirecting to Dashboard...", "info");
+        if(!currentState.submitted) submitTest();
+        else {
+            showToast("End of Document. Returning Home.", "info");
             setTimeout(() => { window.location.href = "index.html"; }, 1500);
         }
     }
@@ -600,10 +651,10 @@ function prev() {
 function updateNavButtons() {
     const btn = document.getElementById('nextBtn');
     if(currentState.idx === QUESTIONS.length - 1) { 
-        btn.innerText = currentState.submitted ? "End Review" : "Finish Exam"; 
+        btn.innerHTML = currentState.submitted ? "Finish <i class='fas fa-check'></i>" : "Submit Exam <i class='fas fa-check-double'></i>"; 
         if (!currentState.submitted) btn.style.background = "var(--danger)"; 
     } else { 
-        btn.innerText = currentState.submitted ? "Next >" : "Save & Next"; 
+        btn.innerHTML = currentState.submitted ? "Next <i class='fas fa-chevron-right'></i>" : "Save & Next <i class='fas fa-chevron-right'></i>"; 
         if (!currentState.submitted) btn.style.background = "var(--gradient-main)"; 
     }
 }
@@ -702,7 +753,7 @@ function fmt(s){
   return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
 }
 
-function renderComparisonBar(label, userVal, maxVal, topperVal, maxTopperVal, unit = "", isReverse = false) {
+function renderComparisonBar(label, userVal, maxVal, topperVal, maxTopperVal, unit = "") {
   const userPct = (userVal > 0) ? Math.min(100, (userVal / maxVal) * 100) : 0;
   const topperPct = Math.min(100, (topperVal / maxTopperVal) * 100) || 0;
 
@@ -720,37 +771,6 @@ function renderComparisonBar(label, userVal, maxVal, topperVal, maxTopperVal, un
        <span style="font-size:12px; font-weight:700; text-align:right; color:var(--text-main);">${topperVal}${unit}</span>
     </div>
   </div>`;
-}
-
-function getRanksAndToppers(myScore, myTime) {
-    return db.ref(DB_REF_NAME).once("value").then(snapshot => {
-        let attempts = [];
-        snapshot.forEach(child => {
-            const val = child.val();
-            if(val && val.score !== undefined && val.testId === CURRENT_TEST_ID) {
-                attempts.push(val);
-            }
-        });
-
-        attempts.sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return a.timeTaken - b.timeTaken;
-        });
-
-        const total = attempts.length;
-        let rank = total + 1; 
-
-        for (let i = 0; i < attempts.length; i++) {
-            if (attempts[i].score === myScore && attempts[i].timeTaken === myTime) {
-                rank = i + 1; break;
-            }
-        }
-
-        const below = attempts.filter(a => a.score < myScore || (a.score === myScore && a.timeTaken > myTime)).length;
-        const percentile = total ? ((below / total) * 100).toFixed(2) : "0.00";
-
-        return { rank, percentile, total, toppersList: attempts.slice(0, 10) };
-    });
 }
 
 async function submitTest() {
@@ -806,7 +826,9 @@ async function submitTest() {
         timeTaken: timeSpentSeconds,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         correct: correct,
-        wrong: wrong
+        wrong: wrong,
+        accuracy: accuracy,
+        skipped: skipped
     };
     
     const resBox = document.getElementById('resultContent');
@@ -818,159 +840,74 @@ async function submitTest() {
     document.getElementById('resultModal').style.display = 'flex';
     document.getElementById('mainSubmitBtn').style.display = 'none';
 
-    db.ref(DB_REF_NAME).push(userData)
-    .then(() => {
+    db.ref(DB_REF_NAME).push(userData).then(() => {
         sendResultToTelegram(currentState.name, totalScore.toFixed(2), correct, wrong, skipped, timeStr, accuracy);
-        return getRanksAndToppers(userData.score, userData.timeTaken);
-    })
-    .then(data => {
-        let topperStats = { score: 0, accuracy: 0, correct: 0, wrong: 0, time: 0 };
-        if (data.toppersList.length > 0) {
-            let t = data.toppersList[0];
-            let tAtt = (t.correct || 0) + (t.wrong || 0);
-            topperStats = {
-                score: t.score,
-                accuracy: tAtt > 0 ? (((t.correct || 0) / tAtt) * 100).toFixed(1) : 0,
-                correct: t.correct || 0,
-                wrong: t.wrong || 0,
-                time: t.timeTaken
-            };
-        }
-
-        let html = `
-        <div id="pdfContent" class="analysis-container">
-            
-            <div style="text-align:center; padding: 10px 0 20px 0;">
-                <h2 style="color:var(--primary); margin:0; font-size:24px;">DSSSB MOCK TEST REPORT</h2>
-                <p style="color:var(--text-muted); margin:5px 0 0 0;">${CURRENT_TEST_TITLE}</p>
-            </div>
-
-            <div class="card-dashboard">
-                <div class="info-grid">
-                    <div><b>Name:</b> ${currentState.name}</div>
-                    <div><b>Status:</b> ${totalScore >= DYNAMIC_CUTOFF ? '<span style="color:var(--success)">QUALIFIED 🏆</span>' : '<span style="color:var(--danger)">NOT QUALIFIED ❌</span>'} <span style="font-size:11px; color:var(--text-muted);">(Cut-off: ${DYNAMIC_CUTOFF})</span></div>
-                </div>
-            </div>
-
-            <div class="card-dashboard score-summary">
-                <div class="score-item">
-                    <h4>🏆 Rank</h4>
-                    <p>${data.rank} / ${data.total}</p>
-                </div>
-                <div class="score-item">
-                    <h4>📊 Percentile</h4>
-                    <p>${data.percentile}%</p>
-                </div>
-                <div class="score-item">
-                    <h4>🧮 Score</h4>
-                    <p>${totalScore.toFixed(2)}</p>
-                </div>
-                <div class="score-item">
-                    <h4>⏱ Time</h4>
-                    <p>${fmt(timeSpentSeconds)}</p>
-                </div>
-            </div>
-
-            <div class="card-dashboard attempt-summary">
-               <div class="attempt-box at-correct">✅ Correct<span>${correct}</span></div>
-               <div class="attempt-box at-wrong">❌ Wrong<span>${wrong}</span></div>
-               <div class="attempt-box at-unattempted">🟡 Skipped<span>${skipped}</span></div>
-               <div class="attempt-box at-total">✍️ Attempted<span>${attempted} / ${QUESTIONS.length}</span></div>
-            </div>
-
-            <div class="card-dashboard">
-                <h3 class="section-title">📊 You vs Topper</h3>
-                ${renderComparisonBar("Score", totalScore.toFixed(2), QUESTIONS.length, topperStats.score, QUESTIONS.length)}
-                ${renderComparisonBar("Accuracy", accuracy, 100, topperStats.accuracy, 100, "%")}
-                ${renderComparisonBar("Correct", correct, QUESTIONS.length, topperStats.correct, QUESTIONS.length)}
-                ${renderComparisonBar("Time Taken", timeSpentSeconds, TOTAL_TIME_MINS*60, topperStats.time, TOTAL_TIME_MINS*60)}
-            </div>
-
-            <div class="card-dashboard">
-                <h3 class="section-title">🏆 Top 10 Leaderboard</h3>
-                <div style="overflow-x:auto">
-                    <table class="topper-table">
-                        <tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr>
-                        ${data.toppersList.map((t, idx) => `
-                        <tr style="${t.name === currentState.name ? 'background:var(--success-bg); font-weight:bold;' : ''}">
-                            <td>${idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '#' + (idx + 1)))}</td>
-                            <td>${t.name} ${t.name === currentState.name ? '(You)' : ''}</td>
-                            <td><b>${t.score}</b></td>
-                            <td>${fmt(t.timeTaken)}</td>
-                        </tr>
-                        `).join('')}
-                    </table>
-                </div>
-            </div>
-
-            <div class="dashboard-grid" style="margin-top:20px; display: grid; gap: 20px;">
-                <div class="card-dashboard" style="height:250px;"><canvas id="pieChart"></canvas></div>
-                <div class="card-dashboard" style="height:250px;"><canvas id="barChart"></canvas></div>
-            </div>
-
-                        <h3 style="margin-top:40px; border-left:5px solid var(--primary); padding-left:15px; color:var(--text-main);">Detailed Question Analysis</h3>
-        `;
-
-        QUESTIONS.forEach((q, i) => {
-            const correctIdx = parseInt(q.ans) - 1;
-            const myAns = currentState.answers[i];
-            let statusBadge = "";
-            if(myAns === null) statusBadge = `<span style="background:#94a3b8; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">SKIPPED</span>`;
-            else if(myAns === correctIdx) statusBadge = `<span style="background:#10b981; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">CORRECT</span>`;
-            else statusBadge = `<span style="background:#ef4444; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">WRONG</span>`;
-            
-            const isHindi = document.getElementById('langBtn').innerText === "HI";
-            const qText = isHindi ? (q.q_hi || q.q_en) : (q.q_en || q.q_hi);
-            const optionsArr = isHindi ? (q.op_hi || q.op_en) : (q.op_en || q.op_hi);
-
-            html += `
-                <div class="card-dashboard" style="margin-bottom:15px; padding:20px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-muted); font-size:13px;">
-                        <b>Q.${i+1} <span style="font-weight:normal; margin-left:10px;">(${q.section || "General"})</span></b> ${statusBadge}
-                    </div>
-                    <div style="font-weight:500; margin-bottom:15px; color:var(--text-main); font-size:16px;">${qText}</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; background:var(--bg-body); padding:12px; border-radius:8px;">
-                        <div><b style="color:var(--text-muted);">Your Answer:</b> <br>${myAns !== null ? String.fromCharCode(65+myAns)+') '+optionsArr[myAns] : 'Not Attempted'}</div>
-                        <div><b style="color:var(--text-muted);">Correct Answer:</b> <br><span style="color:var(--success); font-weight:bold;">${String.fromCharCode(65+correctIdx)+') '+optionsArr[correctIdx]}</span></div>
-                    </div>
-                    <div style="margin-top:15px; background:var(--primary-light); padding:15px; border-left:4px solid var(--primary); color:var(--primary-dark); font-size:14px; border-radius:4px;"><b>💡 Solution:</b><br>${q.solution || 'No solution provided.'}</div>
-                </div>
-            `;
-        });
-
-        html += `</div>`; 
-        
-        // 🌟 NAYA: BACK TO DASHBOARD AND REVIEW SOLUTIONS BUTTONS 🌟
-        html += `<div style="text-align:center; margin-top:30px; padding-bottom:30px;">
-                    <button onclick="downloadPDF()" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--bg-body); color:var(--primary); border:2px solid var(--primary); box-shadow:none;">Download PDF Report 📥</button>
-                    <button onclick="reviewSolutions()" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--success); margin-left:10px;">Review Solutions 👁️</button>
-                    <button onclick="window.location.href='index.html'" class="btn-primary" style="width:auto; padding:12px 30px; background:var(--primary); margin-left:10px; margin-top:10px;">Back to Home 🏠</button>
-                 </div>`;
-
-        resBox.innerHTML = html;
-
-        new Chart(document.getElementById('pieChart'), { type: 'doughnut', data: { labels: ['Correct', 'Wrong', 'Skipped'], datasets: [{ data: [correct, wrong, skipped], backgroundColor: ['#10b981', '#ef4444', '#cbd5e1'], borderWidth:0 }] }, options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false } });
-        const labels = Object.keys(sectionScores);
-        new Chart(document.getElementById('barChart'), { type: 'bar', data: { labels: labels, datasets: [ { label: 'Correct', data: labels.map(k => sectionScores[k].c), backgroundColor: '#10b981' }, { label: 'Wrong', data: labels.map(k => sectionScores[k].w), backgroundColor: '#ef4444' } ] }, options: { scales: { x: { stacked: true, grid:{display:false} }, y: { stacked: true } }, maintainAspectRatio: false, borderRadius:4 } });
-
-        // --- MATHJAX OPTIMIZED (Lazy Loading for Report) ---
-        if(window.MathJax) {
-            MathJax.typesetPromise([document.getElementById('pdfContent')]);
-        }
-    })
-    .catch((error) => {
+        generateReport(userData, secScores);
+    }).catch((error) => {
         console.error("Result Generation FAILED:", error);
         resBox.innerHTML = `<h3 style="color:red; text-align:center;">Network Error. Please try again.</h3>`;
     });
 }
 
+function generateReport(r, secScores) {
+    db.ref('dsssb_results_live').once('value', snap => {
+        let all = []; snap.forEach(c => { if(c.val().testId === CURRENT_TEST_ID) all.push(c.val()); });
+        all.sort((a,b) => b.score - a.score || a.timeTaken - b.timeTaken);
+        
+        // 🌟 NAYA: RANK CALCULATION FIX 🌟
+        const rank = all.findIndex(x => x.name === r.name && x.score === r.score) + 1;
+        const topper = all[0] || r;
+        const totalStudents = all.length;
+
+        let statusClass = r.score >= DYNAMIC_CUTOFF ? "success" : "danger";
+        let statusText = r.score >= DYNAMIC_CUTOFF ? "🏆 QUALIFIED" : "❌ NOT QUALIFIED";
+
+        let html = `
+        <div id="pdfContent" class="analysis-container">
+            <div class="card-dashboard" style="text-align:center; background:var(--${statusClass}-bg); color:var(--${statusClass}); border:2px dashed var(--${statusClass});">
+                <h2 style="margin:0;">${statusText}</h2>
+                <p style="margin:5px 0 0; font-size:14px; color:var(--text-main);">Score: <b>${r.score}</b> | Cut-off: <b>${DYNAMIC_CUTOFF}</b></p>
+            </div>
+
+            <div class="score-summary">
+                <div class="score-item"><h4>🏆 Rank</h4><p>#${rank} <span style="font-size:14px; color:var(--text-muted); font-weight:600;">/ ${totalStudents}</span></p></div>
+                <div class="score-item" style="background:var(--success-bg);"><h4>🎯 Accuracy</h4><p style="color:var(--success);">${r.accuracy}%</p></div>
+                <div class="score-item" style="background:var(--warning-bg);"><h4>⏱ Time</h4><p style="color:#b77c00;">${fmt(r.timeTaken)}</p></div>
+            </div>
+
+            <div class="card-dashboard">
+                <h3 style="margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:10px;">📊 You vs Topper</h3>
+                ${renderComparisonBar("Score", r.score, QUESTIONS.length, topper.score, QUESTIONS.length)}
+                ${renderComparisonBar("Accuracy", r.accuracy, 100, topper.accuracy || 0, 100, "%")}
+                ${renderComparisonBar("Time", r.timeTaken, TOTAL_TIME_MINS*60, topper.timeTaken, TOTAL_TIME_MINS*60)}
+            </div>
+
+            <div class="card-dashboard" style="height:300px;"><canvas id="pieChart"></canvas></div>
+            
+            <div class="card-dashboard">
+                <h3 style="margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🏆 Top 10 Leaderboard</h3>
+                <table class="topper-table">
+                    ${all.slice(0,10).map((t,i) => `<tr style="${t.name===r.name ? 'background:var(--primary-light); font-weight:bold;' : ''}"><td>#${i+1}</td><td>${t.name}</td><td>${t.score}</td></tr>`).join('')}
+                </table>
+            </div>
+        </div>
+        
+        <div style="text-align:center; margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button onclick="downloadPDF()" class="btn-primary" style="width:auto; padding:12px 25px; background:var(--bg-body); color:var(--primary); border:2px solid var(--primary); box-shadow:none;"><i class="fas fa-file-pdf"></i> Download PDF</button>
+            <button onclick="reviewSolutions()" class="btn-primary" style="width:auto; padding:12px 25px; background:var(--success);"><i class="fas fa-eye"></i> View Solutions</button>
+            <button onclick="window.location.href='index.html'" class="btn-primary" style="width:auto; padding:12px 25px;"><i class="fas fa-home"></i> Home</button>
+        </div>`;
+        
+        document.getElementById('resultContent').innerHTML = html;
+        new Chart(document.getElementById('pieChart'), { type: 'doughnut', data: { labels: ['Correct', 'Wrong', 'Skip'], datasets: [{ data: [r.correct, r.wrong, r.skipped], backgroundColor: ['#10b981', '#ef4444', '#cbd5e1'], borderWidth: 0 }] }, options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false } });
+    });
+}
+
 function reviewSolutions() {
     document.getElementById('resultModal').style.display = 'none';
-    showToast("Solution Mode Activated", "success");
-    // Interface update for solution mode
+    TEST_MODE = 'solution'; // Toggle mode implicitly
     document.getElementById('timer').style.display = 'none';
     document.getElementById('mainSubmitBtn').style.display = 'none';
-    TEST_MODE = 'solution'; // Toggle mode explicitly
     loadQuestion(0);
     renderSectionTabs();
     window.scrollTo(0,0);
@@ -996,7 +933,7 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// --- ANTI-CHEATING V2.0 (Tab Switch & Window Blur Detection) ---
+// --- ANTI-CHEATING V2.0 (Tab Switch Detection) ---
 let warningCount = 0;
 const MAX_WARNINGS = 3;
 
@@ -1023,4 +960,4 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 </body>
-</html>
+  </html>
