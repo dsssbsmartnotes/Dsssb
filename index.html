@@ -386,6 +386,8 @@ const db = firebase.database();
 let currentUser = "Student", currentUserId = "guest", isPro = false;
 let myScores = [], allTests = [], allNotes = [];
 let lastAlertTime = 0;
+// 🌟 NAYA VARIABLE: ATTEMPTED TESTS TRACKER 🌟
+let attemptedTestIds = new Set(); 
 
 /* 2. STATIC DATA */
 const syllabusDB = {
@@ -592,7 +594,7 @@ function submitPayment() {
     document.getElementById('paymentModal').style.display = 'none';
 }
 
-/* --- SAVE TEST FEATURE (With Toast Fix) --- */
+/* --- SAVE TEST FEATURE --- */
 function toggleSaveTest(testId, el, event) {
     event.stopPropagation(); 
     let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
@@ -611,7 +613,7 @@ function toggleSaveTest(testId, el, event) {
     localStorage.setItem('savedTests', JSON.stringify(savedTests));
 }
 
-/* 🔥 NAYA FEATURE: BOOKMARKS RENDERER (Detailed Questions) 🔥 */
+/* --- BOOKMARKS RENDERER --- */
 function renderBookmarks() {
     const container = document.getElementById('bookmarksListContainer');
     let bms = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {};
@@ -654,9 +656,8 @@ function renderBookmarks() {
         </div>`;
     });
     
-    container.innerHTML = html;
+        container.innerHTML = html;
     
-    // Parse Math Equations if exist
     if(window.MathJax) { MathJax.typesetPromise([container]); }
 }
 
@@ -667,6 +668,19 @@ function removeBookmark(key) {
         localStorage.setItem('dsssb_bookmarks', JSON.stringify(bms));
         renderBookmarks(); // Refresh UI
         showToast("Bookmark Removed 🗑️");
+    }
+}
+
+/* --- REATTEMPT TEST LOGIC --- */
+function reattemptTest(testId, title, time) {
+    if(confirm("Are you sure? Re-attempt karne par is device se aapke is test ke purane answers clear ho jayenge.")) {
+        const specificStorageKey = "dsssb_cbt_rank_v2_" + testId;
+        
+        localStorage.removeItem(specificStorageKey);           // Clear incomplete saved state
+        localStorage.removeItem(specificStorageKey + "_final"); // Clear final submitted state
+        
+        // Data clear hone ke baad fresh start
+        window.location.href = `cbt.html?testid=${testId}&title=${encodeURIComponent(title)}&time=${time}&mode=exam`;
     }
 }
 
@@ -687,7 +701,7 @@ async function fetchData(user) {
             db.ref("dsssb_notes_db").once("value")
         ]);
 
-        // --- ROBUST PRO CHECK (ULTRA STRICT) ---
+        // --- ROBUST PRO CHECK ---
         isPro = false;
         if(proSnap.exists()) {
             let myUsername = (user.username && user.username !== "guest") ? String(user.username).toLowerCase().trim().replace("@", "") : null;
@@ -697,27 +711,18 @@ async function fetchData(user) {
                 proSnap.forEach(child => {
                     let dbVal = child.val();
                     let dbKey = String(child.key).toLowerCase().trim().replace("@", "");
-                    
                     if (!dbVal) return; 
 
                     let v = "";
-                    if (typeof dbVal === 'object') {
-                        v = dbVal.username || dbVal.id || "";
-                    } else {
-                        v = dbVal;
-                    }
+                    if (typeof dbVal === 'object') v = dbVal.username || dbVal.id || "";
+                    else v = dbVal;
                     
                     v = String(v).toLowerCase().trim().replace("@", "");
 
                     if (v !== "") {
-                        if ((myUsername && (v === myUsername || dbKey === myUsername)) || 
-                            (myId && (v === myId || dbKey === myId))) {
-                            isPro = true;
-                        }
+                        if ((myUsername && (v === myUsername || dbKey === myUsername)) || (myId && (v === myId || dbKey === myId))) isPro = true;
                     } else if (dbKey !== "") {
-                         if ((myUsername && dbKey === myUsername) || (myId && dbKey === myId)) {
-                            isPro = true;
-                        }
+                         if ((myUsername && dbKey === myUsername) || (myId && dbKey === myId)) isPro = true;
                     }
                 });
             }
@@ -733,12 +738,10 @@ async function fetchData(user) {
             document.getElementById('buyProBtn').style.display = 'inline-block';
         }
 
-        // NOTES
+        // NOTES & VIDEOS
         const notes = notesSnap.val() || {};
         allNotes = Object.values(notes).reverse();
         searchNotes('');
-        
-        // VIDEOS
         renderVideos();
 
         // --- DYNAMIC STATS, RANK & CHARTS ---
@@ -753,7 +756,6 @@ async function fetchData(user) {
             let rName = r.name || "Student";
             if(!userMap[rName]) userMap[rName] = {s:0, c:0, isMe: false};
             
-            // --- 🔥 FIX FOR NaN ISSUE IN LEADERBOARD 🔥 ---
             let safeScore = parseFloat(r.score);
             if(isNaN(safeScore)) safeScore = 0;
             
@@ -765,15 +767,16 @@ async function fetchData(user) {
                 userMap[rName].isMe = true; 
                 myTestCount++; 
                 
+                // Track Attempted Tests
+                if(r.testId) attemptedTestIds.add(r.testId);
+
                 let category = "GK"; 
                 let maxMarks = 20;   
                 
                 if(r.testId && testData[r.testId]) {
                     category = testData[r.testId].category || "GK";
                     maxMarks = parseInt(testData[r.testId].qs) || parseInt(testData[r.testId].marks) || 20;
-                } else if (r.category) { 
-                    category = r.category; 
-                }
+                } else if (r.category) { category = r.category; }
 
                 let percent = (safeScore / maxMarks) * 100;
                 let matchedCat = Object.keys(subScores).find(k => category.toLowerCase().includes(k.toLowerCase()));
@@ -782,7 +785,6 @@ async function fetchData(user) {
             }
         });
 
-        // Update Dashboard Cards
         document.getElementById('valTests').innerText = myTestCount;
         if(myTestCount >= 5) document.getElementById('badgeMachine').classList.add('unlocked');
 
@@ -792,7 +794,6 @@ async function fetchData(user) {
 
         renderLeaderboard(lb);
 
-        // Chart Data Calculation
         let chartAverages = [];
         ['Maths', 'English', 'Hindi', 'GK', 'Reasoning'].forEach(cat => {
             let arr = subScores[cat];
@@ -827,6 +828,7 @@ function filterTests(cat, el, searchQuery = "") {
     
     let list = [...allTests].reverse(); 
     let savedTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
+    let now = Date.now(); 
     
     if (searchQuery) {
         list = list.filter(t => (t.title||"").toLowerCase().includes(searchQuery.toLowerCase()));
@@ -835,7 +837,7 @@ function filterTests(cat, el, searchQuery = "") {
         if(key === 'saved') {
             list = list.filter(t => savedTests.includes(t.dbKey));
         } else if (key === 'live') {
-            list = list.filter(t => (t.isLive && t.isLive.toString() === 'true'));
+            list = list.filter(t => (t.isLive && t.isLive.toString() === 'true') || (t.scheduledTime && now >= t.scheduledTime));
         } else {
             list = list.filter(t => {
                 const title = (t.title||"").toLowerCase();
@@ -852,24 +854,40 @@ function filterTests(cat, el, searchQuery = "") {
     list.forEach(t => {
         let locked = t.type === 'pro' && !isPro;
         let displayMarks = t.marks || t.qs || '20';
-        
         let uniqueTestId = t.id || t.dbKey;
         let testTime = t.time || 120; 
-        let action = locked ? "openPayment()" : `window.location.href='cbt.html?testid=${uniqueTestId}&title=${encodeURIComponent(t.title)}&time=${testTime}'`;
+        
+        let isAttempted = attemptedTestIds.has(t.dbKey) || attemptedTestIds.has(t.id); 
+        let safeTitle = (t.title || "").replace(/'/g, "\\'"); 
+        let actionSolution = `window.location.href='cbt.html?testid=${uniqueTestId}&title=${encodeURIComponent(t.title)}&mode=solution'`; 
+        
+        let buttonHTML = "";
+        if (locked) {
+            buttonHTML = `<button class="start-btn locked" onclick="openPayment()">Unlock Pro</button>`;
+        } else if (isAttempted) {
+            buttonHTML = `
+            <div style="display:flex; gap:10px; margin-top:5px;">
+                <button class="start-btn" style="flex:1; background:var(--bg-body); color:var(--primary); border:2px solid var(--primary); padding: 8px;" onclick="reattemptTest('${uniqueTestId}', '${safeTitle}', ${testTime})">🔄 Re-attempt</button>
+                <button class="start-btn" style="flex:1; padding: 8px; background:#10b981;" onclick="${actionSolution}">Solutions <i class="fas fa-arrow-right"></i></button>
+            </div>`;
+        } else {
+            let actionStart = `window.location.href='cbt.html?testid=${uniqueTestId}&title=${encodeURIComponent(t.title)}&time=${testTime}&mode=exam'`;
+            buttonHTML = `<button class="start-btn" onclick="${actionStart}">Start Test ➔</button>`;
+        }
 
         let isSaved = savedTests.includes(t.dbKey);
         let saveIcon = isSaved ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
         let saveClass = isSaved ? 'saved' : '';
         
-        let liveBadgeHTML = (t.isLive && t.isLive.toString() === 'true') ? '<div class="live-badge">🔴 LIVE TEST</div>' : '';
+        let liveBadgeHTML = ((t.isLive && t.isLive.toString() === 'true') || (t.scheduledTime && now >= t.scheduledTime)) ? '<div class="live-badge">🔴 LIVE TEST</div>' : '';
         
         html += `
         <div class="test-card ${locked?'locked':''}">
             ${liveBadgeHTML}
             <button class="save-btn ${saveClass}" onclick="toggleSaveTest('${t.dbKey}', this, event)">${saveIcon}</button>
-            <div class="t-title" style="${(t.isLive && t.isLive.toString() === 'true') ? 'margin-top:25px;' : ''}">${t.title}</div>
+            <div class="t-title" style="${liveBadgeHTML ? 'margin-top:25px;' : ''}">${t.title}</div>
             <div class="t-info"><span><i class="far fa-clock"></i> ${t.time}m</span><span><i class="far fa-file-alt"></i> ${t.qs} Qs</span><span><i class="fas fa-bullseye"></i> ${displayMarks} Marks</span></div>
-            <button class="start-btn ${locked?'locked':''}" onclick="${action}">${locked ? 'Unlock Pro' : 'Start Test'}</button>
+            ${buttonHTML}
         </div>`;
     });
     document.getElementById('testListContainer').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'><i class='fas fa-search fa-2x' style='margin-bottom:10px;opacity:0.5'></i><br>No tests found.</div>";
@@ -918,12 +936,10 @@ function renderVideos() {
     });
 }
 
-// --- 🔥 FIX FOR NaN ISSUE IN LEADERBOARD UI 🔥 ---
 function renderLeaderboard(list) {
     let html = "";
     list.slice(0,10).forEach((u,i) => {
         let avgScore = isNaN(u.avg) ? 0 : u.avg; 
-        
         html += `<div class="rank-row"><div style="display:flex;align-items:center;"><span style="width:25px;height:25px;background:#f3f4f6;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-right:10px;font-size:12px;color:#1f2937;">${i+1}</span><span style="font-weight:600;">${u.name} ${u.name==currentUser?'(You)':''}</span></div><span style="font-weight:800;color:var(--primary);">${avgScore.toFixed(1)}</span></div>`;
     });
     document.getElementById('leaderboardList').innerHTML = html || "<div style='text-align:center;padding:30px;color:grey;'>No scores yet. Attempt a test!</div>";
@@ -932,10 +948,8 @@ function renderLeaderboard(list) {
 function renderCharts(dynamicData) {
     let ctx = document.getElementById('barChart');
     if(!ctx) return;
-    
     let chartStatus = Chart.getChart("barChart"); 
     if (chartStatus) chartStatus.destroy();
-
     new Chart(ctx, {
         type: 'bar',
         data: { 
@@ -949,14 +963,8 @@ function renderCharts(dynamicData) {
         options: { 
             indexAxis: 'y', 
             maintainAspectRatio: false, 
-            plugins: { 
-                legend: { display: false },
-                tooltip: { callbacks: { label: function(c) { return c.raw + "% Score"; } } } 
-            }, 
-            scales: { 
-                x: { display:false, max: 100 }, 
-                y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } 
-            } 
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return c.raw + "% Score"; } } } }, 
+            scales: { x: { display:false, max: 100 }, y: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } } 
         }
     });
 }
@@ -966,7 +974,6 @@ function renderCharts(dynamicData) {
    ========================================= */
 
 document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-
 document.addEventListener('keydown', function(e) {
     if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
     if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
