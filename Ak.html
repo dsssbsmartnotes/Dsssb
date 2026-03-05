@@ -856,6 +856,18 @@ function renderLeaderboard(data) {
     let html = ""; data.slice(0, 10).forEach((u, i) => { let badge = i===0?'🥇':i===1?'🥈':i===2?'🥉':`<div style="width:24px;height:24px;background:var(--border);border-radius:50%;display:grid;place-items:center;font-size:10px;">${i+1}</div>`; html += `<div class="rank-row" style="${u.isMe ? 'background:var(--primary-light); padding:15px; border-radius:12px; margin:5px 0;' : ''}"><span style="width:40px; font-weight:800; display:flex; align-items:center;">${badge}</span><span style="flex:1; display:flex; align-items:center;">${u.name}</span><span style="color:var(--primary); font-weight:900; background:var(--bg-body); padding:4px 10px; border-radius:8px;">${Math.round(u.avg)} Pts</span></div>`; });
     document.getElementById('leaderboardList').innerHTML = html || "<div style='text-align:center; color:grey; padding:20px;'>No ranks yet. Give a test!</div>";
 }
+
+  /* =========================================
+   🔒 ANTI-PIRACY & SECURITY LOCKDOWN 🔒
+   ========================================= */
+
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
+    if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
+});
+  
 </script>
 </body>
 </html>
