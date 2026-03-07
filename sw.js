@@ -1,17 +1,18 @@
-Const CACHE_NAME = 'dsssb-pro-cache-v1';
+const CACHE_NAME = 'dsssb-pro-cache-v1';
 
-// Aapke index.html ke hisaab se sabhi zaroori files aur CDN links
+// Aapke index.html aur cbt.html ke hisaab se sabhi zaroori files aur CDN links
 const urlsToCache = [
   '/',
   '/index.html',
-  '/cbt.html', // Aapka Mock Test player page
+  '/cbt.html',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdn.jsdelivr.net/npm/chart.js',
   'https://telegram.org/js/telegram-web-app.js',
   'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
   'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js',
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js',
-  'https://dsssbsmartnotes.github.io/llogo.png' // Aapka app icon
+  'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+  'https://dsssbsmartnotes.github.io/llogo.png'
 ];
 
 // Install Event: Files ko cache mein save karta hai
