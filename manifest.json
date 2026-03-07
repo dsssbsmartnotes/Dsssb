@@ -1,0 +1,24 @@
+{
+  "name": "DSSSB Pro Portal",
+  "short_name": "DSSSB Smart Notes",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "description": "Premium CBT Portal for DSSSB Exam Preparation.",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://dsssbsmartnotes.github.io/llogo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://dsssbsmartnotes.github.io/llogo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
