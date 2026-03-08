@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#4f46e5">
 
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/Dsssb/manifest.json">
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1145,11 +1145,11 @@ document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
 });
 
-// Service Worker Registration for PWA
+// 👇 Service Worker Registration with Scope for Dsssb Repo 👇
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Service Worker Registered! Scope:', reg.scope))
+        navigator.serviceWorker.register('/Dsssb/sw.js', { scope: '/Dsssb/' })
+        .then(reg => console.log('Service Worker Registered for Dsssb! Scope:', reg.scope))
         .catch(err => console.error('Service Worker Error:', err));
     });
 }
