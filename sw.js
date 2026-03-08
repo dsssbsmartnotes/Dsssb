@@ -1,5 +1,4 @@
-// Version v2 kar diya hai taaki purana cache delete ho jaye
-const CACHE_NAME = 'dsssb-pro-cache-v2'; 
+const CACHE_NAME = 'dsssb-pro-cache-v4';
 
 const urlsToCache = [
   '/',
@@ -7,7 +6,7 @@ const urlsToCache = [
   '/cbt.html',
   '/manifest.json',
   '/llogo.png',
-  '/logo512.jpg',
+  '/logo512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdn.jsdelivr.net/npm/chart.js',
   'https://telegram.org/js/telegram-web-app.js',
@@ -22,8 +21,8 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache v2');
-        return Promise.allSettled(urlsToCache.map(url => cache.add(url))); 
+        console.log('Opened cache v4');
+        return Promise.allSettled(urlsToCache.map(url => cache.add(url).catch(e => console.log('Cache fail:', url)))); 
       })
   );
 });
