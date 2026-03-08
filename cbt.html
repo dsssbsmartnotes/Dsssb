@@ -7,7 +7,7 @@
 
 <meta name="theme-color" content="#4f46e5">
 
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/Dsssb/manifest.json">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -1320,16 +1320,15 @@ function reviewSolutions() {
     showToast("Review Mode Activated 👁️", "success");
 }
 
-// 👇 Service Worker Registration (PWA) 👇
+// 👇 Service Worker Registration with Scope for Dsssb Repo 👇
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('CBT Page: Service Worker Registered!'))
-        .catch(err => console.error('CBT Page: Service Worker Error:', err));
+        navigator.serviceWorker.register('/Dsssb/sw.js', { scope: '/Dsssb/' })
+        .then(reg => console.log('Service Worker Registered for Dsssb! Scope:', reg.scope))
+        .catch(err => console.error('Service Worker Error:', err));
     });
 }
-// 👆 PWA Registration End 👆
-
+  
 </script>
 </body>
-  </html>
+</html>
