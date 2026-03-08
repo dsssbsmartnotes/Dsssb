@@ -546,7 +546,6 @@ window.onload = function() {
         const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
         
-        // 🔥 NEW: Smart PWA logic for Telegram Users
         if (tg.platform && tg.platform !== 'unknown') {
             const banner = document.getElementById('pwaBanner');
             banner.style.display = 'flex';
@@ -657,7 +656,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt = e; 
     document.getElementById('installBtn').style.display = 'grid'; 
     
-    // 🔥 Original Chrome PWA banner show
+    // Native Chrome PWA banner
     const banner = document.getElementById('pwaBanner');
     banner.style.display = 'flex';
     banner.style.background = 'var(--primary)';
@@ -666,7 +665,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
     document.getElementById('pwaBannerBtn').innerHTML = 'Install Now';
     document.getElementById('pwaBannerBtn').style.color = 'var(--primary)';
     
-    // Bind native Chrome prompt logic
     banner.onclick = () => { installApp(); };
 });
 
@@ -925,10 +923,10 @@ async function fetchData(user) {
             let grid = document.getElementById('examFoldersGrid');
             if(grid && !document.getElementById('adminAddFolder')) {
                 grid.innerHTML += `
-                    <div id="adminAddFolder" class="exam-folder-card" style="border: 2px dashed var(--primary); background: transparent;" onclick="alert('Admin Control Panel Opening...')">
+                    <div id="adminAddFolder" class="exam-folder-card" style="border: 2px dashed var(--primary); background: transparent;" onclick="window.location.href='admin.html'">
                         <div class="folder-icon" style="background: var(--primary-light); color: var(--primary);">➕</div>
-                        <div class="folder-title">Add<br>Folder</div>
-                        <div class="folder-action" style="color: var(--primary); background:var(--primary-light);">Admin Only</div>
+                        <div class="folder-title">Admin<br>Panel</div>
+                        <div class="folder-action" style="color: var(--primary); background:var(--primary-light);">Open ⚙️</div>
                     </div>
                 `;
             }
@@ -1147,7 +1145,7 @@ document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
 });
 
-// 👇 Service Worker Registration (PWA) 👇
+// Service Worker Registration for PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -1155,8 +1153,7 @@ if ('serviceWorker' in navigator) {
         .catch(err => console.error('Service Worker Error:', err));
     });
 }
-// 👆 PWA Registration End 👆
   
 </script>
 </body>
-  </html>
+</html>
