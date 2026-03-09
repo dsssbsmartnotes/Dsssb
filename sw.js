@@ -1,12 +1,12 @@
-const CACHE_NAME = 'dsssb-pyq-main-v2';
+const CACHE_NAME = 'dsssb-telegram-v1';
 
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/cbt.html',
-  '/manifest.json',
-  '/llogo.png',
-  '/logo512.png',
+  '/Dsssb/',
+  '/Dsssb/index.html',
+  '/Dsssb/cbt.html',
+  '/Dsssb/manifest.json',
+  '/Dsssb/llogo.png',
+  '/Dsssb/logo512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdn.jsdelivr.net/npm/chart.js',
   'https://telegram.org/js/telegram-web-app.js',
@@ -21,7 +21,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened Play Store cache main-v2');
+        console.log('Opened Telegram Version Cache');
         return Promise.allSettled(urlsToCache.map(url => cache.add(url).catch(e => console.log('Cache fail:', url)))); 
       })
   );
