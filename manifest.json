@@ -1,21 +1,21 @@
 {
-  "name": "DSSSB Pro Portal",
-  "short_name": "DSSSB Smart",
-  "start_url": "/Dsssb/index.html",
+  "name": "DSSSB PYQ - Mock Tests",
+  "short_name": "DSSSB PYQ",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4f46e5",
-  "description": "Premium CBT Portal.",
+  "description": "Premium CBT Portal for DSSSB Previous Year Questions & Mock Tests.",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/Dsssb/llogo.png",
+      "src": "/llogo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Dsssb/logo512.png",
+      "src": "/logo512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
