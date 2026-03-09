@@ -303,7 +303,7 @@ textarea { height: 120px; resize: none; }
         </div>
 
         <div class="quick-actions">
-            <div class="action-item" onclick="window.open('https://t.me/DSSSBRank')"><i class="fab fa-telegram-plane"></i><span>Channel</span></div>
+            <div class="action-item" onclick="window.open('https://t.me/DSSSBSmartNotes')"><i class="fab fa-telegram-plane"></i><span>Channel</span></div>
             <div class="action-item" onclick="shareApp()"><i class="fas fa-share-alt"></i><span>Share</span></div>
             <div class="action-item" onclick="document.getElementById('reportModal').style.display='flex'"><i class="fas fa-headset"></i><span>Support</span></div>
             <div class="action-item" onclick="switchTab('study', document.getElementById('nav-study'))"><i class="fas fa-book-open"></i><span>Library</span></div>
