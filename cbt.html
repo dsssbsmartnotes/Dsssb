@@ -200,6 +200,45 @@ footer .btn-review-next { background: var(--warning); color: #fff; border: none;
     .nav-btn { padding: 6px 10px; font-size: 12px; }
     .sec-tab { padding: 0 12px; font-size: 12px; height: 32px; }
 }
+
+/* 🔥 NEW: DESKTOP / LAPTOP EXAM UI (TCS STYLE) 🔥 */
+@media(min-width: 1024px) {
+    body {
+        display: grid;
+        grid-template-columns: 1fr 340px; /* Split screen: Questions left, Palette right */
+        grid-template-rows: var(--header-height) auto 1fr var(--footer-height);
+        grid-template-areas:
+            "header header"
+            "secbar secbar"
+            "main palette"
+            "footer palette"; /* Palette takes full height on the right */
+    }
+    header { grid-area: header; }
+    #sectionBar { grid-area: secbar; }
+    #mainArea { 
+        grid-area: main; 
+        padding: 40px 60px; 
+        max-width: 1100px; 
+        margin: 0 auto; 
+        width: 100%; 
+    }
+    #palettePanel {
+        grid-area: palette;
+        position: relative; 
+        transform: none; /* Always visible on desktop */
+        width: 100%;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.02);
+        border-left: 1px solid var(--border-color);
+        display: flex !important;
+        z-index: 10;
+    }
+    .modal-header button { display: none; } /* Hide close button on desktop */
+    #paletteOverlay { display: none !important; }
+    footer .btn-grid { display: none; } /* Hide grid button from footer on desktop */
+    footer { grid-area: footer; justify-content: center; border-right: 1px solid var(--border-color); }
+    .q-card { box-shadow: 0 10px 40px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.05); }
+    .opt { padding: 18px; } /* Slightly larger options for mouse clicking */
+}
 </style>
 </head>
 <body onload="initApp()">
@@ -356,7 +395,7 @@ if (!firebase.apps.length) {
 }
 const db = firebase.database();
 const DB_REF_NAME = "dsssb_results_live";
-const DB_DISCUSS_REF = "dsssb_discussions"; // New node for comments
+const DB_DISCUSS_REF = "dsssb_discussions"; 
 
 /* =========================================
    HARDCORE SECURITY LAYER
@@ -416,7 +455,7 @@ let currentState = { idx: 0, answers: [], review: [], time: TOTAL_TIME_MINS * 60
 let timerInt;
 let secIndices = [];
 let fontOffset = 0;
-let currentDiscussionRef = null; // Holds listener for active question
+let currentDiscussionRef = null; 
 
 /* =========================
    OFFLINE SYNC QUEUE 🌐
@@ -453,8 +492,8 @@ document.getElementById('mainArea').addEventListener('touchend', e => {
 });
 
 function handleSwipe() {
-    if(touchendX < touchstartX - 80) next(); // Swipe Left -> Next
-    if(touchendX > touchstartX + 80) prev(); // Swipe Right -> Prev
+    if(touchendX < touchstartX - 80) next(); 
+    if(touchendX > touchstartX + 80) prev(); 
 }
 
 /* =========================
@@ -466,10 +505,25 @@ function initApp() {
     
     syncOfflineResults(); 
 
+    // 🔥 NAME SYNC LOGIC 🔥
     let tName = "Student";
+    let tId = "guest";
+
     if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
         let u = window.Telegram.WebApp.initDataUnsafe.user;
         tName = u.first_name + (u.last_name ? " " + u.last_name : "");
+        tId = u.id.toString();
+        // Save to device memory
+        localStorage.setItem('dsssb_user_name', tName);
+        localStorage.setItem('dsssb_user_id', tId);
+    } else {
+        // Retrieve from device memory if direct open
+        let savedName = localStorage.getItem('dsssb_user_name');
+        let savedId = localStorage.getItem('dsssb_user_id');
+        if(savedName) {
+            tName = savedName;
+            tId = savedId || "guest";
+        }
     }
     
     if (TEST_MODE === 'solution') {
@@ -544,7 +598,8 @@ function validateLogin() {
     const name = document.getElementById('startNameInput').value.trim();
     if(!name) return showToast("Name is missing!", "error");
     
-    currentState.name = name;
+    // Clean name for solutions mode
+    currentState.name = name.replace(" (Solution Mode)", "");
     startGame(false);
 }
 
@@ -573,7 +628,7 @@ function startGame(isResuming) {
         startTimer();
         setInterval(saveState, 5000); 
         showToast(`Welcome, ${currentState.name} 🚀`, "success");
-        if(!isResuming) document.getElementById('tgPopup').style.display = "block"; 
+        if(!isResuming && window.innerWidth < 1024) document.getElementById('tgPopup').style.display = "block"; 
     }
 }
 
@@ -686,10 +741,9 @@ function loadQuestion(idx) {
         solBox.style.display = 'block';
         if(actionBtns) actionBtns.style.display = 'none'; 
         
-        // Show discussion area in solution mode
         discussArea.style.display = 'block';
-        document.getElementById('discussionContainer').style.display = 'none'; // Keep it collapsed initially
-        loadComments(idx); // Fetch comments for this question
+        document.getElementById('discussionContainer').style.display = 'none'; 
+        loadComments(idx); 
     } else {
         solBox.style.display = 'none';
         discussArea.style.display = 'none';
@@ -724,7 +778,6 @@ function loadComments(qIndex) {
     const qKey = CURRENT_TEST_ID + "_Q" + qIndex;
     const listDiv = document.getElementById('commentsList');
     
-    // Remove previous listener if exists
     if(currentDiscussionRef) { currentDiscussionRef.off(); }
     
     currentDiscussionRef = db.ref(`${DB_DISCUSS_REF}/${qKey}`);
@@ -751,7 +804,6 @@ function loadComments(qIndex) {
                 </div>
             `;
         });
-        // Auto scroll to bottom
         listDiv.scrollTop = listDiv.scrollHeight;
     });
 }
@@ -908,6 +960,9 @@ function showToast(msg, type="info") {
 }
 
 function togglePalette() { 
+    // Desktop me palette toggle hide kar diya gaya hai
+    if(window.innerWidth >= 1024) return;
+    
     const p = document.getElementById('palettePanel'); const o = document.getElementById('paletteOverlay');
     if(p.classList.contains('show')) { p.classList.remove('show'); o.style.display = 'none'; } else { p.classList.add('show'); o.style.display = 'block'; }
 }
@@ -951,7 +1006,7 @@ function renderPalette() {
         const btn = document.createElement('button'); btn.className = cls; btn.innerText = i + 1;
         
         if(isAccessible) { 
-            btn.onclick = () => { loadQuestion(i); if(window.innerWidth < 768) togglePalette(); }; 
+            btn.onclick = () => { loadQuestion(i); if(window.innerWidth < 1024) togglePalette(); }; 
             btn.style.cursor = "pointer";
         } else {
             btn.style.opacity = "0.2";
@@ -1067,7 +1122,7 @@ async function submitTest() {
     
     currentState.submitted = true; 
     clearInterval(timerInt); 
-    togglePalette(); 
+    if(window.innerWidth < 1024) togglePalette(); 
     
     const specificStorageKey = STORAGE_KEY + "_" + CURRENT_TEST_ID;
     localStorage.setItem(specificStorageKey + "_final", JSON.stringify(currentState));
@@ -1101,11 +1156,9 @@ async function submitTest() {
     const timeSpentSeconds = (TOTAL_TIME_MINS * 60) - currentState.time;
     const timeStr = `${Math.floor(timeSpentSeconds/60)}m ${timeSpentSeconds%60}s`;
 
-    let tId = "guest";
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
-        tId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
-    }
-
+    // Accurate User ID check
+    let tId = localStorage.getItem('dsssb_user_id') || "guest";
+    
     const userData = {
         name: currentState.name,
         userId: tId,             
