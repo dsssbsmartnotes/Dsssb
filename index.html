@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DSSSB PYQ - Mock Tests</title>
+<title>DSSSB Smart Notes - Student Portal</title>
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -280,7 +280,7 @@ textarea { height: 120px; resize: none; }
 <div id="toast"></div>
 
 <div class="news-container" id="newsSection" style="display:none;">
-    <span>📢</span> <marquee id="newsText" scrollamount="5">Welcome to DSSSB PYQ Portal!</marquee>
+    <span>📢</span> <marquee id="newsText" scrollamount="5">Welcome to DSSSB Smart Notes Portal!</marquee>
 </div>
 
 <div id="loader">
@@ -315,7 +315,7 @@ textarea { height: 120px; resize: none; }
             <div style="display:flex; align-items:center; gap:10px;">
                 <i class="fas fa-arrow-alt-circle-down" style="font-size:24px;"></i>
                 <div style="text-align:left;">
-                    <div style="font-weight:800; font-size:14px;" id="pwaBannerTitle">Install DSSSB PYQ</div>
+                    <div style="font-weight:800; font-size:14px;" id="pwaBannerTitle">Install DSSSB App</div>
                     <div style="font-size:11px; opacity:0.9;" id="pwaBannerDesc">Fast access & better experience</div>
                 </div>
             </div>
@@ -335,7 +335,7 @@ textarea { height: 120px; resize: none; }
         </div>
 
         <div class="quick-actions">
-            <div class="action-item" onclick="window.open('https://t.me/DSSSBSmartNotes')"><i class="fab fa-telegram-plane"></i><span>Channel</span></div>
+            <div class="action-item" onclick="window.open('https://t.me/Dsssbsmartnotes')"><i class="fab fa-telegram-plane"></i><span>Channel</span></div>
             <div class="action-item" onclick="shareApp()"><i class="fas fa-share-alt"></i><span>Share</span></div>
             <div class="action-item" onclick="document.getElementById('reportModal').style.display='flex'"><i class="fas fa-headset"></i><span>Support</span></div>
             <div class="action-item" onclick="switchTab('study', document.getElementById('nav-study'))"><i class="fas fa-book-open"></i><span>Library</span></div>
@@ -727,7 +727,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     const banner = document.getElementById('pwaBanner');
     banner.style.display = 'flex';
     banner.style.background = 'var(--primary)';
-    document.getElementById('pwaBannerTitle').innerHTML = 'Install DSSSB PYQ';
+    document.getElementById('pwaBannerTitle').innerHTML = 'Install DSSSB App';
     document.getElementById('pwaBannerDesc').innerHTML = 'Fast access & better experience';
     document.getElementById('pwaBannerBtn').innerHTML = 'Install Now';
     document.getElementById('pwaBannerBtn').style.color = 'var(--primary)';
