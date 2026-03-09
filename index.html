@@ -200,7 +200,7 @@ body {
 .nav-item.active { color: var(--primary); opacity: 1; transform: translateY(-3px); }
 .nav-item.active i { transform: scale(1.15); }
 
-.chart-box { background: var(--bg-card); padding: 18px; border-radius: 18px; border: 1px solid var(--border); margin: 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+.chart-box { background: var(--bg-card); padding: 18px; border-radius: 18px; border: 1px solid var(--border); margin: 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); flex: 1;}
 .rank-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; }
 
 /* SKELETON LOADER UI */
@@ -222,6 +222,51 @@ textarea { height: 120px; resize: none; }
 
 #toast { display: none; position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-card); padding: 12px 24px; border-radius: 30px; z-index: 9999; font-size: 13px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: fadeInOut 2.5s forwards; white-space: nowrap; }
 @keyframes fadeInOut { 0% { opacity: 0; bottom: 80px; } 15% { opacity: 1; bottom: 90px; } 85% { opacity: 1; bottom: 90px; } 100% { opacity: 0; bottom: 80px; } }
+
+/* 🔥 DESKTOP UI UPGRADE 🔥 */
+@media (min-width: 1024px) {
+    body { padding-bottom: 0; display: flex; background: var(--bg-body); }
+    
+    /* Sidebar Navigation */
+    .nav-bar { 
+        position: fixed; top: 0; left: 0; width: 260px; height: 100vh; 
+        flex-direction: column; justify-content: flex-start; padding-top: 40px; gap: 10px;
+        border-top: none; border-right: 1px solid var(--border);
+        box-shadow: 4px 0 15px rgba(0,0,0,0.02); background: var(--bg-card);
+    }
+    .nav-item { width: 100%; text-align: left; padding: 15px 30px; font-size: 15px; display: flex; align-items: center; gap: 20px; border-radius: 0 30px 30px 0; margin-right: 20px; transition: 0.3s; cursor: pointer; opacity: 0.7;}
+    .nav-item i { margin-bottom: 0; font-size: 20px; width: 24px; text-align: center; display: inline-block; }
+    .nav-item.active { background: var(--primary-light); border-left: 4px solid var(--primary); transform: translateY(0); opacity: 1; font-weight: 800;}
+    
+    /* Main Content Area */
+    #app { margin-left: 260px; padding: 30px 40px; max-width: 1300px; width: calc(100% - 260px); margin-right: auto; }
+    
+    /* Header Floating */
+    .hero-header { border-radius: 20px; top: 20px; margin-bottom: 30px; border: 1px solid var(--border); padding: 20px 30px;}
+    .user-info h1 { font-size: 22px; }
+    
+    /* Grids for Content */
+    .quick-actions { padding: 0; margin-bottom: 25px; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .stats-row { padding: 0; margin-bottom: 25px; gap: 20px; grid-template-columns: repeat(3, 1fr);}
+    .target-exams-section { padding: 0; margin-bottom: 25px; }
+    
+    /* Desktop Charts Side-by-Side */
+    .desktop-charts { display: flex; gap: 20px; margin-bottom: 20px; flex-direction: row;}
+    .desktop-charts .chart-box { margin: 0; }
+    
+    /* List Grids (Tests, Notes, Videos) */
+    .list-container { padding: 0; }
+    #testListContainer, #notesListContainer, #videoListContainer { 
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; 
+    }
+    .test-card, .note-card, .video-card { margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; height: 100%;}
+    
+    /* Banner Adjustment */
+    .pwa-banner, .segment-control, .countdown-box, .daily-goal-card, .qod-card { margin-left: 0; margin-right: 0; }
+    
+    /* Desktop PWA Install Button Style */
+    #pwaBannerBtn { padding: 10px 24px; font-size: 14px; cursor: pointer;}
+}
 </style>
 </head>
 <body>
@@ -331,14 +376,16 @@ textarea { height: 120px; resize: none; }
             <div class="qod-options" id="qodOptions"></div>
         </div>
 
-        <div class="chart-box">
-            <div class="section-title" style="margin-bottom:15px;">📊 Performance Overview</div>
-            <div style="height: 200px;"><canvas id="barChart"></canvas></div>
-        </div>
+        <div class="desktop-charts">
+            <div class="chart-box">
+                <div class="section-title" style="margin-bottom:15px;">📊 Performance Overview</div>
+                <div style="height: 200px;"><canvas id="barChart"></canvas></div>
+            </div>
 
-        <div class="chart-box">
-            <div class="section-title" style="margin-bottom:15px;">🕸️ Mastery Heatmap</div>
-            <div style="height: 240px; position:relative;"><canvas id="radarChart"></canvas></div>
+            <div class="chart-box">
+                <div class="section-title" style="margin-bottom:15px;">🕸️ Mastery Heatmap</div>
+                <div style="height: 240px; position:relative;"><canvas id="radarChart"></canvas></div>
+            </div>
         </div>
     </div>
 
@@ -444,12 +491,12 @@ textarea { height: 120px; resize: none; }
 </div>
 
 <div class="nav-bar">
-    <div class="nav-item active" onclick="switchTab('home', this)"><i class="fas fa-home"></i> Home</div>
-    <div class="nav-item" onclick="switchTab('tests', this)"><i class="fas fa-file-signature"></i> Mocks</div>
-    <div class="nav-item" id="nav-study" onclick="switchTab('study', this)"><i class="fas fa-book-open"></i> Study</div>
-    <div class="nav-item" onclick="switchTab('syllabus', this)"><i class="fas fa-chart-pie"></i> Tracker</div>
-    <div class="nav-item" onclick="switchTab('rank', this)"><i class="fas fa-trophy"></i> Ranks</div>
-    <div class="nav-item" onclick="switchTab('bookmarks', this)"><i class="fas fa-bookmark"></i> Saved</div>
+    <div class="nav-item active" onclick="switchTab('home', this)"><i class="fas fa-home"></i> <span>Home</span></div>
+    <div class="nav-item" onclick="switchTab('tests', this)"><i class="fas fa-file-signature"></i> <span>Mocks</span></div>
+    <div class="nav-item" id="nav-study" onclick="switchTab('study', this)"><i class="fas fa-book-open"></i> <span>Study</span></div>
+    <div class="nav-item" onclick="switchTab('syllabus', this)"><i class="fas fa-chart-pie"></i> <span>Tracker</span></div>
+    <div class="nav-item" onclick="switchTab('rank', this)"><i class="fas fa-trophy"></i> <span>Ranks</span></div>
+    <div class="nav-item" onclick="switchTab('bookmarks', this)"><i class="fas fa-bookmark"></i> <span>Saved</span></div>
 </div>
 
 <script>
@@ -458,7 +505,7 @@ const firebaseConfig = { apiKey: "AIzaSyDGolcXv0efZxRdOvBthfeT72mkNLLbAwI", auth
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let currentUser = "Amit Kumar", currentUserId = "guest", isPro = false;
+let currentUser = "Student", currentUserId = "guest", isPro = false;
 let myScores = [], allTests = [], allNotes = [];
 let lastAlertTime = 0;
 let attemptedTestIds = new Set(); 
@@ -542,6 +589,7 @@ window.onload = function() {
         }
     });
 
+    // --- UPGRADED NAME & TELEGRAM LOGIC ---
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp; tg.expand();
         if(tg.colorScheme === 'dark' && !theme) document.body.classList.add('dark-mode');
@@ -555,7 +603,6 @@ window.onload = function() {
             document.getElementById('pwaBannerBtn').innerHTML = 'Open';
             document.getElementById('pwaBannerBtn').style.color = '#0369a1';
             
-            // Override click to open externally
             banner.onclick = () => { tg.openLink(window.location.href); };
         }
 
@@ -563,21 +610,42 @@ window.onload = function() {
             const u = tg.initDataUnsafe.user;
             currentUser = u.first_name + (u.last_name ? " " + u.last_name : "");
             currentUserId = u.id.toString();
+            
+            localStorage.setItem('dsssb_user_name', currentUser);
+            localStorage.setItem('dsssb_user_id', currentUserId);
+            if(u.photo_url) localStorage.setItem('dsssb_user_photo', u.photo_url);
+
             document.getElementById('uName').innerText = u.first_name;
             if(u.photo_url) document.getElementById('uAvatar').innerHTML = `<img src="${u.photo_url}">`;
             else document.getElementById('uAvatar').innerText = u.first_name.charAt(0);
+            
             fetchData(u);
         } else {
-            document.getElementById('uName').innerText = "Student";
-            document.getElementById('uAvatar').innerText = "S";
-            fetchData({username: "guest", id: "guest"});
+            checkLocalUser();
         }
     } else {
-        document.getElementById('uName').innerText = "Amit";
-        document.getElementById('uAvatar').innerText = "A";
-        fetchData({username: "guest", id: "guest"});
+        checkLocalUser();
     }
 };
+
+function checkLocalUser() {
+    const savedName = localStorage.getItem('dsssb_user_name');
+    const savedId = localStorage.getItem('dsssb_user_id');
+    const savedPhoto = localStorage.getItem('dsssb_user_photo');
+
+    if (savedName) {
+        currentUser = savedName;
+        currentUserId = savedId || "guest";
+        document.getElementById('uName').innerText = savedName.split(" ")[0];
+        if(savedPhoto) document.getElementById('uAvatar').innerHTML = `<img src="${savedPhoto}">`;
+        else document.getElementById('uAvatar').innerText = savedName.charAt(0);
+        fetchData({username: "guest", id: currentUserId});
+    } else {
+        document.getElementById('uName').innerText = "Student";
+        document.getElementById('uAvatar').innerText = "S";
+        fetchData({username: "guest", id: "guest"});
+    }
+}
 
 /* 4. UTILS & UI */
 function toggleTheme() { 
@@ -656,7 +724,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt = e; 
     document.getElementById('installBtn').style.display = 'grid'; 
     
-    // Native Chrome PWA banner
     const banner = document.getElementById('pwaBanner');
     banner.style.display = 'flex';
     banner.style.background = 'var(--primary)';
@@ -679,7 +746,7 @@ async function installApp() {
         window.Telegram.WebApp.openLink(window.location.href);
     } 
     else {
-        alert("App install karne ke liye browser ki settings (⋮) me jaakar 'Add to Home Screen' par click karein.");
+        alert("App install karne ke liye browser ki settings (⋮) me jaakar 'Add to Home Screen' ya 'Install App' par click karein.");
     }
 }
 
@@ -804,16 +871,6 @@ function renderBookmarks() {
     if(window.MathJax) { MathJax.typesetPromise([container]); }
 }
 
-function removeBookmark(key) {
-    if(confirm("Remove this question?")) {
-        let bms = JSON.parse(localStorage.getItem('dsssb_bookmarks')) || {}; 
-        delete bms[key]; 
-        localStorage.setItem('dsssb_bookmarks', JSON.stringify(bms)); 
-        renderBookmarks(); 
-        showToast("Bookmark Removed 🗑️");
-    }
-}
-
 function reattemptTest(testId, title, time) {
     if(confirm("Re-attempting will clear your previous answers on this device. Continue?")) {
         localStorage.removeItem("dsssb_cbt_rank_v2_" + testId); 
@@ -860,6 +917,7 @@ async function fetchData(user) {
             }
         }
 
+        // --- PRO BADGE DYNAMIC TOGGLE ---
         if(isPro) { 
             document.getElementById('badgePro').style.display = 'flex'; 
             document.getElementById('buyProBtn').style.display = 'none'; 
@@ -919,7 +977,7 @@ async function fetchData(user) {
             }
         }
 
-        if (currentUser.includes("Amit")) { 
+        if (currentUser && currentUser.includes("Amit")) { 
             let grid = document.getElementById('examFoldersGrid');
             if(grid && !document.getElementById('adminAddFolder')) {
                 grid.innerHTML += `
@@ -1145,11 +1203,11 @@ document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && ['U', 'u', 'C', 'c'].includes(e.key)) { e.preventDefault(); return false; }
 });
 
-// 👇 Service Worker Registration with Scope for Dsssb Repo 👇
+// Service Worker Registration for PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/Dsssb/sw.js', { scope: '/Dsssb/' })
-        .then(reg => console.log('Service Worker Registered for Dsssb! Scope:', reg.scope))
+        .then(reg => console.log('Service Worker Registered! Scope:', reg.scope))
         .catch(err => console.error('Service Worker Error:', err));
     });
 }
