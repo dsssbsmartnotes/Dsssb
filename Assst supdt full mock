@@ -2837,8 +2837,8 @@
     "section": "English Language and Comprehension",
     "topic": "Reading Comprehension",
     "level": "Intermediate",
-    "q_en": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.<p> </p><br />Select the most appropriate title for the passage.</p>",
-    "q_hi": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.<p> </p><br />Select the most appropriate title for the passage.</p>",
+    "q_en": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>Select the most appropriate title for the passage.</p>",
+    "q_hi": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>Select the most appropriate title for the passage.</p>",
     "op_en": [
       "Life and Death in the Animal World",
       "Understanding Genes in Science",
@@ -2852,7 +2852,91 @@
       "Charles Darwin’s Journey to Africa"
     ],
     "ans": "3",
-    "solution": "पैसेज मुख्य रूप से डार्विन के विकासवाद के सिद्धांत (Theory of Evolution) के बारे में बात करता है, इसलिए <b>'Darwin’s Theory of Evolution'</b> सबसे उपयुक्त शीर्षक है।"
+    "solution": "<p>बच्चों, आइए इस सवाल को समझते हैं। यह प्रश्न Reading Comprehension का है जहाँ हमें गद्यांश का उचित शीर्षक (title) बताना है।</p><p>पैसेज मुख्य रूप से डार्विन के विकासवाद के सिद्धांत (Theory of Evolution) के बारे में बात करता है। इसमें बताया गया है कि कैसे जीवों में बदलाव आते हैं और कैसे वे अपने परिवेश के अनुकूल बनते हैं।</p><ul><li><b>Option 1 (Life and Death in the Animal World):</b> यह बहुत ही सामान्य (general) शीर्षक है, जबकि पैसेज डार्विन के सिद्धांत पर केंद्रित है।</li><li><b>Option 2 (Understanding Genes in Science):</b> पैसेज में genes का केवल एक बार ज़िक्र है, यह मुख्य विषय नहीं है।</li><li><b>Option 3 (Darwin’s Theory of Evolution):</b> बिल्कुल सही! पूरा पैसेज इसी विषय के इर्द-गिर्द घूमता है।</li><li><b>Option 4 (Charles Darwin’s Journey to Africa):</b> पैसेज में अफ्रीका की किसी यात्रा का कोई उल्लेख नहीं है।</li></ul>"
+  },
+  {
+    "section": "English Language and Comprehension",
+    "topic": "Vocabulary (Antonyms)",
+    "level": "Intermediate",
+    "q_en": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>Select the most appropriate ANTONYM for the word 'connected' as used in the passage.</p>",
+    "q_hi": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>Select the most appropriate ANTONYM for the word 'connected' as used in the passage.</p>",
+    "op_en": [
+      "Joined",
+      "Determined",
+      "Limited",
+      "Separate"
+    ],
+    "op_hi": [
+      "Joined",
+      "Determined",
+      "Limited",
+      "Separate"
+    ],
+    "ans": "4",
+    "solution": "<p>बच्चों, आइए इस सवाल को समझते हैं। हमें गद्यांश में प्रयुक्त शब्द 'connected' का सही विलोम (Antonym) ढूँढना है।</p><p><b>'Connected'</b> का अर्थ होता है जुड़ा हुआ या संबंधित। इसका विलोम होगा जो अलग हो।</p><ul><li><b>Option 1 (Joined):</b> इसका अर्थ भी जुड़ा हुआ होता है, तो यह पर्यायवाची (Synonym) हुआ।</li><li><b>Option 2 (Determined):</b> इसका अर्थ दृढ़-निश्चयी होता है, जो यहाँ असंगत है।</li><li><b>Option 3 (Limited):</b> इसका अर्थ सीमित होता है।</li><li><b>Option 4 (Separate):</b> बिल्कुल सही! 'Separate' का अर्थ होता है अलग-अलग, जो 'connected' का एकदम सटीक विलोम है।</li></ul>"
+  },
+  {
+    "section": "English Language and Comprehension",
+    "topic": "Reading Comprehension (Inference)",
+    "level": "Intermediate",
+    "q_en": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>Which of the following can be inferred from the passage about living things?</p>",
+    "q_hi": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>Which of the following can be inferred from the passage about living things?</p>",
+    "op_en": [
+      "Living things cannot survive outside their homes.",
+      "Living things can slowly change and adapt.",
+      "All living things are perfect and cannot change.",
+      "Living things have always been the same."
+    ],
+    "op_hi": [
+      "Living things cannot survive outside their homes.",
+      "Living things can slowly change and adapt.",
+      "All living things are perfect and cannot change.",
+      "Living things have always been the same."
+    ],
+    "ans": "2",
+    "solution": "<p>बच्चों, आइए इस सवाल को समझते हैं। Inference का मतलब है कि गद्यांश को पढ़कर हम क्या निष्कर्ष निकाल सकते हैं।</p><p>पैसेज की पहली ही लाइन स्पष्ट कहती है कि 'living things change slowly over time' और आगे बताया गया है कि वे अपनी परिस्थितियों के अनुसार खुद को ढालते हैं।</p><ul><li><b>Option 1 (Living things cannot survive outside their homes.):</b> पैसेज में ऐसा कुछ नहीं कहा गया है।</li><li><b>Option 2 (Living things can slowly change and adapt.):</b> बिल्कुल सही! डार्विन का सिद्धांत यही कहता है कि जीव समय के साथ धीरे-धीरे बदलते हैं और ढलते हैं (adapt)।</li><li><b>Option 3 (All living things are perfect and cannot change.):</b> यह पैसेज की मूल बात के बिल्कुल विपरीत है।</li><li><b>Option 4 (Living things have always been the same.):</b> यह भी गलत है क्योंकि पैसेज बदलाव (change) पर ज़ोर देता है।</li></ul>"
+  },
+  {
+    "section": "English Language and Comprehension",
+    "topic": "Tone of Passage",
+    "level": "Intermediate",
+    "q_en": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>What is the tone of the passage?</p>",
+    "q_hi": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>What is the tone of the passage?</p>",
+    "op_en": [
+      "Informative",
+      "Sarcastic",
+      "Humorous",
+      "Persuasive"
+    ],
+    "op_hi": [
+      "Informative",
+      "Sarcastic",
+      "Humorous",
+      "Persuasive"
+    ],
+    "ans": "1",
+    "solution": "<p>बच्चों, आइए इस सवाल को समझते हैं। हमें इस गद्यांश की 'Tone' (लेखक का लहज़ा) पहचानी है।</p><p>पूरे पैसेज में लेखक डार्विन के विकासवाद के सिद्धांत (Theory of Evolution) और उससे जुड़े तथ्यों की जानकारी दे रहा है। इसमें कोई व्यंग्य, मज़ाक या किसी बात को मनवाने की ज़िद नहीं है।</p><ul><li><b>Option 1 (Informative):</b> बिल्कुल सही! लेखक तथ्यों और सिद्धांतों की जानकारी दे रहा है, इसलिए टोन जानकारीपूर्ण (Informative) है।</li><li><b>Option 2 (Sarcastic):</b> इसका अर्थ व्यंग्यात्मक होता है, जो यहाँ नहीं है।</li><li><b>Option 3 (Humorous):</b> इसका अर्थ मज़ाकिया होता है।</li><li><b>Option 4 (Persuasive):</b> इसका अर्थ किसी को अपनी बात मनवाने वाला होता है, जबकि यहाँ सिर्फ तथ्य बताए गए हैं।</li></ul>"
+  },
+  {
+    "section": "English Language and Comprehension",
+    "topic": "Reading Comprehension (Fact Retrieval)",
+    "level": "Basic",
+    "q_en": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>According to the passage, how do helpful traits pass on?</p>",
+    "q_hi": "<p><b>Comprehension:</b><br />Read the given passage carefully and answer the questions that follow.<br /><br />Charles Darwin's theory of evolution says that living things change slowly over time. These changes happen because of small differences between individuals. Some of these differences help them live better in their surroundings. The ones that survive can have babies and pass these helpful traits to them.<br /><br />Darwin wrote about this idea in his famous book 'On the Origin of Species'. His thoughts were new at the time and different from what most people believed. He said that new species are formed when groups of animals or plants live in different places or face different problems. Over time, these changes add up and create new types of living things.<br /><br />Scientists have found proof of this theory in fossils, genes, and how living things are built. Darwin’s idea is a big part of modern science. It helps us understand how all living things are connected and how they keep changing with time.</p><br /><p>According to the passage, how do helpful traits pass on?</p>",
+    "op_en": [
+      "From parents to children",
+      "By changing body structure quickly",
+      "By copying other species",
+      "Through teaching"
+    ],
+    "op_hi": [
+      "From parents to children",
+      "By changing body structure quickly",
+      "By copying other species",
+      "Through teaching"
+    ],
+    "ans": "1",
+    "solution": "<p>बच्चों, आइए इस सवाल को समझते हैं। यह एक Fact-based सवाल है जिसका उत्तर गद्यांश में सीधे तौर पर दिया गया है।</p><p>पैसेज के पहले पैराग्राफ की आखिरी लाइन पढ़ें: \"The ones that survive can have babies and pass these helpful traits to them.\"</p><ul><li><b>Option 1 (From parents to children):</b> बिल्कुल सही! गद्यांश के अनुसार जो जीवित बचते हैं वे बच्चे पैदा करते हैं और ये गुण उनमें (माता-पिता से बच्चों में) चले जाते हैं।</li><li><b>Option 2 (By changing body structure quickly):</b> पैसेज कहता है कि बदलाव 'slowly' होते हैं, 'quickly' नहीं।</li><li><b>Option 3 (By copying other species):</b> ऐसा पैसेज में कहीं नहीं लिखा है।</li><li><b>Option 4 (Through teaching):</b> यह भी गद्यांश के अनुसार गलत है, गुण आनुवंशिक रूप से जाते हैं।</li></ul>"
   },
   {
     "section": "English Language and Comprehension",
