@@ -1,0 +1,422 @@
+[
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Spelling Correction",
+        "level": "Easy",
+        "q_en": "Rectify the sentence by selecting the correct spelling from the options.<br><br>The stadium is so big that it can seat more than one lakh spectaters.",
+        "q_hi": "Rectify the sentence by selecting the correct spelling from the options.<br><br>The stadium is so big that it can seat more than one lakh spectaters.",
+        "op_en": [
+            "spectaeters",
+            "spectetors",
+            "spectators",
+            "speactators"
+        ],
+        "op_hi": [
+            "spectaeters",
+            "spectetors",
+            "spectators",
+            "speactators"
+        ],
+        "ans": "3",
+        "solution": "<p>बच्चों, आइए इस Spelling (वर्तनी) के सवाल को समझते हैं।</p><p>वाक्य में 'spectaters' शब्द की स्पेलिंग गलत दी गई है। इसका मतलब होता है 'दर्शक' (देखने वाले)।</p><p>दर्शक के लिए सही अंग्रेजी शब्द <b>'spectator'</b> (बहुवचन में <b>spectators</b>) होता है। इसकी स्पेलिंग s-p-e-c-t-a-t-o-r-s होती है।</p><ul><li><b>Option 1 (spectaeters):</b> गलत स्पेलिंग है।</li><li><b>Option 2 (spectetors):</b> गलत स्पेलिंग है ('e' के स्थान पर 'a' होना चाहिए)।</li><li><b>Option 3 (spectators):</b> यह बिल्कुल सही स्पेलिंग है!</li><li><b>Option 4 (speactators):</b> गलत स्पेलिंग है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Direct & Indirect Speech",
+        "level": "Moderate",
+        "q_en": "Choose the correct direct narration of the given sentence and fill in the blank.<br><br>Samson confessed that he had taken my notebook by mistake.<br><br>Samson confessed, ____________________",
+        "q_hi": "Choose the correct direct narration of the given sentence and fill in the blank.<br><br>Samson confessed that he had taken my notebook by mistake.<br><br>Samson confessed, ____________________",
+        "op_en": [
+            "“I take your notebook by mistake.”",
+            "“I will take your notebook by mistake.”",
+            "“I am taking your notebook by mistake.”",
+            "“I took your notebook by mistake.”"
+        ],
+        "op_hi": [
+            "“I take your notebook by mistake.”",
+            "“I will take your notebook by mistake.”",
+            "“I am taking your notebook by mistake.”",
+            "“I took your notebook by mistake.”"
+        ],
+        "ans": "4",
+        "solution": "<p>बच्चों, आइए इस Direct/Indirect Speech के सवाल को समझते हैं। हमें एक Indirect वाक्य दिया गया है जिसे Direct में बदलना है।</p><p><b>वाक्य:</b> Samson confessed that he had taken my notebook by mistake.</p><p><b>नियम (Rules for Indirect to Direct):</b><br>1) <b>Tense में बदलाव:</b> 'had taken' (Past Perfect Tense) है। Indirect में Past Perfect तब आता है जब Direct में <b>Simple Past</b> (V2) या Present Perfect (has/have + V3) हो।<br>2) <b>Pronoun में बदलाव:</b> 'he' (Samson के लिए) बदलकर 'I' हो जाएगा। 'my' (मेरे लिए) बदलकर 'your' (तुम्हारा) हो जाएगा。</p><p><b>विकल्पों की जाँच:</b></p><ul><li><b>Option 1 (I take):</b> Simple Present है। (Indirect में यह Simple Past बनता)। गलत है।</li><li><b>Option 2 (I will take):</b> Future Tense है। (Indirect में 'would take' बनता)। गलत है।</li><li><b>Option 3 (I am taking):</b> Present Continuous है। (Indirect में 'was taking' बनता)। गलत है।</li><li><b>Option 4 (I took):</b> यह <b>Simple Past</b> (V2) है, जो Indirect में जाकर Past Perfect (had taken) बनता है। यह बिल्कुल सही है!</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Direct & Indirect Speech",
+        "level": "Moderate",
+        "q_en": "Choose the correct indirect narration of the given sentence and fill in the blank.<br>Arjunan said, \"My friends are waiting outside.\"<br>Arjunan said ___________________________________.",
+        "q_hi": "Choose the correct indirect narration of the given sentence and fill in the blank.<br>Arjunan said, \"My friends are waiting outside.\"<br>Arjunan said ___________________________________.",
+        "op_en": [
+            "that his friends were waiting outside.",
+            "that his friends are waiting outside.",
+            "that their friends were waiting outside.",
+            "that my friends were waiting outside."
+        ],
+        "op_hi": [
+            "that his friends were waiting outside.",
+            "that his friends are waiting outside.",
+            "that their friends were waiting outside.",
+            "that my friends were waiting outside."
+        ],
+        "ans": "1",
+        "solution": "<p>बच्चों, आइए इस Direct/Indirect Speech के सवाल को हल करते हैं। इस बार हमें Direct से Indirect बनाना है।</p><p><b>वाक्य:</b> Arjunan said, \"My friends are waiting outside.\"</p><p><b>बदलाव के नियम:</b><br>1) <b>Inverted Commas:</b> इन्हें हटाकर 'that' लगाएँगे।<br>2) <b>Pronoun (सर्वनाम):</b> 'My' (First Person) रिपोर्टिंग वर्ब के Subject (Arjunan - लड़का) के अनुसार बदलेगा, इसलिए 'My' का <b>'his'</b> हो जाएगा।<br>3) <b>Tense (काल):</b> Reporting verb (said) Past Tense में है, इसलिए 'are waiting' (Present Continuous) बदलकर 'were waiting' <b>(Past Continuous)</b> हो जाएगा।</p><p>तो सही वाक्य बनेगा: Arjunan said <b>that his friends were waiting outside.</b></p><ul><li><b>Option 1:</b> यह सभी नियमों का पालन कर रहा है। यह एकदम सही उत्तर है!</li><li><b>Option 2:</b> इसमें Tense (are) नहीं बदला गया। गलत है।</li><li><b>Option 3:</b> इसमें Pronoun (their) गलत है।</li><li><b>Option 4:</b> इसमें Pronoun (my) नहीं बदला गया।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Active & Passive Voice",
+        "level": "Moderate",
+        "q_en": "Choose the correct option to convert the following passive voice sentence into active voice.<br>The new species of orchid was discovered by researchers in the Western Ghats.",
+        "q_hi": "Choose the correct option to convert the following passive voice sentence into active voice.<br>The new species of orchid was discovered by researchers in the Western Ghats.",
+        "op_en": [
+            "Researchers discovers the new species of orchid in the Western Ghats.",
+            "Researchers have discovering the new species of orchid in the Western Ghats.",
+            "Researchers were discovering the new species of orchid in the Western Ghats.",
+            "Researchers discovered the new species of orchid in the Western Ghats."
+        ],
+        "op_hi": [
+            "Researchers discovers the new species of orchid in the Western Ghats.",
+            "Researchers have discovering the new species of orchid in the Western Ghats.",
+            "Researchers were discovering the new species of orchid in the Western Ghats.",
+            "Researchers discovered the new species of orchid in the Western Ghats."
+        ],
+        "ans": "4",
+        "solution": "<p>बच्चों, आइए इस Active/Passive Voice के सवाल को समझते हैं। हमें Passive वाक्य को Active में बदलना है।</p><p><b>वाक्य:</b> The new species of orchid <b>was discovered</b> by researchers in the Western Ghats.</p><p><b>नियम (Passive to Active):</b><br>1) 'by researchers' (Object) अब Active वाक्य का <b>Subject</b> बनेगा &rarr; <b>Researchers</b>.<br>2) 'The new species...' (Subject) अब <b>Object</b> बन जाएगा।<br>3) <b>Tense (काल):</b> 'was discovered' (was/were + V3) <b>Simple Past Tense</b> का Passive रूप है। इसे Active में बदलने के लिए हमें केवल Verb की 2nd form (V2) यानी <b>'discovered'</b> का प्रयोग करना होगा।</p><p>अतः सही Active वाक्य होगा: <b>Researchers discovered</b> the new species of orchid in the Western Ghats.</p><ul><li><b>Option 1:</b> 'discovers' Simple Present है। गलत है।</li><li><b>Option 2:</b> 'have discovering' ग्रामर के हिसाब से गलत है।</li><li><b>Option 3:</b> 'were discovering' Past Continuous है। गलत है।</li><li><b>Option 4:</b> 'discovered' (V2) बिल्कुल सही Tense है। यह सही उत्तर है!</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Spelling Correction",
+        "level": "Moderate",
+        "q_en": "Rectify the sentence by selecting the correct spelling from the options.<br><br>The moment that the wagon rattled out of the yard away to the station, Madame Solisainte settled herself into a state of nervous expectansy.",
+        "q_hi": "Rectify the sentence by selecting the correct spelling from the options.<br><br>The moment that the wagon rattled out of the yard away to the station, Madame Solisainte settled herself into a state of nervous expectansy.",
+        "op_en": [
+            "expactancy",
+            "expactency",
+            "expectancy",
+            "expectency"
+        ],
+        "op_hi": [
+            "expactancy",
+            "expactency",
+            "expectancy",
+            "expectency"
+        ],
+        "ans": "3",
+        "solution": "<p>बच्चों, आइए इस वाक्य में गलत स्पेलिंग ढूँढते हैं।</p><p>वाक्य के अंत में एक शब्द है <b>'expectansy'</b>, जो गलत लिखा गया है। इसका अर्थ 'उम्मीद' या 'प्रतीक्षा की स्थिति' होता है (जैसे nervous expectancy)।</p><p>इस शब्द की सही अंग्रेजी स्पेलिंग <b>'expectancy'</b> (e-x-p-e-c-t-a-n-c-y) होती है।</p><ul><li><b>Option 1 (expactancy):</b> 'p' के बाद 'a' नहीं 'e' आता है। गलत है।</li><li><b>Option 2 (expactency):</b> गलत स्पेलिंग है।</li><li><b>Option 3 (expectancy):</b> यह बिल्कुल सही स्पेलिंग है!</li><li><b>Option 4 (expectency):</b> अंत में 'ency' नहीं बल्कि 'ancy' होता है। गलत है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Spelling Correction",
+        "level": "Easy",
+        "q_en": "Select the wrongly spelt word.<br>",
+        "q_hi": "Select the wrongly spelt word.<br>",
+        "op_en": [
+            "Ignit",
+            "Resource",
+            "Cobbler",
+            "Anxiety"
+        ],
+        "op_hi": [
+            "Ignit",
+            "Resource",
+            "Cobbler",
+            "Anxiety"
+        ],
+        "ans": "1",
+        "solution": "<p>बच्चों, आइए इन शब्दों की स्पेलिंग (वर्तनी) की जाँच करते हैं।</p><ul><li><b>Option 2 (Resource):</b> इसकी स्पेलिंग बिल्कुल सही है। इसका अर्थ 'संसाधन' होता है।</li><li><b>Option 3 (Cobbler):</b> इसकी स्पेलिंग भी सही है। इसका अर्थ 'मोची' (जूते बनाने/सुधारने वाला) होता है।</li><li><b>Option 4 (Anxiety):</b> इसकी स्पेलिंग सही है। इसका अर्थ 'चिंता' या 'घबराहट' होता है।</li><li><b>Option 1 (Ignit):</b> यह स्पेलिंग गलत है! सही शब्द <b>'Ignite'</b> (i-g-n-i-t-e) होता है, जिसका अर्थ है 'आग लगाना' या 'सुलगाना'। अंत में 'e' गायब है। इसलिए यह हमारा सही उत्तर है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Direct & Indirect Speech",
+        "level": "Moderate",
+        "q_en": "Choose the most appropriate option to fill in the given blank.<br>Direct form: The teacher said, \"I will review your essays here tomorrow.\"<br>Indirect form: ___________",
+        "q_hi": "Choose the most appropriate option to fill in the given blank.<br>Direct form: The teacher said, \"I will review your essays here tomorrow.\"<br>Indirect form: ___________",
+        "op_en": [
+            "The teacher said that I would review your essays there the next day.",
+            "The teacher said that she would review my essays there the next day.",
+            "The teacher said that she would review my essays here tomorrow.",
+            "The teacher said that she reviewed my essays there the next day."
+        ],
+        "op_hi": [
+            "The teacher said that I would review your essays there the next day.",
+            "The teacher said that she would review my essays there the next day.",
+            "The teacher said that she would review my essays here tomorrow.",
+            "The teacher said that she reviewed my essays there the next day."
+        ],
+        "ans": "2",
+        "solution": "<p>बच्चों, आइए इस वाक्य को Direct से Indirect में बदलते हैं।</p><p><b>वाक्य:</b> The teacher said, \"I will review your essays here tomorrow.\"</p><p><b>बदलाव के नियम:</b><br>1) <b>Pronoun:</b> 'I' (teacher के लिए) बदलकर 'she' (या he) हो जाएगा। 'your' बदलकर 'my' हो जाएगा।<br>2) <b>Tense:</b> 'will' बदलकर <b>'would'</b> हो जाएगा।<br>3) <b>Time/Place Words:</b> 'here' (यहाँ) बदलकर <b>'there'</b> (वहाँ) हो जाएगा। 'tomorrow' (कल) बदलकर <b>'the next day'</b> हो जाएगा।</p><p>सही वाक्य: The teacher said that <b>she would</b> review <b>my</b> essays <b>there the next day</b>.</p><ul><li><b>Option 1:</b> इसमें 'I' और 'your' को नहीं बदला गया। गलत है।</li><li><b>Option 2:</b> यह सभी नियमों का सही से पालन कर रहा है। यह एकदम सही उत्तर है!</li><li><b>Option 3:</b> इसमें 'here' और 'tomorrow' को नहीं बदला गया। गलत है।</li><li><b>Option 4:</b> इसमें Tense गलत तरीके से 'reviewed' (Past Simple) कर दिया गया है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Spelling Correction",
+        "level": "Moderate",
+        "q_en": "Rectify the sentence by selecting the correct spelling from the options.<br>Agapie had seen the Dresden figure in Madame Valtour's possession and at once guessed the whole akusation.<br><br>",
+        "q_hi": "Rectify the sentence by selecting the correct spelling from the options.<br>Agapie had seen the Dresden figure in Madame Valtour's possession and at once guessed the whole akusation.<br><br>",
+        "op_en": [
+            "accusasion",
+            "acusation",
+            "accusetion",
+            "accusation"
+        ],
+        "op_hi": [
+            "accusasion",
+            "acusation",
+            "accusetion",
+            "accusation"
+        ],
+        "ans": "4",
+        "solution": "<p>बच्चों, आइए इस वाक्य में स्पेलिंग की गलती ढूँढते हैं।</p><p>वाक्य के अंत में <b>'akusation'</b> शब्द दिया गया है, जो स्पेलिंग के लिहाज से गलत है। इसका अर्थ होता है 'आरोप' या 'दोषारोपण' (charge or claim that someone has done something wrong)।</p><p>सही अंग्रेजी शब्द <b>'accusation'</b> होता है। इसमें डबल 'c' आता है और अंत में 'tion' होता है (a-c-c-u-s-a-t-i-o-n)।</p><ul><li><b>Option 1 (accusasion):</b> अंत में 'sion' नहीं आता। गलत है।</li><li><b>Option 2 (acusation):</b> इसमें सिंगल 'c' है, जबकि डबल 'c' होना चाहिए। गलत है।</li><li><b>Option 3 (accusetion):</b> इसमें 'e' का प्रयोग गलत है ('a' होना चाहिए)। गलत है।</li><li><b>Option 4 (accusation):</b> यह बिल्कुल सही स्पेलिंग है!</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Spelling Correction",
+        "level": "Easy",
+        "q_en": "Read the given options carefully and choose the sentence that contains a spelling mistake.",
+        "q_hi": "Read the given options carefully and choose the sentence that contains a spelling mistake.",
+        "op_en": [
+            "The villagers celebrated the festival with great enthusiasm.",
+            "The writer completed the final draft of the novel.",
+            "The soldier showed immense courage during the rescue operation.",
+            "The bakery displayed a variety of delicious pasteries."
+        ],
+        "op_hi": [
+            "The villagers celebrated the festival with great enthusiasm.",
+            "The writer completed the final draft of the novel.",
+            "The soldier showed immense courage during the rescue operation.",
+            "The bakery displayed a variety of delicious pasteries."
+        ],
+        "ans": "4",
+        "solution": "<p>बच्चों, आइए सभी वाक्यों में स्पेलिंग की जाँच करते हैं।</p><ul><li><b>Option 1:</b> 'villagers', 'celebrated', 'enthusiasm' - सभी स्पेलिंग सही हैं।</li><li><b>Option 2:</b> 'writer', 'completed', 'draft' - सभी स्पेलिंग सही हैं।</li><li><b>Option 3:</b> 'soldier', 'immense', 'courage', 'rescue' - सभी स्पेलिंग सही हैं।</li><li><b>Option 4:</b> इस वाक्य में अंतिम शब्द <b>'pasteries'</b> गलत है! पेस्ट्री (Pastry) का बहुवचन (plural) <b>'pastries'</b> (p-a-s-t-r-i-e-s) होता है। इसमें बीच में 'e' नहीं आता। अतः इस वाक्य में गलती है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Active & Passive Voice",
+        "level": "Easy",
+        "q_en": "Select the option that expresses the given sentence in passive voice.<br><br>Marwa cleaned the classroom before lunch.",
+        "q_hi": "Select the option that expresses the given sentence in passive voice.<br><br>Marwa cleaned the classroom before lunch.",
+        "op_en": [
+            "The classroom is cleaning Marwa before lunch.",
+            "The classroom has been cleaning before lunch by Marwa.",
+            "The classroom have been cleaned before lunch by Marwa.",
+            "The classroom was cleaned before lunch by Marwa."
+        ],
+        "op_hi": [
+            "The classroom is cleaning Marwa before lunch.",
+            "The classroom has been cleaning before lunch by Marwa.",
+            "The classroom have been cleaned before lunch by Marwa.",
+            "The classroom was cleaned before lunch by Marwa."
+        ],
+        "ans": "4",
+        "solution": "<p>बच्चों, आइए इस Active/Passive Voice के सवाल को समझते हैं। हमें Active वाक्य को Passive में बदलना है।</p><p><b>वाक्य:</b> Marwa (Subject) cleaned (Verb) the classroom (Object) before lunch.</p><p><b>नियम (Active to Passive):</b><br>1) <b>Object बनेगा Subject:</b> 'The classroom' वाक्य की शुरुआत में आएगा।<br>2) <b>Tense (काल):</b> 'cleaned' (V2) <b>Simple Past Tense</b> है। Simple Past का Passive बनाने के लिए हम <b>'was/were + V3'</b> का प्रयोग करते हैं। (The classroom एकवचन है, इसलिए 'was' आएगा)।<br>3) <b>Subject बनेगा Object:</b> अंत में 'by Marwa' आएगा।</p><p>सही Passive वाक्य: <b>The classroom was cleaned</b> before lunch <b>by Marwa.</b></p><ul><li><b>Option 1:</b> 'is cleaning' (Present Continuous) गलत है। अर्थ भी गलत हो रहा है।</li><li><b>Option 2:</b> 'has been cleaning' (Present Perfect Continuous) गलत है।</li><li><b>Option 3:</b> 'have been cleaned' गलत है क्योंकि 'classroom' एकवचन (singular) है और Tense भी गलत है।</li><li><b>Option 4:</b> यह बिल्कुल सही नियम का पालन कर रहा है (was cleaned)। यह सही उत्तर है!</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Moderate",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>Which of the following most accurately states the main idea of the passage?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>Which of the following most accurately states the main idea of the passage?",
+        "op_en": [
+            "Artificial Intelligence will fully replace traditional computing systems very soon.",
+            "Artificial Intelligence infrastructure significantly harms the environment through resource strain.",
+            "Data centres mostly improve global water access and sustainability.",
+            "Artificial Intelligence development benefits outweigh all environmental concerns mentioned."
+        ],
+        "op_hi": [
+            "Artificial Intelligence will fully replace traditional computing systems very soon.",
+            "Artificial Intelligence infrastructure significantly harms the environment through resource strain.",
+            "Data centres mostly improve global water access and sustainability.",
+            "Artificial Intelligence development benefits outweigh all environmental concerns mentioned."
+        ],
+        "ans": "2",
+        "solution": "<p>बच्चों, आइए इस Reading Comprehension (पठित गद्यांश) के सवाल को हल करते हैं। हमें passage (गद्यांश) का मुख्य विचार (main idea) बताना है।</p><p>गद्यांश में साफ तौर पर AI डेटा सेंटर्स से होने वाले नुकसान बताए गए हैं:<br>1) <b>भारी मात्रा में कच्चा माल और दुर्लभ खनिज (Rare earth elements)</b> की जरूरत (जिसका खनन पर्यावरण के लिए विनाशकारी है)।<br>2) <b>इलेक्ट्रॉनिक कचरा (E-waste)</b> जिसमें पारा और सीसा (mercury and lead) जैसे खतरनाक पदार्थ होते हैं।<br>3) <b>पानी की भारी खपत (Water consumption)</b> डेटा सेंटर्स को ठंडा रखने के लिए।</p><p>इन सभी बातों का एक ही निष्कर्ष निकलता है कि AI का इन्फ्रास्ट्रक्चर पर्यावरण पर भारी दबाव (resource strain) डाल रहा है।</p><ul><li><b>Option 1:</b> AI द्वारा पारंपरिक सिस्टम को रिप्लेस करने की कोई बात पैसेज में नहीं की गई है।</li><li><b>Option 2 (Artificial Intelligence infrastructure significantly harms the environment...):</b> यह बिल्कुल सही है। पैसेज का पूरा फोकस पर्यावरण को हो रहे नुकसान पर ही है।</li><li><b>Option 3:</b> डेटा सेंटर पानी के संकट को बढ़ा रहे हैं, न कि उसे सुधार (improve) रहे हैं।</li><li><b>Option 4:</b> पैसेज में AI के फायदों को नुकसान से ज्यादा नहीं बताया गया है (केवल नुकसान बताए गए हैं)।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Hard",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>Which is the best description of the tone of the passage?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>Which is the best description of the tone of the passage?",
+        "op_en": [
+            "Sarcastic",
+            "Cautionary",
+            "Celebratory",
+            "Humorous"
+        ],
+        "op_hi": [
+            "Sarcastic",
+            "Cautionary",
+            "Celebratory",
+            "Humorous"
+        ],
+        "ans": "2",
+        "solution": "<p>बच्चों, हमें इस पैसेज का <b>Tone (स्वर या लहजा)</b> पहचानना है। लेखक किस भावना के साथ यह बात कह रहा है?</p><p>लेखक बता रहा है कि AI डेटा सेंटर्स से पृथ्वी को कितना नुकसान (take a heavy toll) हो रहा है। वह बता रहा है कि खनिजों का खनन विनाशकारी है, इलेक्ट्रॉनिक कचरा खतरनाक (hazardous) है, और पानी की कमी वाले समय में AI बहुत ज्यादा पानी पी रहा है।</p><p>यह सब बातें हमें <b>चेतावनी (Warning/Caution)</b> दे रही हैं कि AI के विकास के साथ-साथ पर्यावरण पर ध्यान देना जरूरी है।</p><ul><li><b>Option 1 (Sarcastic):</b> सार्कैस्टिक का मतलब 'व्यंग्यात्मक' (ताना मारना) होता है। लेखक यहाँ ताना नहीं मार रहा, गंभीर तथ्य बता रहा है।</li><li><b>Option 2 (Cautionary):</b> इसका मतलब 'चेतावनी देने वाला' या 'सावधान करने वाला' होता है। लेखक हमें पर्यावरण के प्रति सावधान कर रहा है। यह एकदम सही उत्तर है!</li><li><b>Option 3 (Celebratory):</b> लेखक AI के विकास का जश्न (celebration) नहीं मना रहा है।</li><li><b>Option 4 (Humorous):</b> इसमें कुछ भी मजाकिया (humorous) नहीं है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension / Vocabulary",
+        "level": "Moderate",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>What is the synonym of the word ‘staggering' from the passage?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>What is the synonym of the word ‘staggering' from the passage?",
+        "op_en": [
+            "Simplified",
+            "Adventurous",
+            "Astonishing",
+            "Segregated"
+        ],
+        "op_hi": [
+            "Simplified",
+            "Adventurous",
+            "Astonishing",
+            "Segregated"
+        ],
+        "ans": "3",
+        "solution": "<p>बच्चों, हमें पैसेज में प्रयुक्त शब्द <b>'staggering'</b> का समानार्थी (Synonym) बताना है।</p><p>पैसेज की लाइन है: \"...rely on a <b>staggering</b> amount of grist: making a 2 kg computer requires 800 kg of raw materials.\" (एक 2 किलो के कंप्यूटर को बनाने के लिए 800 किलो कच्चे माल की आवश्यकता होती है)।<br>यहाँ 2 किलो की चीज़ के लिए 800 किलो माल लगना बहुत ही 'चौंकाने वाली' या 'हैरान करने वाली' बात है। अतः <b>staggering का अर्थ 'चौंकाने वाला / बहुत विशाल' है।</b></p><ul><li><b>Option 1 (Simplified):</b> इसका अर्थ 'सरल किया हुआ' होता है।</li><li><b>Option 2 (Adventurous):</b> इसका अर्थ 'साहसी' होता है।</li><li><b>Option 3 (Astonishing):</b> इसका अर्थ 'हैरान करने वाला' या 'आश्चर्यजनक' होता है। यह staggering का बिल्कुल सही समानार्थी है!</li><li><b>Option 4 (Segregated):</b> इसका अर्थ 'अलग किया हुआ' होता है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Hard",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>Which among the following represents the structure of the passage?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>Which among the following represents the structure of the passage?",
+        "op_en": [
+            "Problem–evidence",
+            "Narrative and chronology",
+            "Persuasive",
+            "Comparison"
+        ],
+        "op_hi": [
+            "Problem–evidence",
+            "Narrative and chronology",
+            "Persuasive",
+            "Comparison"
+        ],
+        "ans": "1",
+        "solution": "<p>बच्चों, हमें इस पैसेज की <b>Structure (संरचना)</b> बतानी है। यानी लेखक ने अपनी बात कहने के लिए किस तरीके का इस्तेमाल किया है।</p><p>पैसेज को ध्यान से देखें:<br>शुरुआत में लेखक कहता है कि AI डेटा सेंटर पर्यावरण के लिए <b>समस्या (Problem)</b> हैं (take a heavy toll on the planet)।<br>इसके बाद वह अपनी बात साबित करने के लिए <b>सबूत (Evidence / Facts)</b> देता है:<br>- सबूत 1: 2 किलो कंप्यूटर के लिए 800 किलो कच्चा माल।<br>- सबूत 2 (The second problem): इलेक्ट्रॉनिक कचरा (mercury and lead)।<br>- सबूत 3 (Third): डेनमार्क देश से 6 गुना ज्यादा पानी की खपत।</p><p>यहाँ स्पष्ट रूप से एक समस्या बताई गई है और फिर उसे आँकड़ों (evidence) से साबित किया गया है।</p><ul><li><b>Option 1 (Problem–evidence):</b> यह बिल्कुल सही संरचना है! (समस्या और सबूत)</li><li><b>Option 2 (Narrative and chronology):</b> यह कोई कहानी नहीं है जो समय के अनुसार (chronology) चल रही हो।</li><li><b>Option 3 (Persuasive):</b> लेखक यहाँ हमें कुछ करने के लिए मना/मजबूर नहीं कर रहा है (persuade नहीं कर रहा), वह सिर्फ तथ्य (facts) रख रहा है।</li><li><b>Option 4 (Comparison):</b> यद्यपि इसमें डेनमार्क से एक छोटी सी तुलना है, लेकिन पूरे पैसेज की संरचना तुलनात्मक (comparison) नहीं है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension / Vocabulary",
+        "level": "Easy",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>What is the antonym of the word 'hazardous’?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage carefully and answer the questions that follow. <br><br>Most large-scale Artificial Intelligence (AI) deployments are housed in data centres, including those operated by cloud service providers. These data centres can take a heavy toll on the planet. The electronics they house rely on a staggering amount of grist: making a 2 kg computer requires 800 kg of raw materials. As well, the microchips that power AI need rare earth elements, which are often mined in environmentally destructive ways, noted Navigating New Horizons. <br>The second problem is that data centres produce electronic waste, which often contains hazardous substances, like mercury and lead. <br>Third, data centres use water during construction and, once operational, to cool electrical components. Globally, AI-related infrastructure may soon consume six times more water than Denmark, a country of 6 million, according to one estimate. That is a problem when a quarter of humanity already lacks access to clean water and sanitation.<br><br>What is the antonym of the word 'hazardous’?",
+        "op_en": [
+            "Hybrid",
+            "Secret",
+            "Safe",
+            "Heating"
+        ],
+        "op_hi": [
+            "Hybrid",
+            "Secret",
+            "Safe",
+            "Heating"
+        ],
+        "ans": "3",
+        "solution": "<p>बच्चों, हमें <b>'hazardous'</b> शब्द का विलोम (Antonym / विपरीतार्थक शब्द) खोजना है।</p><p>पैसेज की लाइन: \"...produce electronic waste, which often contains <b>hazardous</b> substances, like mercury and lead.\" (इलेक्ट्रॉनिक कचरे में पारा और सीसा जैसे <b>खतरनाक</b> पदार्थ होते हैं)।<br>तो 'hazardous' का अर्थ हुआ 'खतरनाक' (Dangerous)। इसका उल्टा होगा 'सुरक्षित' (Safe)।</p><ul><li><b>Option 1 (Hybrid):</b> इसका अर्थ 'मिश्रित' या 'संकर' होता है।</li><li><b>Option 2 (Secret):</b> इसका अर्थ 'रहस्य' होता है।</li><li><b>Option 3 (Safe):</b> इसका अर्थ 'सुरक्षित' है। यह 'खतरनाक' का बिल्कुल सही विलोम (Antonym) है!</li><li><b>Option 4 (Heating):</b> इसका अर्थ 'गर्म करना' होता है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Moderate",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What does the passage suggest about the prolegs of inchworms and cabbage loopers?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What does the passage suggest about the prolegs of inchworms and cabbage loopers?",
+        "op_en": [
+            "They have more prolegs than other caterpillars.",
+            "Their prolegs are much larger.",
+            "They have fewer prolegs than other caterpillars.",
+            "They have no prolegs at all."
+        ],
+        "op_hi": [
+            "They have more prolegs than other caterpillars.",
+            "Their prolegs are much larger.",
+            "They have fewer prolegs than other caterpillars.",
+            "They have no prolegs at all."
+        ],
+        "ans": "3",
+        "solution": "<p>बच्चों, आइए इस पैसेज को पढ़ते हैं। सवाल पूछ रहा है कि 'inchworms' और 'cabbage loopers' के 'prolegs' (पैरों) के बारे में पैसेज क्या कहता है?</p><p>पैसेज की आखिरी लाइनें पढ़ें: \"The caterpillars of many familiar lepidopterans... have prolegs on segments 3 through 6 and 10... (that is, four pairs... and one pair = 5 pairs). <b>For example, inchworms and cabbage loopers have only two or three pairs of prolegs...</b>\"</p><p>जहाँ सामान्य कैटरपिलर के 5 जोड़े (pairs) prolegs होते हैं, वहीं inchworms और cabbage loopers के केवल 'दो या तीन' (two or three) जोड़े होते हैं। इसका स्पष्ट अर्थ है कि उनके पास अन्य कैटरपिलर की तुलना में <b>कम prolegs (fewer prolegs)</b> होते हैं।</p><ul><li><b>Option 1:</b> गलत है, उनके पास ज्यादा (more) नहीं होते।</li><li><b>Option 2:</b> पैसेज में उनके पैरों के आकार (larger) के बारे में कुछ नहीं कहा गया है।</li><li><b>Option 3 (They have fewer prolegs...):</b> यह बिल्कुल सही उत्तर है! (फाइवर का अर्थ है 'कम')।</li><li><b>Option 4:</b> गलत है, उनके पास 2-3 जोड़े पैर होते हैं, ऐसा नहीं है कि कोई पैर नहीं (no prolegs) होता।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Hard",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What is the tone of the passage?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What is the tone of the passage?",
+        "op_en": [
+            "Humorous",
+            "Narrative",
+            "Persuasive",
+            "Informative"
+        ],
+        "op_hi": [
+            "Humorous",
+            "Narrative",
+            "Persuasive",
+            "Informative"
+        ],
+        "ans": "4",
+        "solution": "<p>बच्चों, हमें इस पैसेज का <b>Tone (स्वर)</b> बताना है। पैसेज में कैटरपिलर के शरीर (anatomy), उनके पैरों (true legs and prolegs), और उनके चलने के तरीके के बारे में <b>तथ्यात्मक जानकारी (factual information)</b> दी गई है।</p><p>लेखक यहाँ कोई कहानी नहीं सुना रहा, न ही कोई मजाक कर रहा है, और न ही हमें किसी बात के लिए मना (persuade) रहा है। वह सिर्फ एक जीव के बारे में वैज्ञानिक जानकारी (Information) साझा कर रहा है।</p><ul><li><b>Option 1 (Humorous):</b> इसमें कुछ भी हास्यपूर्ण (मजाकिया) नहीं है।</li><li><b>Option 2 (Narrative):</b> यह कोई कहानी (story/narrative) नहीं है।</li><li><b>Option 3 (Persuasive):</b> लेखक हमें किसी विचार से सहमत करने की कोशिश नहीं कर रहा है।</li><li><b>Option 4 (Informative):</b> यह बिल्कुल सही उत्तर है! पैसेज पूरी तरह से जानकारीपूर्ण (Informational / Factual) है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Moderate",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What inference can be made from the description of prolegs in caterpillars?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What inference can be made from the description of prolegs in caterpillars?",
+        "op_en": [
+            "Prolegs help caterpillars move more efficiently on surfaces.",
+            "Prolegs are unnecessary for the caterpillar’s movement.",
+            "Prolegs are found only on butterflies of certain species.",
+            "Caterpillars with prolegs cannot move."
+        ],
+        "op_hi": [
+            "Prolegs help caterpillars move more efficiently on surfaces.",
+            "Prolegs are unnecessary for the caterpillar’s movement.",
+            "Prolegs are found only on butterflies of certain species.",
+            "Caterpillars with prolegs cannot move."
+        ],
+        "ans": "1",
+        "solution": "<p>बच्चों, हमें पैसेज के आधार पर 'prolegs' (मांसल पैरों) के बारे में एक निष्कर्ष (Inference) निकालना है।</p><p>पैसेज की लाइनें पढ़ें: \"<b>Prolegs</b> are usually tipped with curved rows of minute hooklets <b>to help the animals hold on to surfaces, such as twigs and leaves.</b>\" (प्रोलेग्स में छोटे हुक होते हैं जो जानवरों को टहनियों और पत्तियों जैसी सतहों को पकड़ने में मदद करते हैं)।<br>इसके अलावा आखिरी लाइन में बताया गया है कि जिनके कम prolegs होते हैं, उन्हें चलने के लिए अपने पिछले हिस्से को आगे तक खींचना पड़ता है। इसका मतलब है कि prolegs का मुख्य काम पकड़ मजबूत बनाना और सतह पर चलने (movement) में मदद करना है।</p><ul><li><b>Option 1 (Prolegs help caterpillars move more efficiently...):</b> यह बिल्कुल सही है। सतह को पकड़ने (hold on) से उन्हें चलने में मदद मिलती है।</li><li><b>Option 2:</b> गलत है, ये अनावश्यक (unnecessary) नहीं हैं।</li><li><b>Option 3:</b> गलत है, ये लगभग सभी (most species) में पाए जाते हैं।</li><li><b>Option 4:</b> यह कथन तो एकदम उलटा और गलत है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Easy",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What would be the best title for the passage?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>What would be the best title for the passage?",
+        "op_en": [
+            "The Life of a Caterpillar",
+            "Caterpillar Anatomy and Adaptations",
+            "The Importance of Cylindrical Bodies",
+            "The Stages of Butterfly Development"
+        ],
+        "op_hi": [
+            "The Life of a Caterpillar",
+            "Caterpillar Anatomy and Adaptations",
+            "The Importance of Cylindrical Bodies",
+            "The Stages of Butterfly Development"
+        ],
+        "ans": "2",
+        "solution": "<p>बच्चों, इस सवाल में हमें पैसेज के लिए एक <b>उपयुक्त शीर्षक (Title)</b> खोजना है। पैसेज का मुख्य विषय (Theme) क्या है?</p><p>पूरे पैसेज में कैटरपिलर के शरीर की बनावट (Anatomy) की बात हो रही है - जैसे उनके cylindrical bodies, three pairs of true legs, fleshy prolegs, minute hooklets, और अलग-अलग प्रजातियों में prolegs की संख्या के कारण उनके चलने का तरीका (Adaptation)।</p><ul><li><b>Option 1 (The Life of a Caterpillar):</b> पैसेज में कैटरपिलर क्या खाता है, कैसे जीता है या जीवन चक्र की बात नहीं है।</li><li><b>Option 2 (Caterpillar Anatomy and Adaptations):</b> यह बिल्कुल सटीक (Perfect) शीर्षक है! क्योंकि पैसेज पूरी तरह से उनके शारीरिक अंगों (Anatomy) और उनके काम करने के तरीके (Adaptations) पर केंद्रित है।</li><li><b>Option 3 (The Importance of Cylindrical Bodies):</b> यह सिर्फ एक छोटा सा हिस्सा है, पूरा पैसेज नहीं।</li><li><b>Option 4 (The Stages of Butterfly Development):</b> पैसेज में बटरफ्लाई बनने की पूरी प्रक्रिया (अंडा, प्यूपा आदि) नहीं बताई गई है।</li></ul>"
+    },
+    {
+        "section": "English Language and Comprehension1",
+        "topic": "Reading Comprehension",
+        "level": "Easy",
+        "q_en": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>Which of the following is NOT mentioned as a feature of caterpillar anatomy?",
+        "q_hi": "<b>Comprehension:</b><br>Read the following passage and answer the questions that follow.<br><br>Caterpillars are the larval form of moths, butterflies, and skippers. Like all insects, they have three pairs of true, jointed legs, which are attached to the three thoracic segments of their cylindrical bodies. Most species also have several pairs of fleshy prolegs on their abdominal segments. Prolegs are usually tipped with curved rows of minute hooklets to help the animals hold on to surfaces, such as twigs and leaves. The caterpillars of many familiar lepidopterans, such as monarchs and hawk moths, have prolegs on segments 3 through 6 and 10 of the abdomen (that is, four pairs on the mid-abdomen and one pair near the bottom), though the number may be reduced in some species. For example, inchworms and cabbage loopers have only two or three pairs of prolegs, which is why these caterpillars draw their hind end up to meet the front before extending forward again.<br><br>Which of the following is NOT mentioned as a feature of caterpillar anatomy?",
+        "op_en": [
+            "Wings",
+            "Jointed legs",
+            "Fleshy prolegs",
+            "Curved hooklets on prolegs"
+        ],
+        "op_hi": [
+            "Wings",
+            "Jointed legs",
+            "Fleshy prolegs",
+            "Curved hooklets on prolegs"
+        ],
+        "ans": "1",
+        "solution": "<p>बच्चों, यह 'Factual / Detail-based' सवाल है। हमें बताना है कि विकल्पों में से किस चीज़ का जिक्र (mention) पैसेज में <b>नहीं (NOT)</b> किया गया है।</p><p>आइए विकल्पों को पैसेज की लाइनों से मिलाते हैं:</p><ul><li><b>Option 2 (Jointed legs):</b> पैसेज में है - \"they have three pairs of true, <b>jointed legs</b>\".</li><li><b>Option 3 (Fleshy prolegs):</b> पैसेज में है - \"have several pairs of <b>fleshy prolegs</b>\".</li><li><b>Option 4 (Curved hooklets on prolegs):</b> पैसेज में है - \"Prolegs are usually tipped with <b>curved rows of minute hooklets</b>\".</li><li><b>Option 1 (Wings):</b> कैटरपिलर (लार्वा) के पंख नहीं होते (पंख बटरफ्लाई बनने के बाद आते हैं), और पैसेज में <b>कही भी Wings (पंख) का जिक्र नहीं है</b>। अतः यह सही उत्तर है!</li></ul>"
+    }
+]
